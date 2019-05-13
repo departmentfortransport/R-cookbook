@@ -1,3 +1,44 @@
+--- 
+title: "DfT R Cookbook"
+author: "Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Andrew Kelly, Tim Taylor"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::gitbook:
+    df_print: kable
+    fig_width: 7
+    fig_height: 6
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: departmentfortransport/R-cookbook
+description: "Guidance and code examples for R usage for DfT and beyond"
+
+---
+
+# Why do we need _another_ book?
+
+Placeholder
+
+
+## Coding standards
+## Adding to the book
+
+<!--chapter:end:index.Rmd-->
+
+
+# The basics {#basics}
+
+Placeholder
+
+
+## Vectors
+### Types {#vector-types}
+### Conversion between atomic vector types
+
+<!--chapter:end:01-basics.Rmd-->
+
 # Data Importing/Exporting and interaction with other programmes {#data-import}
 
 This chapter is for code examples of data importing/exporting and interactions with other programmes and databases.
@@ -204,3 +245,66 @@ You have received some kind of data entry form that has been done in excel in a 
 
 ### GCP
  - BigQuery - bigrquery
+
+<!--chapter:end:02-data-import.Rmd-->
+
+
+# Table/Data Frame manipulation {#tables}
+
+Placeholder
+
+
+## Pivot and reshape tables
+## Dropping and selecting columns
+## Filtering data
+## Get counts of data
+## Combine tables
+## Joining tables
+## Select specific columns in a join
+## Sum rows or columns
+### Sum rows
+### Sum columns
+## Replace NAs or other values
+## Creating new variables
+## Summarising data
+## Look up tables
+
+<!--chapter:end:03-table-manipulation.Rmd-->
+
+```{r include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+```
+
+# Working with dates {#dates}
+**NOT FINISHED - need to write about `lubridate`**
+
+<!--chapter:end:04-dates.Rmd-->
+
+
+# Working with factors {#factors}
+
+Placeholder
+
+
+
+<!--chapter:end:05-factors.Rmd-->
+
+
+# Plotting and Data Visualisations {#plots}
+
+Placeholder
+
+
+
+<!--chapter:end:06-plotting.Rmd-->
+
+
+# Interesting tidbits {#tidbits}
+
+Placeholder
+
+
+## Rounding
+
+<!--chapter:end:08-tidbits.Rmd-->
+
