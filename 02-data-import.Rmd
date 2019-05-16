@@ -113,34 +113,28 @@ Other arguments within `read_csv` that I will just mention, with their default s
  
 
 
-### .xls and .xlsx
+### .xlsx and .xls
 
 Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using `readxl` and `purrr` to iterate over either worksheets and/or workbooks.
 
 #### A single worksheet in a single workbook
 
-The simplest combination, you are interested in one rectangular datset in a particular worksheet in one workbook. Leaving the defaults works nicely on this dataset, though perhaps "units" needs some investigating.
+The simplest combination, you are interested in one rectangular datset in a particular worksheet in one workbook. Leaving the defaults works fine on this dataset. Note that `readxl::read_excel` detects if the file is `.xlsx` or `.xls` and behaves accordingly.
 
 ```{r}
-
-data_from_xl <- readxl::read_excel(
-  path = "data/port0499.xlsx"
-)
-
-tibble::glimpse(data_from_xl)
-
+readxl::read_excel(path = "data/port0499.xlsx") %>% 
+  head()
 ```
 
 Let's set a few of the other arguments, run `?read_excel` in the console to see the full list.
 ```{r}
-data_from_xl <- readxl::read_excel(
+readxl::read_excel(
   path = "data/port0499.xlsx"
   , sheet = 1 #number or name of sheet, default is first sheet
   , col_names = TRUE #default
   , col_types = "text" #a single type will recycle to all columns, specify each using character vector of the same length eg c("numeric", "text", ...)
-)
-
-tibble::glimpse(data_from_xl)
+) %>% 
+  head()
 ```
 
 
@@ -154,7 +148,7 @@ The code below collects the names of the 3 excel workbooks using `fs::dir_ls`, a
 pokemon <- fs::dir_ls(path = "data", regex = "pokemon_player_.\\.xlsx$")  %>% 
   purrr::map_df(readxl::read_excel, .id = "player")
 
-pokemon
+DT::datatable(data = pokemon)
 
 ```
 
@@ -164,7 +158,7 @@ Note that the `regex` argument in `fs::dir_ls` is applied to the full file path 
 
 #### Many worksheets in a single workbook
 
-You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure. For example, you have a workbook containing pokemon go captures data, where each different data collection point has it's own sheet. The data structure, column names and data types are consistent. You want to read in and combine these data into a single dataframe.
+You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure. For example, you have a workbook containing pokemon go captures data, where each different data collection point has its own sheet. The data structure, column names and data types are consistent. You want to read in and combine these data into a single dataframe.
 
 The code below sets the location of the workbook and puts this in the object `path`. It then collects the names of all the sheets in that workbook using `readxl::excel_sheets`. Next `purrr::set_names` sets these names in a vector so that they can be used in the next step. This vector of names is implictly assigned to the `.x` argument in `purrr::map_df` as it is the first thing passed to it. This means we can refer to it as `.x` in the function we are iterating, in this case `readxl::read_excel`. Finally, an id column is included, made up of the sheet names and named "sheet". The output is a single dataframe with all the sheets row bound together.
 
@@ -178,14 +172,36 @@ pokemon_collections <- readxl::excel_sheets(path = path) %>%
      , .id = "sheet"
    )
 
-pokemon_collections
+DT::datatable(data = pokemon_collections)
 
 ```
 
 #### Many worksheets in many workbooks
 
-```{r}
+Now we can use the above two solutions to combine data from many worksheets spread across many workbooks. As before, the data is rectangular and has the same structure. For example, you receive a workbook every month, containing pokemon go captures data, and data collection point has its own sheet. 
 
+We create a function to import and combine the sheets from a single workbook, and then iterate this function over all the workbooks using `purrr::map_df`.
+
+```{r}
+#function to combine sheets from a single workbook
+read_and_combine_sheets <- function(path){
+  readxl::excel_sheets(path = path) %>% 
+  purrr::set_names() %>% 
+   purrr::map_df(
+     ~ readxl::read_excel(path = path, sheet = .x)
+     , .id = "sheet"
+   )
+}
+
+#code to iterate over many workbooks
+pokemon_monthly_collections <- fs::dir_ls(
+  path = "data", regex = "pokemon_2019\\d{2}\\.xlsx$")  %>% 
+  purrr::map_df(
+    read_and_combine_sheets
+    , .id = "month"
+    )
+
+DT::datatable(data = pokemon_monthly_collections)
 ```
 
 #### Non-rectangular data in many workbooks
