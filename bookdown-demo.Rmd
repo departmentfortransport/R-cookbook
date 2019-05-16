@@ -1,3 +1,44 @@
+--- 
+title: "DfT R Cookbook"
+author: "Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Andrew Kelly, Tim Taylor"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::gitbook:
+    df_print: kable
+    fig_width: 7
+    fig_height: 6
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: departmentfortransport/R-cookbook
+description: "Guidance and code examples for R usage for DfT and beyond"
+
+---
+
+# Why do we need _another_ book?
+
+Placeholder
+
+
+## Coding standards
+## Adding to the book
+
+<!--chapter:end:index.Rmd-->
+
+
+# The basics {#basics}
+
+Placeholder
+
+
+## Vectors
+### Types {#vector-types}
+### Conversion between atomic vector types
+
+<!--chapter:end:01-basics.Rmd-->
+
 # Data Importing/Exporting and interaction with other programmes {#data-import}
 
 This chapter is for code examples of data importing/exporting and interactions with other programmes and databases.
@@ -159,26 +200,14 @@ pokemon
 ```
 
 Note that the `regex` argument in `fs::dir_ls` is applied to the full file path so if I had tried to specify that the file name starts with "pokemon" by front anchoring it using "^pokemon" this would return no results, since the full name is actually "data/pokemon...". 
+
 [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
 [stringr cheatsheet including regex](http://edrub.in/CheatSheets/cheatSheetStringr.pdf)
 
 #### Many worksheets in a single workbook
 
-You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure. For example, you have a workbook containing pokemon go captures data, where each different data collection point has it's own sheet. The data structure, column names and data types are consistent. You want to read in and combine these data into a single dataframe.
-
-The code below sets the location of the workbook and puts this in the object `path`. It then collects the names of all the sheets in that workbook using `readxl::excel_sheets`. Next `purrr::set_names` sets these names in a vector so that they can be used in the next step. This vector of names is implictly assigned to the `.x` argument in `purrr::map_df` as it is the first thing passed to it. This means we can refer to it as `.x` in the function we are iterating, in this case `readxl::read_excel`. Finally, an id column is included, made up of the sheet names and named "sheet". The output is a single dataframe with all the sheets row bound together.
-
+You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure.
 ```{r}
-path <- "data/multi_tab_messy_pokemon_data.xlsx"
-
-pokemon_collections <- readxl::excel_sheets(path = path) %>% 
-  purrr::set_names() %>% 
-   purrr::map_df(
-     ~ readxl::read_excel(path = path, sheet = .x)
-     , .id = "sheet"
-   )
-
-pokemon_collections
 
 ```
 
@@ -216,3 +245,66 @@ You have received some kind of data entry form that has been done in excel in a 
 
 ### GCP
  - BigQuery - bigrquery
+
+<!--chapter:end:02-data-import.Rmd-->
+
+
+# Table/Data Frame manipulation {#tables}
+
+Placeholder
+
+
+## Pivot and reshape tables
+## Dropping and selecting columns
+## Filtering data
+## Get counts of data
+## Combine tables
+## Joining tables
+## Select specific columns in a join
+## Sum rows or columns
+### Sum rows
+### Sum columns
+## Replace NAs or other values
+## Creating new variables
+## Summarising data
+## Look up tables
+
+<!--chapter:end:03-table-manipulation.Rmd-->
+
+```{r include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+```
+
+# Working with dates {#dates}
+**NOT FINISHED - need to write about `lubridate`**
+
+<!--chapter:end:04-dates.Rmd-->
+
+
+# Working with factors {#factors}
+
+Placeholder
+
+
+
+<!--chapter:end:05-factors.Rmd-->
+
+
+# Plotting and Data Visualisations {#plots}
+
+Placeholder
+
+
+
+<!--chapter:end:06-plotting.Rmd-->
+
+
+# Interesting tidbits {#tidbits}
+
+Placeholder
+
+
+## Rounding
+
+<!--chapter:end:08-tidbits.Rmd-->
+
