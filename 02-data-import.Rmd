@@ -206,12 +206,100 @@ DT::datatable(data = pokemon_monthly_collections)
 
 #### Non-rectangular data in many workbooks
 
-You have received some kind of data entry form that has been done in excel in a more human readable, rather than machine readable, format. Some of the cells contain instructions and admin data so you only want the data held in specific cells. This is non-rectangular data, that is, the data of interest is dotted all over the place.
+You have received some kind of data entry form that has been done in excel in a more human readable, rather than machine readable, format. Some of the cells contain instructions and admin data so you only want the data held in specific cells. This is non-rectangular data, that is, the data of interest is dotted all over the place. In this example we have pet forms, one sheet per workbook, and the data of interest is in cells B2, D5 and E8 only.
 
-```{r}
+Let's see what we get if we naively try to read in one of these forms.
+```{r message=FALSE}
+readxl::read_excel(
+  path = "data/pet_form_1.xlsx"
+) %>% 
+  head()
 
 ```
+It's not what we wanted, let's try again, now using the `range` argument
+```{r message=FALSE}
+readxl::read_excel(
+  path = "data/pet_form_1.xlsx"
+  , col_names = FALSE
+  , range = "A2:B2"
+)
+```
+The `range` argument helps, we have picked up one bit of the data, and it's name. The `range` argument uses the `cellranger` package which allows you to refer to ranges in Excel files in Excel style. However, we have 3 disconnected data points, we need to iterate, so it's `purrr::map_df` to the rescue once more.
+```{r}
+pet_details <- purrr::map_df(
+    .x = c("B2", "D5", "E8")
+    , ~ readxl::read_excel(
+      path = "data/pet_form_1.xlsx"
+      , range = .x
+      , col_names = "cells"
+      , col_types = "text" #have to use text to preserve all data in single column
+    ) 
+  ) 
+pet_details
+```
+This is pretty close to what we want, we have a dataframe named `pet_details` comprising a single "cells" column, which contains all the relevant data from this worksheet. Now we can reshape it. Below I create a tibble with the column names I want in the first column, under "cell_name" and pull the data from `pet_details` into it, then spread it.
+```{r}
+pet <- tibble::tibble(
+    cell_name = c("Name", "Age", "Species")
+    , values = dplyr::pull(pet_details)
+  ) %>% 
+    dplyr::mutate(
+      cell_name = as_factor(cell_name) #convert to factor to preserve order
+      ) %>% 
+    tidyr::spread(
+      key = cell_name #make variable name the key and the values the value
+      , value = values
+      )
+pet
+```
+Having solved for one workbook and sheet, we can functionalise and iterate to gather the data from every wookbook. (Note if you have many worksheets as well, you'll need another interim iteratative step)
 
+The function `get_cells_and_reshape` below iterates over reading each of the three cells from the worksheet, combines these into a single column dataframe, then adds the cell names and reshapes the data into tidy format. It takes three inputs, `path`, `cells`, `cell_name`, all of which are type character or character vector.
+```{r}
+get_cells_and_reshape <- function(path, cells, cell_name){
+  purrr::map_df(
+    .x = cells
+    , ~ readxl::read_excel(
+      path = path
+      , range = .x
+      , col_names = "details"
+      , col_types = "text" #have to use text to preserve all data in single column
+    ) 
+  ) %>% 
+  dplyr::pull() %>% #pull just the values from the previous df
+  tibble::tibble( #create df with 2 columns, cell_name and these values
+    cell_name = c("Name", "Age", "Species")
+    , values = . #use . to refer to what was piped, when not in first position
+  ) %>% 
+  dplyr::mutate(
+    cell_name = as_factor(cell_name) #convert to factor to preserve order
+  ) %>% 
+  tidyr::spread( #this is 
+    key = cell_name #make variable name the key and the values the value
+    , value = values
+  )  
+}
+```
+
+Let's test it on the first pet form data, first setting the paramaters to use in the function. 
+```{r}
+path <- "data/pet_form_1.xlsx"
+cells <- c("B2", "D5", "E8")
+cell_name <- c("Name", "Age", "Species")
+
+get_cells_and_reshape(
+  path = path, cells = cells, cell_name = cell_name)
+```
+
+It works! So now we can iterate this over all the pet form workbooks, specifying the paths using regex as before. Note we use `.x` in the `path` argument in the `get_cells_and_reshape` function to refer to the vector of paths piped to `purrr::map_df` from `fs::dir_ls`. 
+```{r}
+fs::dir_ls(
+  path = "data", regex = "pet_form_\\d\\.xlsx$")  %>% 
+  purrr::map_df(
+    ~ get_cells_and_reshape(path = .x, cells = cells, cell_name = cell_name)
+    , .id = "path"
+    )
+```
 
  
  - read .xls/s
