@@ -302,11 +302,7 @@ fs::dir_ls(
 ```
 
  
- - read .xls/s
- - read single tab
- - read many tabs from one workbook (FASTS)
- - read individual cells/cell ranges (SP)
- - write with formatting openxlsx/xltabr
+  - write with formatting openxlsx/xltabr
  
  
 ### .sav
