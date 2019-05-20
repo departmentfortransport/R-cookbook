@@ -11,6 +11,9 @@ library(dbplyr)
 library(haven)
 library(bigrquery)
 library(fs)
+library(haven)
+library(xltabr)
+library(openxlsx)
 ```
 
 ## Navigating folders
@@ -47,6 +50,7 @@ This section focusses on reading in various filetypes for working on in R memory
 .rds is R's native file format, any object you create in R can be saved as a .rds file. The functions `readRDS` and `saveRDS` are base R functions.
 
 ```{r eval=FALSE}
+#not run
 saveRDS(
   object = my_model #specify the R object you want to save
   , file = "2019_0418_my_model.rds" #give it a name, don't forget the file extension
@@ -57,6 +61,8 @@ saveRDS(
 ### .csv
 
 We use the functions `read_csv` and `write_csv` from the `readr` package (which is part of the `tidyverse`). These are a little bit *cleverer* than their base counterparts, however, this cleverness can catch you out.
+
+#### `readr::read_csv`
 
 The file **messy_pokemon_data.csv** contains pokemon go captures data which has been deliberately messed up a bit. `read_csv` imputes the column specification from the first 1000 rows, which is fine if your first 1000 rows are representative of the data type. If not then subsequent data that can't be coerced into the imputed data type will be replaced with NA. 
 
@@ -110,10 +116,31 @@ Other arguments within `read_csv` that I will just mention, with their default s
 - `skip = 0`: number of lines to skip before reading data.
 - `guess_max = min(1000, n_max)`: maximum number of records to use for guessing column type. NB the bigger this is the longer it will take to read in the data.
 
- 
+#### `readr::write_csv`
+
+There are many `write_` functions in the `readr` package. I rarely use anything other than `write_csv`, but some are faster or have other functionality. See the full list by running `?write_csv` in the console.
+
+Set the path relative to your R project or working directory, and name the file including the file extension ".csv". Pay attention to the defaults, for instance you might want to change the default `na = "NA"` to `na = ""` so that __NA__'s in your data are written to blanks in your .csv rather than the character string "NA". This is important if "NA" means something else in your data, for example, if you are working with country codes including "NA" for Namibia...
+
+```{r eval=FALSE}
+#not run
+
+readr::write_csv(
+  x = pokemon
+  , path = "data/pokemon.csv"
+  , na = "NA" #default - take care if dealing with country code NA for Namibia!
+  , append = FALSE #default is not to append, if the file exists it will be overwritten
+  , col_names = !append #default is the opposite of append, since if appending you don't want the col_names repeated
+  , quote_escape = "double" #default - eg use two types of quote if you want the output quoted; eg "'quoted output'" will be written as 'quoted output'.
+)
+
+```
 
 
-### .xlsx and .xls
+
+
+
+### Importing .xlsx and .xls
 
 Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using `readxl` and `purrr` to iterate over either worksheets and/or workbooks.
 
@@ -301,11 +328,255 @@ fs::dir_ls(
     )
 ```
 
+### Exporting to .xlsx
+
+We recommend `openxlsx` and `xltabr` for writing and formatting tables to MS Excel. The latter is a wrapper built on `openxlsx` developed by MoJ and is specifically aimed at making it easier to produce publication ready tables. `xltabr` has one known drawback in that it applies the foramtting cell by cell, so if your tables are massive (~100,000 rows) it will take too long, in this instance you should resort to `openxlsx`.
+
+https://cran.r-project.org/web/packages/openxlsx/openxlsx.pdf
+
+https://cran.r-project.org/web/packages/xltabr/xltabr.pdf
+
+Here I am going to go over a few basics of using `xltabr` to produce publication ready output. I'm using an extract of some already published Search and Rescue Helicopter data that was itself produced using `xltabr`, see the full series here. 
+
+https://www.gov.uk/government/statistical-data-sets/search-and-rescue-helicopter-sarh01
+
+#### Formatting prep
+
+I'm assuming that the data has already been cleaned, tidied and the unformatted table created in R, most likely using `reshape2::dcast` (see chapter 4) as `xltabr` has bee designed to work well with `reshape2`. 
+
+Read in table to be formatted
+
+```{r message=FALSE}
+demo_sarh <- readr::read_csv(
+  file = "data/sarh_example.csv"
+)
+```
+
+The formatting uses a style sheet for reference. This must be created in a .xlsx workbook, and the specific formatting applied to each cell. The cell text will be the name used to reference that style in the code. In the example below anything with style *header* applied to it will be bold, left-justified, and use the same font style, colour and size as in cell A1. It will also apply the row height, but this can be overwritten. You can also apply cell borders, as in styles *top_header_1*, *top_header_2* and *body_bold_method_change*.
+
+![](data/sarh_dft_style_example.png)
+
+
+```{r}
+#Variables required to be manually updated  ------------------------------
+
+#table_name_date variables - update these variables as required
+latest_month <- "March 2018"
+latest_year_end <- "Year ending 31 March 2018" 
+
+#footer_text_admin footnote dates and information used - update these variables as required
+last_updated <- "December 2017"
+next_update <- "June 2018"
+contact_telephone <- "some telephone number"
+contact_email <- "some email address"
+
+#hyperlink addresses used
+hyperlink_sarh <- "https://www.gov.uk/government/collections/search-and-rescue-helicopter-statistics"
+names(hyperlink_sarh) <- "DEMO: Search and Rescue Helicopter Statistics"
+class(hyperlink_sarh) <- "hyperlink"
+#=========================================================================
+
+# Titles ------------------------------------------------------------------
+#standard dates used in table_name
+table_name_date_01 <- paste0(": April 2017 to ", latest_month)
+  
+#function to minimise reptition in input for table titles
+set_text_title <- function (table_number, table_name_subheader, table_name_date){
+  title_text <- c("DEMO: Department for Transport Statistics"
+                  ,"DEMO: Search and Rescue Helicopter Statistics"
+                  , table_number
+                  , paste0("DEMO: UK Civilian Search and Rescue Helicopter Taskings"
+                          ,table_name_subheader
+                          ,table_name_date)
+                  ,"Number of Taskings")
+  
+  #check input is char and length 1, and output is length 5
+  stopifnot(is.character(table_number)
+            ,is.character(table_name_subheader)
+            ,length(table_number) == 1
+            ,length(table_name_subheader) == 1
+            ,length(title_text) == 5)
+  
+  return(title_text)
+}
+
+#preset each style for each of the 5 rows of the title
+set_style_title <- c("header"
+                     ,"body"
+                     ,"table_title"
+                     ,"title"
+                     ,"title_units")
+
+
+
+
+# Footnotes ---------------------------------------------------------------
+#standard footnotes used
+#all tables have footer_text_source and footer_text_update footnotes,
+#insert and number additional footnotes here/alter exisiting ones
+footer_text_source <- "Source: demo data only"
+footer_text_01 <- ": no data for some reason or other"
+footer_text_02 <- c("methodology change")
+footer_text_admin <- c(""
+                       , paste0("Last updated: ", last_updated)
+                       , paste0("Next update: ", next_update)
+                       , paste0("Telephone: ", contact_telephone)
+                       , paste0("Email: ", contact_email)
+                       , ""
+                       , "The figures in this table are fabricated for demonstration purposes."
+)
+
+#function to piece together individual footnotes for each table, based on those set above
+set_text_footer <- function(...) {
+  #check arguments are all char
+  footer_text <- c(footer_text_source, ..., footer_text_admin)
+}
+
+#function to preset styles for footnotes (number of footnotes varies per table)
+#all footnotes are in style "footer" except the first which is style "source"
+#and the second to last 2 which are style "footer_italics"
+
+set_style_footer <- function(footer_text){
+  c("source"
+    ,rep("footer", length(footer_text)-5) 
+    ,"footer_italics"
+    ,"footer_italics"
+    ,"footer"
+    ,"footer") 
+}
+
+#function to calculate the sheet row holding certain footer text, the search_text
+#to be used in overiding row heights, (eg for wrapped text that goes over one line) and configuring hyperlinks
+#if you give this function a vector it returns a vector of row positions
+footer_text_row <- function(search_text){
+  footer_text_row = (
+    length(tab$title$title_text) #number of rows in title
+    + length(tab$top_headers$top_headers_list) #number of rows in top header (usually 1)
+    + dim(tab$body$body_df)[1]  #number of rows in body (not including header)
+    + match(search_text, tab$footer$footer_text) #number of rows to search_text in footer
+  ) 
+  return(footer_text_row) #may be a single row number or a vector of row numbers
+}
+
+
+# Hyperlinks --------------------------------------------------------------
+#functions to set the hyperlinks, function works by searching for the hyperlink text
+#function uses variables that are already in the global environment
+set_title_hyperlink <- function(){
+openxlsx::writeData(
+  wb = tab$wb
+  , sheet = 1
+  , startRow = match(x = names(hyperlink_sarh), table = tab$title$title_text) #find row of hyperlink by matching its 'name' the text that shows
+  , startCol = 1
+  , x = hyperlink_sarh)
+}
+
+# Table column widths -----------------------------------------------------
+#assign to set consistent column width across all tables
+table_column_width <- 15
+
+
+
+
+```
+
+#### Applying formatting
+```{r}
+# Formatting --------------------------------------------------------------
+#when setting the formats for each table refer to script 02_sarh_format_prep
+#for variables to use which are common to all tables
+
+#set styles path
+#xltabr::set_style_path("style/DfT_styles_SARH.xlsx")
+xltabr::set_style_path("data/sarh_dft_style.xlsx")
+#not all these row heights are making it through, eg title, body, footer stay as 12, 15, etc 
+#top_headers changed to 26, 39... 
+#some must be being overwritten by default (well hidden)
+
+#openxlsx::openXL("data/sarh_dft_style.xlsx") #uncomment to check styles
+#NB only edit the style sheet in Excel (editing/saving in LibreOffice does not work; it saves stuff slightly differently)
+
  
-  - write with formatting openxlsx/xltabr
- 
+# demo_sarh ----------------------------------------------------------------
+#Search and Rescue Helicopter Taskings - by Base
+
+#initialise
+tab <- xltabr::initialise()
+
+#titles
+tab <- xltabr::add_title(
+  tab = tab
+  , title_text = set_text_title(
+    table_number = "DEMO-SARH"
+    , table_name_subheader = " - by Base"
+    , table_name_date = table_name_date_01)
+  , title_style_names = set_style_title)
+
+#top headers
+top_header_row_1 <- c(rep("", dim(demo_sarh)[2] - dim(dplyr::select_if(demo_sarh, is.numeric))[2] + 1) #add 1 back to account for Year which is type int, but we want to skip it
+                      , colnames(dplyr::select(demo_sarh, 3:dim(demo_sarh)[2]))
+)
+tab <- xltabr::add_top_headers(
+  tab = tab
+  , top_headers = top_header_row_1) #add_top_headers uses top_header1 by default
+
+#body table
+tab <- xltabr::add_body(
+  tab = tab
+  , df = demo_sarh
+  , row_style_names = c(rep("body_right", 3), "body_bold_right") #auto repeats pattern
+  , fill_non_values_with = list(na = NULL)
+    #list(na = ':') this used to work... 
+)
+
+#footnotes
+#set footer text
+footer_text <- set_text_footer(footer_text_01, footer_text_02)
+tab <- xltabr::add_footer(
+  tab = tab
+  , footer_text = footer_text
+  , footer_style_names = set_style_footer(footer_text))
+
+#auto merge title and footer cells to width of table
+tab <- xltabr::auto_merge_title_cells(tab)
+tab <- xltabr::auto_merge_footer_cells(tab)
+
+#set column widths
+tab <- xltabr::set_wb_widths(tab, body_header_col_widths = table_column_width)
+
+#set row heights
+#row height for footnotes - do not hardcode row
+openxlsx::setRowHeights(
+  tab$wb
+  , sheet = 1
+  , rows = footer_text_row(search_text = footer_text_02)[1] #footer_text_02 has 2 rows, only want the first
+  , heights = 2*12.75)
+
+#set data and styles 
+tab <- xltabr::write_data_and_styles_to_wb(tab)
+
+#add further non-xltabr formatting
+#enable hyperlinks in header and footer 
+set_title_hyperlink()
+
+#rename worksheet
+openxlsx::renameWorksheet(wb = tab$wb, sheet = "Sheet1", newName = "DEMOSARH")
+
+#View and save output
+#view output
+openxlsx::openXL(tab$wb) 
+#save output
+openxlsx::saveWorkbook(tab$wb, file = "data/sarh_demo.xlsx", overwrite = TRUE)
+
+
+
+```
+
+  
  
 ### .sav
+
+- haven to open SPSS, STAT, SAS files
 
 ## Connecting to databases
 
@@ -315,4 +586,4 @@ fs::dir_ls(
   - link to C&C talks on the subject
 
 ### GCP
- - BigQuery - bigrquery
+ - BigQuery - bigrquery C&C talk
