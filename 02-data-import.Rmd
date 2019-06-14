@@ -12,9 +12,30 @@ library(haven)
 library(bigrquery)
 library(fs)
 library(haven)
-library(xltabr)
-library(openxlsx)
 ```
+
+```{r message=FALSE}
+library(tidyverse)
+library(fs) #cross-platform file systems operations (based on libuv C library)
+library(knitr) #general purpose tool for dynamic report generation in R 
+library(kableExtra) #presentation of complex tables with customizable styles
+library(DT) #presentation of tables (wrapper of JavaScript library DataTables)
+library(DBI) #database connection
+library(dbplyr) #database connection
+library(haven) #for importing/exporting SPSS, Stata, and SAS files
+library(bigrquery) #connecting to GCP BigQuery
+library(openxlsx) #formatting xslx outputs
+library(xltabr) #MoJ RAP enabler built on openxlsx
+```
+
+# Star functions
+
+- `readxl::read_excel`
+- `readxl::excel_sheets`
+- `purrr::map_dfr`
+- `purrr::map_dfc`
+- `purrr::map2_dfc`
+- `fs::dir_ls`
 
 ## Navigating folders
 
@@ -62,8 +83,6 @@ saveRDS(
 
 We use the functions `read_csv` and `write_csv` from the `readr` package (which is part of the `tidyverse`). These are a little bit *cleverer* than their base counterparts, however, this cleverness can catch you out.
 
-#### `readr::read_csv`
-
 The file **messy_pokemon_data.csv** contains pokemon go captures data which has been deliberately messed up a bit. `read_csv` imputes the column specification from the first 1000 rows, which is fine if your first 1000 rows are representative of the data type. If not then subsequent data that can't be coerced into the imputed data type will be replaced with NA. 
 
 Looking at the column specification below notice that `read_csv` has recognised **time_first_capture** as a time type, but not **date_first_capture** as date type. Given the information that **combat_power** should be numeric we can see that something is also amiss here as `read_csv` has guessed character type for this column.  
@@ -81,18 +100,20 @@ pokemon %>%
   head()
 ```
 
-The pokemon dataset has less than 1000 rows so `read_csv` has 'seen' the letters mixed in with some of the numbers in the **combat_power** column. It has guessed at character type because everything in the column can be coerced to character type.
+The pokemon dataset has less than 1000 rows so `read_csv` has 'seen' the letters mixed in with some of the numbers in the **combat_power** column. It has guessed at character type because everything it has read in the column can be coerced to character type.
 
 What if there are more than 1000 rows? For example, say you have a numeric column, but there are some letters prefixed to the numbers in some of the post-row-1000 rows. These values are still meaningful to you, and with some data wrangling you can extract the actual numbers. Unfortunately `read_csv` has guessed at type double based on the first 1000 rows and since character type cannot be coerced into double, these values will be replaced with `NA`. If you have messy data like this the best thing to do is to force `read_csv` to read in as character type to preserve all values as they appear, you can then sort out the mess yourself.
 
-You can specify the column data type using the `col_types` argument. Below I have used a compact string of abbreviations to specify the column types, see the help at `?read_csv` or the `readr` vignette for the full list. You can see I got many parsing failures, which I can access with `problems()`. This is a data frame of the values that `read_csv` was unable to coerce into the type I specified, and so has replaced with NA. 
+You can specify the column data type using the `col_types` argument. Below I have used a compact string of abbreviations to specify the column types, see the help at `?read_csv` or the `readr` vignette for the full list. You can see I got many parsing failures, which I can access with `problems()`, which is a data frame of the values that `read_csv` was unable to coerce into the type I specified, and so has replaced with NA. 
 ```{r}
 pokemon <- readr::read_csv(
   file = "data/messy_pokemon_data.csv"
   , col_types = "cdddcdcccDt"
 )
 # c = character, d = double, D = Date, t = time
+tibble::glimpse(pokemon)
 ```
+
 Let's take a look at the problems.
 ```{r}
 problems(pokemon) %>% 
@@ -106,47 +127,27 @@ problems(pokemon) %>%
   head()
   
 ```
+
 The `problems()` feature in `read_csv` is super useful, it helps you isolate the problem data so you can fix it.
 
 Other arguments within `read_csv` that I will just mention, with their default settings are
 
-- `col_names = TRUE`: the first row on the imput is used as the column names.
+- `col_names = TRUE`: the first row on the input is used as the column names.
 - `na = c("", "NA")`: the default values to interpret as `NA`.
 - `trim_ws = TRUE`: by default trims leading/trailing white space. 
 - `skip = 0`: number of lines to skip before reading data.
 - `guess_max = min(1000, n_max)`: maximum number of records to use for guessing column type. NB the bigger this is the longer it will take to read in the data.
 
-#### `readr::write_csv`
-
-There are many `write_` functions in the `readr` package. I rarely use anything other than `write_csv`, but some are faster or have other functionality. See the full list by running `?write_csv` in the console.
-
-Set the path relative to your R project or working directory, and name the file including the file extension ".csv". Pay attention to the defaults, for instance you might want to change the default `na = "NA"` to `na = ""` so that __NA__'s in your data are written to blanks in your .csv rather than the character string "NA". This is important if "NA" means something else in your data, for example, if you are working with country codes including "NA" for Namibia...
-
-```{r eval=FALSE}
-#not run
-
-readr::write_csv(
-  x = pokemon
-  , path = "data/pokemon.csv"
-  , na = "NA" #default - take care if dealing with country code NA for Namibia!
-  , append = FALSE #default is not to append, if the file exists it will be overwritten
-  , col_names = !append #default is the opposite of append, since if appending you don't want the col_names repeated
-  , quote_escape = "double" #default - eg use two types of quote if you want the output quoted; eg "'quoted output'" will be written as 'quoted output'.
-)
-
-```
+ 
 
 
+### .xlsx and .xls
 
+Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using functions from `readxl` and `purrr` to iterate over either worksheets and/or workbooks, the aim being to end up with all the data in a single tidy dataframe.
 
+#### Single worksheet - single workbook
 
-### Importing .xlsx and .xls
-
-Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using `readxl` and `purrr` to iterate over either worksheets and/or workbooks.
-
-#### A single worksheet in a single workbook
-
-The simplest combination, you are interested in one rectangular datset in a particular worksheet in one workbook. Leaving the defaults works fine on this dataset. Note that `readxl::read_excel` detects if the file is `.xlsx` or `.xls` and behaves accordingly.
+The simplest combination, you are interested in one rectangular dataset in a particular worksheet in one workbook. Leaving the defaults works fine on this dataset. Note that `readxl::read_excel` detects if the file is `.xlsx` or `.xls` and behaves accordingly.
 
 ```{r}
 readxl::read_excel(path = "data/port0499.xlsx") %>% 
@@ -165,47 +166,58 @@ readxl::read_excel(
 ```
 
 
-#### A single worksheet in many workbooks
+#### Single worksheet - many workbooks
 
-For example, you collect pokemon go capture data from many different players, the data all has the same struture and you want to read it in and row bind into a single dataframe in R. 
-The code below collects the names of the 3 excel workbooks using `fs::dir_ls`, and, as these are not the only files in that folder, I've specified them using regular expressions (regex). Then we use `purrr::map_df` to iterate over this list of files, applying the function we supply, that is `readxl::read_excel`. The `.id` argument adds the file path into a new column, which we have named "player" in this instance.
+For example, you collect pokemon go capture data from many different players, the data all has the same structure and you want to read it in and row bind into a single dataframe in R. 
+
+![](image/pokemon_player.png)
+
+<br/>
+The code below collects the names of the 3 excel workbooks using `fs::dir_ls`, and, as these are not the only files in that folder, I've specified them using regular expressions (regex). Then we use `purrr::map_dfr` to iterate and rowbind over this list of files, applying the function we supply, that is `readxl::read_excel`. Since we are only reading a single worksheet per workbook we don't need to supply any arguments to `readxl:read_excel`, the defaults will work fine, each workbook path is piped in, in turn. The `.id` argument in `purrr:map_dfr` adds the file path into a new column, which we have named "player" in this instance. The "dfr" in `map_dfr` refers to the output "data-frame-rowbound".
 
 ```{r}
-
 pokemon <- fs::dir_ls(path = "data", regex = "pokemon_player_.\\.xlsx$")  %>% 
-  purrr::map_df(readxl::read_excel, .id = "player")
+  purrr::map_dfr(.f = readxl::read_excel, .id = "player")
 
-DT::datatable(data = pokemon)
-
+tibble::glimpse(pokemon)
 ```
 
-Note that the `regex` argument in `fs::dir_ls` is applied to the full file path so if I had tried to specify that the file name starts with "pokemon" by front anchoring it using "^pokemon" this would return no results, since the full name is actually "data/pokemon...". 
+
+Using `DT::datatable` for ease of viewing we can see that all 5 rows of data from each of the 3 workbooks has been read in, rowbound, and an id column has been added showing the workbook path.
+```{r}
+DT::datatable(data = pokemon)
+```
+
+
+Note that the `regex` argument in `fs::dir_ls` is applied to the full file path so if I had tried to specify that the file name starts with "pokemon" by front anchoring it using "^pokemon" this would return no results, since the full name is actually "data/pokemon...". Helpful regex links below.
+
 [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
+
 [stringr cheatsheet including regex](http://edrub.in/CheatSheets/cheatSheetStringr.pdf)
 
-#### Many worksheets in a single workbook
+#### Many worksheets - single workbook
 
 You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure. For example, you have a workbook containing pokemon go captures data, where each different data collection point has its own sheet. The data structure, column names and data types are consistent. You want to read in and combine these data into a single dataframe.
 
-The code below sets the location of the workbook and puts this in the object `path`. It then collects the names of all the sheets in that workbook using `readxl::excel_sheets`. Next `purrr::set_names` sets these names in a vector so that they can be used in the next step. This vector of names is implictly assigned to the `.x` argument in `purrr::map_df` as it is the first thing passed to it. This means we can refer to it as `.x` in the function we are iterating, in this case `readxl::read_excel`. Finally, an id column is included, made up of the sheet names and named "sheet". The output is a single dataframe with all the sheets row bound together.
+The code below sets the location of the workbook and puts this in the object `path`. It then collects the names of all the sheets in that workbook using `readxl::excel_sheets`. Next `purrr::set_names` sets these names in a vector so that they can be used in the next step. This vector of names is implictly assigned to the `.x` argument in `purrr::map_dfr` as it is the first thing passed to it. This means we can refer to it as `.x` in the function we are iterating, in this case `readxl::read_excel`. Finally, an id column is included, made up of the sheet names and named "sheet". The output is a single dataframe with all the sheets row bound together.
 
 ```{r}
 path <- "data/multi_tab_messy_pokemon_data.xlsx"
-
 pokemon_collections <- readxl::excel_sheets(path = path) %>% 
   purrr::set_names() %>% 
-   purrr::map_df(
+   purrr::map_dfr(
      ~ readxl::read_excel(path = path, sheet = .x)
      , .id = "sheet"
    )
-
 DT::datatable(data = pokemon_collections)
-
 ```
 
-#### Many worksheets in many workbooks
+#### Many worksheets - many workbooks
 
-Now we can use the above two solutions to combine data from many worksheets spread across many workbooks. As before, the data is rectangular and has the same structure. For example, you receive a workbook every month, containing pokemon go captures data, and data collection point has its own sheet. 
+Now we can use the above two solutions to combine data from many worksheets spread across many workbooks. As before, the data is rectangular and has the same structure. For example, you receive a workbook every month, containing pokemon go captures data, and each data collection point has its own sheet. 
+
+![](image/pokemon_collection_point.png)
+
 
 We create a function to import and combine the sheets from a single workbook, and then iterate this function over all the workbooks using `purrr::map_df`.
 
@@ -219,7 +231,6 @@ read_and_combine_sheets <- function(path){
      , .id = "sheet"
    )
 }
-
 #code to iterate over many workbooks
 pokemon_monthly_collections <- fs::dir_ls(
   path = "data", regex = "pokemon_2019\\d{2}\\.xlsx$")  %>% 
@@ -227,84 +238,124 @@ pokemon_monthly_collections <- fs::dir_ls(
     read_and_combine_sheets
     , .id = "month"
     )
-
 DT::datatable(data = pokemon_monthly_collections)
 ```
 
-#### Non-rectangular data in many workbooks
+#### Non-rectangular data - single worksheet - single workbook
 
-You have received some kind of data entry form that has been done in excel in a more human readable, rather than machine readable, format. Some of the cells contain instructions and admin data so you only want the data held in specific cells. This is non-rectangular data, that is, the data of interest is dotted all over the place. In this example we have pet forms, one sheet per workbook, and the data of interest is in cells B2, D5 and E8 only.
+You have received some kind of data entry form that has been done in excel in a more human readable, rather than machine readable, format. Some of the cells contain instructions and admin data so you only want the data held in specific cells. This is non-rectangular data, that is, the data of interest is dotted all over the place. In this example we have pet forms, and the data of interest is in cells **B2**, **D5** and **E8** only.
 
-Let's see what we get if we naively try to read in one of these forms.
+Here's an image of what the data looks like.
+
+![](image/pet_form.png)
+
+Let's see what we get if we naively try to read it in.
 ```{r message=FALSE}
 readxl::read_excel(
   path = "data/pet_form_1.xlsx"
 ) %>% 
-  head()
-
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
 ```
+
 It's not what we wanted, let's try again, now using the `range` argument
 ```{r message=FALSE}
 readxl::read_excel(
   path = "data/pet_form_1.xlsx"
   , col_names = FALSE
   , range = "A2:B2"
-)
+) %>% 
+ knitr::kable() %>% 
+ kableExtra::kable_styling(full_width = F, position = "left")
 ```
-The `range` argument helps, we have picked up one bit of the data, and it's name. The `range` argument uses the `cellranger` package which allows you to refer to ranges in Excel files in Excel style. However, we have 3 disconnected data points, we need to iterate, so it's `purrr::map_df` to the rescue once more.
+
+The `range` argument helps, we have picked up one bit of the data, and its name. The `range` argument uses the `cellranger` package which allows you to refer to ranges in Excel files in Excel style. However, we have 3 disconnected data points, we need to iterate, so it's `purrr` to the rescue once more.
+
+The code below demonstrates explicitly that the `.x` argument in `purrr::map_dfr` takes the vector of things that will be iterated over in the supplied function. In this case we are giving the `range` argument of `readxl::read_excel` three individual cells to iterate over. These will then be rowbound so we end up with a single dataframe comprising a single column, named "cells", containing 3 rows.
 ```{r}
-pet_details <- purrr::map_df(
+pet_details <- purrr::map_dfr(
     .x = c("B2", "D5", "E8")
     , ~ readxl::read_excel(
       path = "data/pet_form_1.xlsx"
       , range = .x
-      , col_names = "cells"
+      , col_names = "cells" #assign name 
       , col_types = "text" #have to use text to preserve all data in single column
     ) 
-  ) 
-pet_details
-```
-This is pretty close to what we want, we have a dataframe named `pet_details` comprising a single "cells" column, which contains all the relevant data from this worksheet. Now we can reshape it. Below I create a tibble with the column names I want in the first column, under "cell_name" and pull the data from `pet_details` into it, then spread it.
-```{r}
-pet <- tibble::tibble(
-    cell_name = c("Name", "Age", "Species")
-    , values = dplyr::pull(pet_details)
-  ) %>% 
-    dplyr::mutate(
-      cell_name = as_factor(cell_name) #convert to factor to preserve order
-      ) %>% 
-    tidyr::spread(
-      key = cell_name #make variable name the key and the values the value
-      , value = values
-      )
-pet
-```
-Having solved for one workbook and sheet, we can functionalise and iterate to gather the data from every wookbook. (Note if you have many worksheets as well, you'll need another interim iteratative step)
+  )
 
-The function `get_cells_and_reshape` below iterates over reading each of the three cells from the worksheet, combines these into a single column dataframe, then adds the cell names and reshapes the data into tidy format. It takes three inputs, `path`, `cells`, `cell_name`, all of which are type character or character vector.
+pet_details 
+
+pet_details %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+This is an improvement, we have a dataframe named `pet_details` comprising a single "cells" column, which contains all the relevant data from this worksheet. 
+
+We could now try to reshape it, however, a better idea is to use `map_dfc` since we actually want to column bind these data rather than rowbind them. The read out from `tibble::glimpse` shows that the different variable types have been picked up, which is also helpful. The default naming of the columns gives a clue as to how the function works. 
+
+
 ```{r}
-get_cells_and_reshape <- function(path, cells, cell_name){
-  purrr::map_df(
+pet_details <- purrr::map_dfc(
+  .x = c("B2", "D5", "E8") #vector of specific cells containing the data
+  , ~ readxl::read_excel(
+    path = "data/pet_form_1.xlsx"
+    , range = .x
+    , col_names = FALSE
+  ) 
+)
+
+tibble::glimpse(pet_details)
+```
+
+```{r echo=FALSE}
+pet_details %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+This is pretty close to what we want, the only sticking point is that we still don't have the correct column names. We could deal with this using `dplyr::rename`, but an even better idea is to use `purrr::map2_dfc`. The `map2` variant allows you to iterate over two arguments simultaneously (into the same function).
+
+```{r}
+pet_details_2 <- purrr::map2_dfc(
+  .x = c("B2", "D5", "E8") #vector of specific data cells
+  , .y = c("Name", "Age", "Species") #vector of column names
+  , ~ readxl::read_excel(
+    path = "data/pet_form_1.xlsx"
+    , range = .x
+    , col_names = .y
+  ) 
+)
+
+tibble::glimpse(pet_details_2)
+```
+
+```{r echo=FALSE}
+pet_details_2 %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+#### Non-rectangular data - single worksheet - many workbooks
+
+Having solved for one workbook and worksheet, we can functionalise and iterate to gather the data from every wookbook, two of which are shown below.
+
+![](image/pet_forms.png)
+
+<br/>
+The function `cells_to_rows` below iterates over `read_excel` reading each of the three cells from the worksheet, applying the corresponding column name as it goes. It takes three character or character vector inputs, `path`, `cells`, and `col_names`.
+
+```{r}
+cells_to_rows <- function(path, cells, col_names){
+  purrr::map2_dfc(
     .x = cells
+    , .y = col_names
     , ~ readxl::read_excel(
       path = path
       , range = .x
-      , col_names = "details"
-      , col_types = "text" #have to use text to preserve all data in single column
+      , col_names = .y
     ) 
-  ) %>% 
-  dplyr::pull() %>% #pull just the values from the previous df
-  tibble::tibble( #create df with 2 columns, cell_name and these values
-    cell_name = c("Name", "Age", "Species")
-    , values = . #use . to refer to what was piped, when not in first position
-  ) %>% 
-  dplyr::mutate(
-    cell_name = as_factor(cell_name) #convert to factor to preserve order
-  ) %>% 
-  tidyr::spread( #this is 
-    key = cell_name #make variable name the key and the values the value
-    , value = values
-  )  
+  )
 }
 ```
 
@@ -312,21 +363,140 @@ Let's test it on the first pet form data, first setting the paramaters to use in
 ```{r}
 path <- "data/pet_form_1.xlsx"
 cells <- c("B2", "D5", "E8")
-cell_name <- c("Name", "Age", "Species")
+col_names <- c("Name", "Age", "Species")
 
-get_cells_and_reshape(
-  path = path, cells = cells, cell_name = cell_name)
+pet_form_1 <- cells_to_rows(
+  path = path, cells = cells, col_names = col_names
+  )
+
+pet_form_1
 ```
 
-It works! So now we can iterate this over all the pet form workbooks, specifying the paths using regex as before. Note we use `.x` in the `path` argument in the `get_cells_and_reshape` function to refer to the vector of paths piped to `purrr::map_df` from `fs::dir_ls`. 
+```{r echo=FALSE}
+pet_form_1 %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+It works! So now we can iterate this over all the pet form workbooks, specifying the paths using regex as before. Note below we use `.x` in the `path` argument in the `cells_to_rows` function to refer to the vector of paths piped to `purrr::map_dfr` from `fs::dir_ls`. 
 ```{r}
-fs::dir_ls(
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+all_pet_forms <- fs::dir_ls(
   path = "data", regex = "pet_form_\\d\\.xlsx$")  %>% 
-  purrr::map_df(
-    ~ get_cells_and_reshape(path = .x, cells = cells, cell_name = cell_name)
+  purrr::map_dfr(
+    ~ cells_to_rows(path = .x, cells = cells, col_names = col_names)
     , .id = "path"
     )
+
+all_pet_forms
+
 ```
+
+```{r echo=FALSE}
+all_pet_forms %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
+#### Non-rectangular data - many worksheets - single workbook
+
+Now we have more than one worksheet in a single workbook, and the data looks like this, the workbook is from a "pet house" and each worksheet is pet details.
+
+![](image/pet_house.png)
+<br/>
+
+To incorporate the worksheets element we rejig the `cells_to_rows` function from above and give it a "sheet" argument, so it can be passed a specific sheet.
+
+```{r}
+sheet_cells_to_rows <- function(path, sheet, cells, col_names){
+  purrr::map2_dfc(
+    .x = cells
+    , .y = col_names
+    , ~ readxl::read_excel(
+      path = path
+      , sheet = sheet
+      , range = .x
+      , col_names = .y
+    ) 
+  )
+}
+```
+
+We now have the function `sheet_cells_to_rows` that can accept a list of worksheet names. As before we use `readxl::excel_sheets` to collect the worksheet names, first setting the other parameters
+```{r}
+path <- "data/pet_house_1.xlsx"
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+pet_house_1 <- readxl::excel_sheets(path = path) %>% 
+  purrr::set_names() %>% 
+  purrr::map_dfr(
+    ~ sheet_cells_to_rows(path = path
+                          , sheet = .x
+                          , cells = cells
+                          , col_names = col_names)
+    , .id = "sheet"
+  )
+
+pet_house_1
+
+```
+
+```{r echo=FALSE}
+pet_house_1%>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
+#### Non-rectangular data - many worksheets - many workbooks
+
+Finally we have many workbooks each containing many worksheets, each containing many cells, as before we want to read them in and combine.
+
+![](image/pet_houses.png)
+<br/>
+
+We could functionalise the code above that reads and combines the cells in many worksheets from a single workbook, but an alternative approach is used below. We create an anonymous function an use that on the fly. This is useful if the function is a one off, and not too complicated. The anonymous function below still depends on the `sheet_cells_to_rows` we created earlier though.
+
+```{r}
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+pet_house_all <- fs::dir_ls(
+  path = "data", regex = "pet_house_\\d\\.xlsx$")  %>% 
+  purrr::map_dfr(
+    function(path){
+      readxl::excel_sheets(path = path) %>% 
+        purrr::set_names() %>% 
+        purrr::map_dfr(
+          ~ sheet_cells_to_rows(path = path
+                                , sheet = .x
+                                , cells = cells
+                                , col_names = col_names)
+          , .id = "sheet"
+        )
+    }
+    , .id = "path"
+  )
+
+```
+
+```{r echo=FALSE}
+pet_house_all%>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
+
+ 
 
 ### Exporting to .xlsx
 
@@ -354,7 +524,7 @@ demo_sarh <- readr::read_csv(
 
 The formatting uses a style sheet for reference. This must be created in a .xlsx workbook, and the specific formatting applied to each cell. The cell text will be the name used to reference that style in the code. In the example below anything with style *header* applied to it will be bold, left-justified, and use the same font style, colour and size as in cell A1. It will also apply the row height, but this can be overwritten. You can also apply cell borders, as in styles *top_header_1*, *top_header_2* and *body_bold_method_change*.
 
-![](data/sarh_dft_style_example.png)
+![](image/sarh_dft_style_example.png)
 
 
 ```{r}
@@ -572,18 +742,26 @@ openxlsx::saveWorkbook(tab$wb, file = "data/sarh_demo.xlsx", overwrite = TRUE)
 
 ```
 
-  
- 
+
 ### .sav
 
-- haven to open SPSS, STAT, SAS files
+Use `haven` to import SPSS, Stata and SAS files.
 
 ## Connecting to databases
 
 ### SQL
- - DBI
- - default schema
-  - link to C&C talks on the subject
+
+Below are links to DfT Coffee and Coding talks on the subject of connecting R to SQL
+
+[20181114_Connecting_R_to_SQL](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20181114_Connecting_R_to_SQL)
+
+[20190130_SQL_and_Excel_to_R](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20190130_SQL_and_Excel_to_R)
+
 
 ### GCP
- - BigQuery - bigrquery C&C talk
+
+#### BigQuery
+
+Link below to Coffee and Coding talk on how to use bigrquery to interact with GCP's BigQuery
+
+[20190403_bigrquery](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20190403_bigrquery)
