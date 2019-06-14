@@ -25,7 +25,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Andrew Kelly, Tim Taylor">
 
 
-<meta name="date" content="2019-05-17">
+<meta name="date" content="2019-05-20">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,8 +127,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3" data-path="data-import.html"><a href="data-import.html#working-with-files-in-r"><i class="fa fa-check"></i><b>3.3</b> Working with files in R</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="data-import.html"><a href="data-import.html#rds"><i class="fa fa-check"></i><b>3.3.1</b> .rds</a></li>
 <li class="chapter" data-level="3.3.2" data-path="data-import.html"><a href="data-import.html#csv"><i class="fa fa-check"></i><b>3.3.2</b> .csv</a></li>
-<li class="chapter" data-level="3.3.3" data-path="data-import.html"><a href="data-import.html#xlsx-and-.xls"><i class="fa fa-check"></i><b>3.3.3</b> .xlsx and .xls</a></li>
-<li class="chapter" data-level="3.3.4" data-path="data-import.html"><a href="data-import.html#sav"><i class="fa fa-check"></i><b>3.3.4</b> .sav</a></li>
+<li class="chapter" data-level="3.3.3" data-path="data-import.html"><a href="data-import.html#importing-.xlsx-and-.xls"><i class="fa fa-check"></i><b>3.3.3</b> Importing .xlsx and .xls</a></li>
+<li class="chapter" data-level="3.3.4" data-path="data-import.html"><a href="data-import.html#exporting-to-.xlsx"><i class="fa fa-check"></i><b>3.3.4</b> Exporting to .xlsx</a></li>
+<li class="chapter" data-level="3.3.5" data-path="data-import.html"><a href="data-import.html#sav"><i class="fa fa-check"></i><b>3.3.5</b> .sav</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="data-import.html"><a href="data-import.html#connecting-to-databases"><i class="fa fa-check"></i><b>3.4</b> Connecting to databases</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="data-import.html"><a href="data-import.html#sql"><i class="fa fa-check"></i><b>3.4.1</b> SQL</a></li>
@@ -197,7 +198,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We want to have the day of the week variable running along the top so each day of the week is its own column.</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-35">Table 4.1: </span>Number of road accidents by accident severity and weekday
+<span id="tab:unnamed-chunk-149">Table 4.1: </span>Number of road accidents by accident severity and weekday
 </caption>
 <thead>
 <tr>
@@ -294,7 +295,7 @@ road_accidents_weekdays &lt;-<span class="st"> </span>road_accidents_small <span
 <p>With the spread function above you need to first specify the variable you want to spread, in this case Day_of_Week, and then the variable that will be used to populate the columns (n).</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-37">Table 4.2: </span>Number of road accidents by accident severity and weekday, tidyr::spread
+<span id="tab:unnamed-chunk-151">Table 4.2: </span>Number of road accidents by accident severity and weekday, tidyr::spread
 </caption>
 <thead>
 <tr>
@@ -423,7 +424,7 @@ road_accidents_weekdays2 &lt;-<span class="st"> </span>reshape2<span class="op">
 <p>With the dcast function above, after stating the name of the data frame, you need to specify the variable(s) you want in long format (multiple variables seperated by “+”), in this case Accident_Severity, and then the wide format variable(s) are put after the tilda (again multiple seperated by “+”). The value.var argument specifies which column will be used to populate the new columns, in this case it is n.</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-40">Table 4.3: </span>Number of road accidents by accident severity and weekday, reshape2::dcast
+<span id="tab:unnamed-chunk-154">Table 4.3: </span>Number of road accidents by accident severity and weekday, reshape2::dcast
 </caption>
 <thead>
 <tr>
@@ -542,7 +543,7 @@ road_accidents_weekdays3 &lt;-<span class="st"> </span>reshape2<span class="op">
 <p>In this example, we use the margins argument to specify what we want to combine to create totals. So we want to add all the accident severity figures up for each weekday. Before using margin you need to specify how the margins are calculated, in this case we want a sum. Alternative options are to calculate the length, i.e. the number of rows.</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-42">Table 4.4: </span>Number of road accidents by accident severity and weekday plus totals, reshape2::dcast
+<span id="tab:unnamed-chunk-156">Table 4.4: </span>Number of road accidents by accident severity and weekday plus totals, reshape2::dcast
 </caption>
 <thead>
 <tr>
@@ -692,7 +693,7 @@ road_accidents_melt &lt;-<span class="st"> </span>reshape2<span class="op">::</s
 <p>value.name = “name of value column”</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-44">Table 4.5: </span>Number of road accidents by accident severity and weekday, reshape2::melt
+<span id="tab:unnamed-chunk-158">Table 4.5: </span>Number of road accidents by accident severity and weekday, reshape2::melt
 </caption>
 <thead>
 <tr>
@@ -785,7 +786,7 @@ n
 <span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Date, Police_Force)</code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-46">Table 4.6: </span>Four columns from road accidents 2017
+<span id="tab:unnamed-chunk-160">Table 4.6: </span>Four columns from road accidents 2017
 </caption>
 <thead>
 <tr>
@@ -896,7 +897,7 @@ Police_Force
 <span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Police_Force)</code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-48">Table 4.7: </span>Three columns from road accidents 2017
+<span id="tab:unnamed-chunk-162">Table 4.7: </span>Three columns from road accidents 2017
 </caption>
 <thead>
 <tr>
@@ -989,7 +990,7 @@ Date
 <span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-50">Table 4.8: </span>Slight severity road accidents 2017
+<span id="tab:unnamed-chunk-164">Table 4.8: </span>Slight severity road accidents 2017
 </caption>
 <thead>
 <tr>
@@ -1116,7 +1117,7 @@ road_accidents_small &lt;-<span class="st"> </span>road_accidents <span class="o
 <p>The above example creates groups by accident severity and weekday and counts how many accidents are in each group (one row equals one accident therefore the tally is counting accidents).</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-55">Table 4.9: </span>Road accidents 2017 by accident severity and weekday
+<span id="tab:unnamed-chunk-169">Table 4.9: </span>Road accidents 2017 by accident severity and weekday
 </caption>
 <thead>
 <tr>
@@ -1213,7 +1214,7 @@ n
 <p>Here are three tables, one shows data for accident severity of 1, one for accident severity of 2, and one for accident severity of 3.</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-57">Table 4.10: </span>Number of fatal road accidents in 2017, by weekday
+<span id="tab:unnamed-chunk-171">Table 4.10: </span>Number of fatal road accidents in 2017, by weekday
 </caption>
 <thead>
 <tr>
@@ -1310,7 +1311,7 @@ n
 </table>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-57">Table 4.10: </span>Number of serious injury road accidents in 2017, by weekday
+<span id="tab:unnamed-chunk-171">Table 4.10: </span>Number of serious injury road accidents in 2017, by weekday
 </caption>
 <thead>
 <tr>
@@ -1407,7 +1408,7 @@ n
 </table>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-57">Table 4.10: </span>Number of slight injury road accidents in 2017, by weekday
+<span id="tab:unnamed-chunk-171">Table 4.10: </span>Number of slight injury road accidents in 2017, by weekday
 </caption>
 <thead>
 <tr>
@@ -1511,7 +1512,7 @@ all_accidents &lt;-<span class="st"> </span>accidents_<span class="dv">1</span> 
 <span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(accidents_<span class="dv">2</span>, accidents_<span class="dv">3</span>)</code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-59">Table 4.11: </span>Road accident data 2017, bind_rows
+<span id="tab:unnamed-chunk-173">Table 4.11: </span>Road accident data 2017, bind_rows
 </caption>
 <thead>
 <tr>
@@ -1916,7 +1917,7 @@ all_accidents_not_monday &lt;-<span class="st"> </span>road_accidents_small <spa
 <p>The above code takes the initial table we want to get our data from (road_accidents_small) and anti joins accidents_monday. This says, “get all the rows from road_accidents_small that are not in accidents_monday”. Again, note the need to specify what the join rows would be joined and compared by.</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-66">Table 4.12: </span>Road accident data 2017 not on a Monday by accident severity
+<span id="tab:unnamed-chunk-180">Table 4.12: </span>Road accident data 2017 not on a Monday by accident severity
 </caption>
 <thead>
 <tr>
@@ -2139,7 +2140,7 @@ n
 <p>Let’s look at some previous tables again:</p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-67">Table 4.13: </span>Police force and accident severity information for accidents
+<span id="tab:unnamed-chunk-181">Table 4.13: </span>Police force and accident severity information for accidents
 </caption>
 <thead>
 <tr>
@@ -2225,7 +2226,7 @@ Accident_Severity
 </table>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-67">Table 4.13: </span>Date and weekday information for accidents
+<span id="tab:unnamed-chunk-181">Table 4.13: </span>Date and weekday information for accidents
 </caption>
 <thead>
 <tr>
@@ -2321,7 +2322,7 @@ road_acc_<span class="dv">3</span> &lt;-<span class="st"> </span>road_acc_<span 
 <p><strong>Note: you will need to select the joining variable in both tables but this will only appear once</strong></p>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-69">Table 4.14: </span>Police force and Date information for specific accidents
+<span id="tab:unnamed-chunk-183">Table 4.14: </span>Police force and Date information for specific accidents
 </caption>
 <thead>
 <tr>
@@ -2416,7 +2417,7 @@ Date
 road_accidents_weekdays<span class="op">$</span>rowsum &lt;-<span class="st"> </span><span class="kw">rowSums</span>(road_accidents_weekdays, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-71">Table 4.15: </span>Road accidents 2017 by accident severity and weekday
+<span id="tab:unnamed-chunk-185">Table 4.15: </span>Road accidents 2017 by accident severity and weekday
 </caption>
 <thead>
 <tr>
@@ -2547,7 +2548,7 @@ road_accidents_weekdays<span class="op">$</span>alldays &lt;-<span class="st"> <
 <span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">7</span><span class="st">`</span></code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-73">Table 4.16: </span>Road accidents 2017 by accident severity and weekday
+<span id="tab:unnamed-chunk-187">Table 4.16: </span>Road accidents 2017 by accident severity and weekday
 </caption>
 <thead>
 <tr>
@@ -2683,7 +2684,7 @@ road_accidents_weekdays &lt;-<span class="st"> </span>road_accidents_weekdays <s
 <span class="st">  </span>janitor<span class="op">::</span><span class="kw">adorn_totals</span>(<span class="st">&quot;row&quot;</span>)</code></pre></div>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-76">Table 4.17: </span>Road accidents 2017 by accident severity and weekday
+<span id="tab:unnamed-chunk-190">Table 4.17: </span>Road accidents 2017 by accident severity and weekday
 </caption>
 <thead>
 <tr>

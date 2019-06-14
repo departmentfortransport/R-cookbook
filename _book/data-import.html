@@ -25,7 +25,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Andrew Kelly, Tim Taylor">
 
 
-<meta name="date" content="2019-05-17">
+<meta name="date" content="2019-05-20">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,8 +127,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3" data-path="data-import.html"><a href="data-import.html#working-with-files-in-r"><i class="fa fa-check"></i><b>3.3</b> Working with files in R</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="data-import.html"><a href="data-import.html#rds"><i class="fa fa-check"></i><b>3.3.1</b> .rds</a></li>
 <li class="chapter" data-level="3.3.2" data-path="data-import.html"><a href="data-import.html#csv"><i class="fa fa-check"></i><b>3.3.2</b> .csv</a></li>
-<li class="chapter" data-level="3.3.3" data-path="data-import.html"><a href="data-import.html#xlsx-and-.xls"><i class="fa fa-check"></i><b>3.3.3</b> .xlsx and .xls</a></li>
-<li class="chapter" data-level="3.3.4" data-path="data-import.html"><a href="data-import.html#sav"><i class="fa fa-check"></i><b>3.3.4</b> .sav</a></li>
+<li class="chapter" data-level="3.3.3" data-path="data-import.html"><a href="data-import.html#importing-.xlsx-and-.xls"><i class="fa fa-check"></i><b>3.3.3</b> Importing .xlsx and .xls</a></li>
+<li class="chapter" data-level="3.3.4" data-path="data-import.html"><a href="data-import.html#exporting-to-.xlsx"><i class="fa fa-check"></i><b>3.3.4</b> Exporting to .xlsx</a></li>
+<li class="chapter" data-level="3.3.5" data-path="data-import.html"><a href="data-import.html#sav"><i class="fa fa-check"></i><b>3.3.5</b> .sav</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="data-import.html"><a href="data-import.html#connecting-to-databases"><i class="fa fa-check"></i><b>3.4</b> Connecting to databases</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="data-import.html"><a href="data-import.html#sql"><i class="fa fa-check"></i><b>3.4.1</b> SQL</a></li>
@@ -185,7 +186,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">library</span>(dbplyr)
 <span class="kw">library</span>(haven)
 <span class="kw">library</span>(bigrquery)
-<span class="kw">library</span>(fs)</code></pre></div>
+<span class="kw">library</span>(fs)
+<span class="kw">library</span>(haven)
+<span class="kw">library</span>(xltabr)
+<span class="kw">library</span>(openxlsx)</code></pre></div>
 </div>
 <div id="navigating-folders" class="section level2">
 <h2><span class="header-section-number">3.2</span> Navigating folders</h2>
@@ -213,7 +217,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="rds" class="section level3">
 <h3><span class="header-section-number">3.3.1</span> .rds</h3>
 <p>.rds is R’s native file format, any object you create in R can be saved as a .rds file. The functions <code>readRDS</code> and <code>saveRDS</code> are base R functions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">saveRDS</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#not run</span>
+<span class="kw">saveRDS</span>(
   <span class="dt">object =</span> my_model <span class="co">#specify the R object you want to save</span>
   , <span class="dt">file =</span> <span class="st">&quot;2019_0418_my_model.rds&quot;</span> <span class="co">#give it a name, don&#39;t forget the file extension</span>
 )</code></pre></div>
@@ -221,6 +226,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="csv" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> .csv</h3>
 <p>We use the functions <code>read_csv</code> and <code>write_csv</code> from the <code>readr</code> package (which is part of the <code>tidyverse</code>). These are a little bit <em>cleverer</em> than their base counterparts, however, this cleverness can catch you out.</p>
+<div id="readrread_csv" class="section level4">
+<h4><span class="header-section-number">3.3.2.1</span> <code>readr::read_csv</code></h4>
 <p>The file <strong>messy_pokemon_data.csv</strong> contains pokemon go captures data which has been deliberately messed up a bit. <code>read_csv</code> imputes the column specification from the first 1000 rows, which is fine if your first 1000 rows are representative of the data type. If not then subsequent data that can’t be coerced into the imputed data type will be replaced with NA.</p>
 <p>Looking at the column specification below notice that <code>read_csv</code> has recognised <strong>time_first_capture</strong> as a time type, but not <strong>date_first_capture</strong> as date type. Given the information that <strong>combat_power</strong> should be numeric we can see that something is also amiss here as <code>read_csv</code> has guessed character type for this column.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pokemon &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(
@@ -639,8 +646,24 @@ P542
 <li><code>guess_max = min(1000, n_max)</code>: maximum number of records to use for guessing column type. NB the bigger this is the longer it will take to read in the data.</li>
 </ul>
 </div>
-<div id="xlsx-and-.xls" class="section level3">
-<h3><span class="header-section-number">3.3.3</span> .xlsx and .xls</h3>
+<div id="readrwrite_csv" class="section level4">
+<h4><span class="header-section-number">3.3.2.2</span> <code>readr::write_csv</code></h4>
+<p>There are many <code>write_</code> functions in the <code>readr</code> package. I rarely use anything other than <code>write_csv</code>, but some are faster or have other functionality. See the full list by running <code>?write_csv</code> in the console.</p>
+<p>Set the path relative to your R project or working directory, and name the file including the file extension “.csv”. Pay attention to the defaults, for instance you might want to change the default <code>na = &quot;NA&quot;</code> to <code>na = &quot;&quot;</code> so that <strong>NA</strong>’s in your data are written to blanks in your .csv rather than the character string “NA”. This is important if “NA” means something else in your data, for example, if you are working with country codes including “NA” for Namibia…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#not run</span>
+
+readr<span class="op">::</span><span class="kw">write_csv</span>(
+  <span class="dt">x =</span> pokemon
+  , <span class="dt">path =</span> <span class="st">&quot;data/pokemon.csv&quot;</span>
+  , <span class="dt">na =</span> <span class="st">&quot;NA&quot;</span> <span class="co">#default - take care if dealing with country code NA for Namibia!</span>
+  , <span class="dt">append =</span> <span class="ot">FALSE</span> <span class="co">#default is not to append, if the file exists it will be overwritten</span>
+  , <span class="dt">col_names =</span> <span class="op">!</span>append <span class="co">#default is the opposite of append, since if appending you don&#39;t want the col_names repeated</span>
+  , <span class="dt">quote_escape =</span> <span class="st">&quot;double&quot;</span> <span class="co">#default - eg use two types of quote if you want the output quoted; eg &quot;&#39;quoted output&#39;&quot; will be written as &#39;quoted output&#39;.</span>
+)</code></pre></div>
+</div>
+</div>
+<div id="importing-.xlsx-and-.xls" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> Importing .xlsx and .xls</h3>
 <p>Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using <code>readxl</code> and <code>purrr</code> to iterate over either worksheets and/or workbooks.</p>
 <div id="a-single-worksheet-in-a-single-workbook" class="section level4">
 <h4><span class="header-section-number">3.3.3.1</span> A single worksheet in a single workbook</h4>
@@ -1085,8 +1108,8 @@ Other general cargo &amp; containers &lt;20’
 <span class="st">  </span>purrr<span class="op">::</span><span class="kw">map_df</span>(readxl<span class="op">::</span>read_excel, <span class="dt">.id =</span> <span class="st">&quot;player&quot;</span>)
 
 DT<span class="op">::</span><span class="kw">datatable</span>(<span class="dt">data =</span> pokemon)</code></pre></div>
-<div id="htmlwidget-091e86855dc63d97a8df" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-091e86855dc63d97a8df">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],["data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx"],["krabby","geodude","venonat","parasect","eevee","nidoran_female","kingler","magnemite","koffing","rhyhorn","drowzee","gastly","pidgey","rattata","rattata"],[51,85,129,171,172,10,234,20,173,157,249,28,24,195,138],[15,23,38,32,37,11,33,20,26,49,50,10,13,35,30],[5.82,20.88,20.4,19.2,4.18,6.21,73.81,5.28,0.53,90.57,11.96,0.13,1.44,2.5,3.37],["normal","normal","extra_small","extra_small","extra_small","normal","normal","normal","extra_small","normal","extra_small","extra_large","normal","extra_small","normal"],[0.36,0.37,0.92,0.87,0.25,0.36,1.52,0.3,0.49,0.94,0.62,1.36,0.29,0.3,0.31],["normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","extra_small","normal","normal","normal","normal"],["mud_shot","rock_throw","confusion","bug_bite","tackle","bite","metal_claw","thunder_shock","acid","rock_smash","confusion","sucker_punch","tackle","quick_attack","tackle"],["vice_grip","rock_tomb","poison_fang","x-scissor","body_slam","poison_fang","vice_grip","magnet_bomb","sludge","horn_attack","psychic","sludge_bomb","twister","body_slam","body_slam"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>player<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-7dd7516341ef847567f4" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7dd7516341ef847567f4">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],["data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_a.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_b.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx","data/pokemon_player_c.xlsx"],["krabby","geodude","venonat","parasect","eevee","nidoran_female","kingler","magnemite","koffing","rhyhorn","drowzee","gastly","pidgey","rattata","rattata"],[51,85,129,171,172,10,234,20,173,157,249,28,24,195,138],[15,23,38,32,37,11,33,20,26,49,50,10,13,35,30],[5.82,20.88,20.4,19.2,4.18,6.21,73.81,5.28,0.53,90.57,11.96,0.13,1.44,2.5,3.37],["normal","normal","extra_small","extra_small","extra_small","normal","normal","normal","extra_small","normal","extra_small","extra_large","normal","extra_small","normal"],[0.36,0.37,0.92,0.87,0.25,0.36,1.52,0.3,0.49,0.94,0.62,1.36,0.29,0.3,0.31],["normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","extra_small","normal","normal","normal","normal"],["mud_shot","rock_throw","confusion","bug_bite","tackle","bite","metal_claw","thunder_shock","acid","rock_smash","confusion","sucker_punch","tackle","quick_attack","tackle"],["vice_grip","rock_tomb","poison_fang","x-scissor","body_slam","poison_fang","vice_grip","magnet_bomb","sludge","horn_attack","psychic","sludge_bomb","twister","body_slam","body_slam"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>player<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>Note that the <code>regex</code> argument in <code>fs::dir_ls</code> is applied to the full file path so if I had tried to specify that the file name starts with “pokemon” by front anchoring it using “^pokemon” this would return no results, since the full name is actually “data/pokemon…”. <a href="https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf">regex cheatsheet</a> <a href="http://edrub.in/CheatSheets/cheatSheetStringr.pdf">stringr cheatsheet including regex</a></p>
 </div>
 <div id="many-worksheets-in-a-single-workbook" class="section level4">
@@ -1103,8 +1126,8 @@ pokemon_collections &lt;-<span class="st"> </span>readxl<span class="op">::</spa
    )
 
 DT<span class="op">::</span><span class="kw">datatable</span>(<span class="dt">data =</span> pokemon_collections)</code></pre></div>
-<div id="htmlwidget-50f35bf319676415e071" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-50f35bf319676415e071">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14"],["collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3"],["jigglypuff","caterpie","koffing","drowzee","growlithe","pidgey","weedle","venomoth","slowpoke","rattata","rattata","pidgey","poliwhirl","poliwag"],[56,212,440,283,624,199,158,77,206,40,10,274,542,154],[51,53,43,53,66,40,43,13,62,16,10,49,71,32],[5.55,1.84,0.93,37.03,24.43,1.56,2.94,10.72,38.09,4.71,3.09,1.95,24.49,9.99],["normal","extra_small","normal","normal","extra_large","normal","normal","normal","normal","extra_large","normal","normal","normal","normal"],[0.49,0.28,0.53,1.09,0.8,0.3,0.27,1.48,1.13,0.34,0.29,0.32,1.08,0.53],["normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal"],["feint_attack","bug_bite","acid","pound","bite","quick_attack","poison_sting","bug_bite","confusion","tackle","quick_attack","quick_attack","bubble","mud_shot"],["play_rough","struggle","sludge_bomb","psychic","body_slam","aerial_ace","struggle","poison_fang","psyshock","body_slam","hyper_fang","twister","bubble_beam","body_slam"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sheet<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-28407ffb91265e730080" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-28407ffb91265e730080">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14"],["collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3"],["jigglypuff","caterpie","koffing","drowzee","growlithe","pidgey","weedle","venomoth","slowpoke","rattata","rattata","pidgey","poliwhirl","poliwag"],[56,212,440,283,624,199,158,77,206,40,10,274,542,154],[51,53,43,53,66,40,43,13,62,16,10,49,71,32],[5.55,1.84,0.93,37.03,24.43,1.56,2.94,10.72,38.09,4.71,3.09,1.95,24.49,9.99],["normal","extra_small","normal","normal","extra_large","normal","normal","normal","normal","extra_large","normal","normal","normal","normal"],[0.49,0.28,0.53,1.09,0.8,0.3,0.27,1.48,1.13,0.34,0.29,0.32,1.08,0.53],["normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal"],["feint_attack","bug_bite","acid","pound","bite","quick_attack","poison_sting","bug_bite","confusion","tackle","quick_attack","quick_attack","bubble","mud_shot"],["play_rough","struggle","sludge_bomb","psychic","body_slam","aerial_ace","struggle","poison_fang","psyshock","body_slam","hyper_fang","twister","bubble_beam","body_slam"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>sheet<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,7]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="many-worksheets-in-many-workbooks" class="section level4">
 <h4><span class="header-section-number">3.3.3.4</span> Many worksheets in many workbooks</h4>
@@ -1129,8 +1152,8 @@ pokemon_monthly_collections &lt;-<span class="st"> </span>fs<span class="op">::<
     )
 
 DT<span class="op">::</span><span class="kw">datatable</span>(<span class="dt">data =</span> pokemon_monthly_collections)</code></pre></div>
-<div id="htmlwidget-13bd011d6df1b939efb8" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-13bd011d6df1b939efb8">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45"],["data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx"],["collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_3","cp_1","cp_1","cp_1","cp_1","cp_1","cp_2","cp_2","cp_2","cp_2","cp_2","cp_3","cp_3","cp_3","cp_3","cp_3"],["horsea","geodude","drowzee","eevee","goldeen","eevee","ekans","eevee","drowzee","krabby","abra","abra","bellsprout","bellsprout","bellsprout","magikarp","krabby","drowzee","exeggute","horsea","goldeen","drowzee","bellsprout","jigglypuff","drowzee","eevee","eevee","chansey","bellsprout","drowzee","drowzee","horsea","cubone","magikarp","drowzee","goldeen","dratini","dratini","drowzee","drowzee","bulbasaur","krabby","exeggute","hypno","gastly"],[119,225,213,234,59,44,95,195,44,91,101,81,156,262,389,23,209,245,449,56,122,159,628,349,74,108,572,328,433,128,294,53,489,10,284,400,298,332,73,249,135,76,488,471,236],[21,38,46,46,19,19,24,40,21,17,20,16,32,44,50,10,29,52,67,15,26,40,68,119,28,30,74,291,59,38,54,14,64,10,54,53,42,44,26,50,29,18,67,66,30],[4.62,18.16,25.17,5.33,10.83,9.82,5.2,6.02,41.36,5.4,17.18,25.94,5.85,5.42,3.4,6.98,3.28,38.46,3.5,9.65,20.77,31.68,3.84,3.57,38.48,5.58,7.97,39.74,6.67,20.73,31.05,5.1,5.75,9,19.51,15.93,4.4,4.75,45.34,11.96,10.09,8.05,3.64,93,0.07],["extra_small","normal","normal","normal","extra_small","extra_large","normal","normal","extra_large","normal","normal","extra_large","extra_large","extra_large","normal","extra_small","normal","normal","extra_large","normal","extra_large","normal","normal","extra_small","normal","normal","normal","normal","extra_large","extra_small","normal","extra_small","normal","normal","extra_small","normal","extra_large","extra_large","extra_large","extra_small","extra_large","normal","extra_large","normal","extra_small"],[0.29,0.4,0.85,0.3,0.54,0.34,1.93,0.28,1.09,0.38,0.85,1,0.8,0.82,0.66,0.78,0.34,1.13,0.47,0.43,0.67,1.01,0.78,0.42,1.05,0.29,0.53,1.17,0.84,0.78,0.8,0.35,0.4,0.81,0.8,0.59,2.08,1.99,1.16,0.62,0.8,0.46,0.49,1.76,1.09],["extra_small","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","extra_small","normal","normal","normal","normal","normal"],["bubble","tackle","pound","tackle","mud_shot","tackle","acid","tackle","confusion","bubble","zen_headbutt","zen_headbutt","acid","acid","vine_whip","splash","mud_shot","confusion","confusion","bubble","peck","pound","vine_whip","pound","pound","tackle","tackle","pound","acid","confusion","confusion","bubble","rock_smash","splash","pound","peck","dragon_breath","dragon_breath","confusion","confusion","tackle","bubble","confusion","confusion","lick"],["bubble_beam","rock_slide","psychic","body_slam","horn_attack","dig","gunk_shot","swift","psyshock","vice_grip","shadow_ball","shadow_ball","sludge_bomb","sludge_bomb","wrap","struggle","water_pulse","psyshock","psychic","bubble_beam","water_pulse","psybeam","sludge_bomb","disarming_voice","psybeam","body_slam","swift","dazzling_gleam","power_whip","psyshock","psybeam","flash_cannon","bulldoze","struggle","psybeam","aqua_tail","aqua_tail","twister","psybeam","psychic","sludge_bomb","water_pulse","psychic","psychic","sludge_bomb"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>month<\/th>\n      <th>sheet<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[4,5,6,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-88fe97a3e745292c74d2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-88fe97a3e745292c74d2">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45"],["data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201901.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201902.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx","data/pokemon_201903.xlsx"],["collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_1","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_2","collection_point_3","collection_point_3","collection_point_3","collection_point_3","collection_point_3","cp_1","cp_1","cp_1","cp_1","cp_1","cp_2","cp_2","cp_2","cp_2","cp_2","cp_3","cp_3","cp_3","cp_3","cp_3"],["horsea","geodude","drowzee","eevee","goldeen","eevee","ekans","eevee","drowzee","krabby","abra","abra","bellsprout","bellsprout","bellsprout","magikarp","krabby","drowzee","exeggute","horsea","goldeen","drowzee","bellsprout","jigglypuff","drowzee","eevee","eevee","chansey","bellsprout","drowzee","drowzee","horsea","cubone","magikarp","drowzee","goldeen","dratini","dratini","drowzee","drowzee","bulbasaur","krabby","exeggute","hypno","gastly"],[119,225,213,234,59,44,95,195,44,91,101,81,156,262,389,23,209,245,449,56,122,159,628,349,74,108,572,328,433,128,294,53,489,10,284,400,298,332,73,249,135,76,488,471,236],[21,38,46,46,19,19,24,40,21,17,20,16,32,44,50,10,29,52,67,15,26,40,68,119,28,30,74,291,59,38,54,14,64,10,54,53,42,44,26,50,29,18,67,66,30],[4.62,18.16,25.17,5.33,10.83,9.82,5.2,6.02,41.36,5.4,17.18,25.94,5.85,5.42,3.4,6.98,3.28,38.46,3.5,9.65,20.77,31.68,3.84,3.57,38.48,5.58,7.97,39.74,6.67,20.73,31.05,5.1,5.75,9,19.51,15.93,4.4,4.75,45.34,11.96,10.09,8.05,3.64,93,0.07],["extra_small","normal","normal","normal","extra_small","extra_large","normal","normal","extra_large","normal","normal","extra_large","extra_large","extra_large","normal","extra_small","normal","normal","extra_large","normal","extra_large","normal","normal","extra_small","normal","normal","normal","normal","extra_large","extra_small","normal","extra_small","normal","normal","extra_small","normal","extra_large","extra_large","extra_large","extra_small","extra_large","normal","extra_large","normal","extra_small"],[0.29,0.4,0.85,0.3,0.54,0.34,1.93,0.28,1.09,0.38,0.85,1,0.8,0.82,0.66,0.78,0.34,1.13,0.47,0.43,0.67,1.01,0.78,0.42,1.05,0.29,0.53,1.17,0.84,0.78,0.8,0.35,0.4,0.81,0.8,0.59,2.08,1.99,1.16,0.62,0.8,0.46,0.49,1.76,1.09],["extra_small","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","normal","extra_small","normal","normal","normal","normal","normal"],["bubble","tackle","pound","tackle","mud_shot","tackle","acid","tackle","confusion","bubble","zen_headbutt","zen_headbutt","acid","acid","vine_whip","splash","mud_shot","confusion","confusion","bubble","peck","pound","vine_whip","pound","pound","tackle","tackle","pound","acid","confusion","confusion","bubble","rock_smash","splash","pound","peck","dragon_breath","dragon_breath","confusion","confusion","tackle","bubble","confusion","confusion","lick"],["bubble_beam","rock_slide","psychic","body_slam","horn_attack","dig","gunk_shot","swift","psyshock","vice_grip","shadow_ball","shadow_ball","sludge_bomb","sludge_bomb","wrap","struggle","water_pulse","psyshock","psychic","bubble_beam","water_pulse","psybeam","sludge_bomb","disarming_voice","psybeam","body_slam","swift","dazzling_gleam","power_whip","psyshock","psybeam","flash_cannon","bulldoze","struggle","psybeam","aqua_tail","aqua_tail","twister","psybeam","psychic","sludge_bomb","water_pulse","psychic","psychic","sludge_bomb"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>month<\/th>\n      <th>sheet<\/th>\n      <th>species<\/th>\n      <th>combat_power<\/th>\n      <th>hit_points<\/th>\n      <th>weight_kg<\/th>\n      <th>weight_bin<\/th>\n      <th>height_m<\/th>\n      <th>height_bin<\/th>\n      <th>fast_attack<\/th>\n      <th>charge_attack<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[4,5,6,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="non-rectangular-data-in-many-workbooks" class="section level4">
 <h4><span class="header-section-number">3.3.3.5</span> Non-rectangular data in many workbooks</h4>
@@ -1140,10 +1163,6 @@ DT<span class="op">::</span><span class="kw">datatable</span>(<span class="dt">d
   <span class="dt">path =</span> <span class="st">&quot;data/pet_form_1.xlsx&quot;</span>
 ) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">head</span>()</code></pre></div>
-<pre><code>## New names:
-## * `` -&gt; `..3`
-## * `` -&gt; `..4`
-## * `` -&gt; `..5`</code></pre>
 <div class="kable-table">
 <table>
 <thead>
@@ -1277,9 +1296,6 @@ cat
   , <span class="dt">col_names =</span> <span class="ot">FALSE</span>
   , <span class="dt">range =</span> <span class="st">&quot;A2:B2&quot;</span>
 )</code></pre></div>
-<pre><code>## New names:
-## * `` -&gt; `..1`
-## * `` -&gt; `..2`</code></pre>
 <div class="kable-table">
 <table>
 <thead>
@@ -1533,17 +1549,238 @@ dragon
 </tbody>
 </table>
 </div>
-<ul>
-<li>read .xls/s</li>
-<li>read single tab</li>
-<li>read many tabs from one workbook (FASTS)</li>
-<li>read individual cells/cell ranges (SP)</li>
-<li>write with formatting openxlsx/xltabr</li>
-</ul>
+</div>
+</div>
+<div id="exporting-to-.xlsx" class="section level3">
+<h3><span class="header-section-number">3.3.4</span> Exporting to .xlsx</h3>
+<p>We recommend <code>openxlsx</code> and <code>xltabr</code> for writing and formatting tables to MS Excel. The latter is a wrapper built on <code>openxlsx</code> developed by MoJ and is specifically aimed at making it easier to produce publication ready tables. <code>xltabr</code> has one known drawback in that it applies the foramtting cell by cell, so if your tables are massive (~100,000 rows) it will take too long, in this instance you should resort to <code>openxlsx</code>.</p>
+<p><a href="https://cran.r-project.org/web/packages/openxlsx/openxlsx.pdf" class="uri">https://cran.r-project.org/web/packages/openxlsx/openxlsx.pdf</a></p>
+<p><a href="https://cran.r-project.org/web/packages/xltabr/xltabr.pdf" class="uri">https://cran.r-project.org/web/packages/xltabr/xltabr.pdf</a></p>
+<p>Here I am going to go over a few basics of using <code>xltabr</code> to produce publication ready output. I’m using an extract of some already published Search and Rescue Helicopter data that was itself produced using <code>xltabr</code>, see the full series here.</p>
+<p><a href="https://www.gov.uk/government/statistical-data-sets/search-and-rescue-helicopter-sarh01" class="uri">https://www.gov.uk/government/statistical-data-sets/search-and-rescue-helicopter-sarh01</a></p>
+<div id="formatting-prep" class="section level4">
+<h4><span class="header-section-number">3.3.4.1</span> Formatting prep</h4>
+<p>I’m assuming that the data has already been cleaned, tidied and the unformatted table created in R, most likely using <code>reshape2::dcast</code> (see chapter 4) as <code>xltabr</code> has bee designed to work well with <code>reshape2</code>.</p>
+<p>Read in table to be formatted</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">demo_sarh &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(
+  <span class="dt">file =</span> <span class="st">&quot;data/sarh_example.csv&quot;</span>
+)</code></pre></div>
+<p>The formatting uses a style sheet for reference. This must be created in a .xlsx workbook, and the specific formatting applied to each cell. The cell text will be the name used to reference that style in the code. In the example below anything with style <em>header</em> applied to it will be bold, left-justified, and use the same font style, colour and size as in cell A1. It will also apply the row height, but this can be overwritten. You can also apply cell borders, as in styles <em>top_header_1</em>, <em>top_header_2</em> and <em>body_bold_method_change</em>.</p>
+<div class="figure">
+<img src="data/sarh_dft_style_example.PNG" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Variables required to be manually updated  ------------------------------</span>
+
+<span class="co">#table_name_date variables - update these variables as required</span>
+latest_month &lt;-<span class="st"> &quot;March 2018&quot;</span>
+latest_year_end &lt;-<span class="st"> &quot;Year ending 31 March 2018&quot;</span> 
+
+<span class="co">#footer_text_admin footnote dates and information used - update these variables as required</span>
+last_updated &lt;-<span class="st"> &quot;December 2017&quot;</span>
+next_update &lt;-<span class="st"> &quot;June 2018&quot;</span>
+contact_telephone &lt;-<span class="st"> &quot;some telephone number&quot;</span>
+contact_email &lt;-<span class="st"> &quot;some email address&quot;</span>
+
+<span class="co">#hyperlink addresses used</span>
+hyperlink_sarh &lt;-<span class="st"> &quot;https://www.gov.uk/government/collections/search-and-rescue-helicopter-statistics&quot;</span>
+<span class="kw">names</span>(hyperlink_sarh) &lt;-<span class="st"> &quot;DEMO: Search and Rescue Helicopter Statistics&quot;</span>
+<span class="kw">class</span>(hyperlink_sarh) &lt;-<span class="st"> &quot;hyperlink&quot;</span>
+<span class="co">#=========================================================================</span>
+
+<span class="co"># Titles ------------------------------------------------------------------</span>
+<span class="co">#standard dates used in table_name</span>
+table_name_date_<span class="dv">01</span> &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;: April 2017 to &quot;</span>, latest_month)
+  
+<span class="co">#function to minimise reptition in input for table titles</span>
+set_text_title &lt;-<span class="st"> </span><span class="cf">function</span> (table_number, table_name_subheader, table_name_date){
+  title_text &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;DEMO: Department for Transport Statistics&quot;</span>
+                  ,<span class="st">&quot;DEMO: Search and Rescue Helicopter Statistics&quot;</span>
+                  , table_number
+                  , <span class="kw">paste0</span>(<span class="st">&quot;DEMO: UK Civilian Search and Rescue Helicopter Taskings&quot;</span>
+                          ,table_name_subheader
+                          ,table_name_date)
+                  ,<span class="st">&quot;Number of Taskings&quot;</span>)
+  
+  <span class="co">#check input is char and length 1, and output is length 5</span>
+  <span class="kw">stopifnot</span>(<span class="kw">is.character</span>(table_number)
+            ,<span class="kw">is.character</span>(table_name_subheader)
+            ,<span class="kw">length</span>(table_number) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>
+            ,<span class="kw">length</span>(table_name_subheader) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>
+            ,<span class="kw">length</span>(title_text) <span class="op">==</span><span class="st"> </span><span class="dv">5</span>)
+  
+  <span class="kw">return</span>(title_text)
+}
+
+<span class="co">#preset each style for each of the 5 rows of the title</span>
+set_style_title &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;header&quot;</span>
+                     ,<span class="st">&quot;body&quot;</span>
+                     ,<span class="st">&quot;table_title&quot;</span>
+                     ,<span class="st">&quot;title&quot;</span>
+                     ,<span class="st">&quot;title_units&quot;</span>)
+
+
+
+
+<span class="co"># Footnotes ---------------------------------------------------------------</span>
+<span class="co">#standard footnotes used</span>
+<span class="co">#all tables have footer_text_source and footer_text_update footnotes,</span>
+<span class="co">#insert and number additional footnotes here/alter exisiting ones</span>
+footer_text_source &lt;-<span class="st"> &quot;Source: demo data only&quot;</span>
+footer_text_<span class="dv">01</span> &lt;-<span class="st"> &quot;: no data for some reason or other&quot;</span>
+footer_text_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;methodology change&quot;</span>)
+footer_text_admin &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;&quot;</span>
+                       , <span class="kw">paste0</span>(<span class="st">&quot;Last updated: &quot;</span>, last_updated)
+                       , <span class="kw">paste0</span>(<span class="st">&quot;Next update: &quot;</span>, next_update)
+                       , <span class="kw">paste0</span>(<span class="st">&quot;Telephone: &quot;</span>, contact_telephone)
+                       , <span class="kw">paste0</span>(<span class="st">&quot;Email: &quot;</span>, contact_email)
+                       , <span class="st">&quot;&quot;</span>
+                       , <span class="st">&quot;The figures in this table are fabricated for demonstration purposes.&quot;</span>
+)
+
+<span class="co">#function to piece together individual footnotes for each table, based on those set above</span>
+set_text_footer &lt;-<span class="st"> </span><span class="cf">function</span>(...) {
+  <span class="co">#check arguments are all char</span>
+  footer_text &lt;-<span class="st"> </span><span class="kw">c</span>(footer_text_source, ..., footer_text_admin)
+}
+
+<span class="co">#function to preset styles for footnotes (number of footnotes varies per table)</span>
+<span class="co">#all footnotes are in style &quot;footer&quot; except the first which is style &quot;source&quot;</span>
+<span class="co">#and the second to last 2 which are style &quot;footer_italics&quot;</span>
+
+set_style_footer &lt;-<span class="st"> </span><span class="cf">function</span>(footer_text){
+  <span class="kw">c</span>(<span class="st">&quot;source&quot;</span>
+    ,<span class="kw">rep</span>(<span class="st">&quot;footer&quot;</span>, <span class="kw">length</span>(footer_text)<span class="op">-</span><span class="dv">5</span>) 
+    ,<span class="st">&quot;footer_italics&quot;</span>
+    ,<span class="st">&quot;footer_italics&quot;</span>
+    ,<span class="st">&quot;footer&quot;</span>
+    ,<span class="st">&quot;footer&quot;</span>) 
+}
+
+<span class="co">#function to calculate the sheet row holding certain footer text, the search_text</span>
+<span class="co">#to be used in overiding row heights, (eg for wrapped text that goes over one line) and configuring hyperlinks</span>
+<span class="co">#if you give this function a vector it returns a vector of row positions</span>
+footer_text_row &lt;-<span class="st"> </span><span class="cf">function</span>(search_text){
+  footer_text_row =<span class="st"> </span>(
+    <span class="kw">length</span>(tab<span class="op">$</span>title<span class="op">$</span>title_text) <span class="co">#number of rows in title</span>
+    <span class="op">+</span><span class="st"> </span><span class="kw">length</span>(tab<span class="op">$</span>top_headers<span class="op">$</span>top_headers_list) <span class="co">#number of rows in top header (usually 1)</span>
+    <span class="op">+</span><span class="st"> </span><span class="kw">dim</span>(tab<span class="op">$</span>body<span class="op">$</span>body_df)[<span class="dv">1</span>]  <span class="co">#number of rows in body (not including header)</span>
+    <span class="op">+</span><span class="st"> </span><span class="kw">match</span>(search_text, tab<span class="op">$</span>footer<span class="op">$</span>footer_text) <span class="co">#number of rows to search_text in footer</span>
+  ) 
+  <span class="kw">return</span>(footer_text_row) <span class="co">#may be a single row number or a vector of row numbers</span>
+}
+
+
+<span class="co"># Hyperlinks --------------------------------------------------------------</span>
+<span class="co">#functions to set the hyperlinks, function works by searching for the hyperlink text</span>
+<span class="co">#function uses variables that are already in the global environment</span>
+set_title_hyperlink &lt;-<span class="st"> </span><span class="cf">function</span>(){
+openxlsx<span class="op">::</span><span class="kw">writeData</span>(
+  <span class="dt">wb =</span> tab<span class="op">$</span>wb
+  , <span class="dt">sheet =</span> <span class="dv">1</span>
+  , <span class="dt">startRow =</span> <span class="kw">match</span>(<span class="dt">x =</span> <span class="kw">names</span>(hyperlink_sarh), <span class="dt">table =</span> tab<span class="op">$</span>title<span class="op">$</span>title_text) <span class="co">#find row of hyperlink by matching its &#39;name&#39; the text that shows</span>
+  , <span class="dt">startCol =</span> <span class="dv">1</span>
+  , <span class="dt">x =</span> hyperlink_sarh)
+}
+
+<span class="co"># Table column widths -----------------------------------------------------</span>
+<span class="co">#assign to set consistent column width across all tables</span>
+table_column_width &lt;-<span class="st"> </span><span class="dv">15</span></code></pre></div>
+</div>
+<div id="applying-formatting" class="section level4">
+<h4><span class="header-section-number">3.3.4.2</span> Applying formatting</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Formatting --------------------------------------------------------------</span>
+<span class="co">#when setting the formats for each table refer to script 02_sarh_format_prep</span>
+<span class="co">#for variables to use which are common to all tables</span>
+
+<span class="co">#set styles path</span>
+<span class="co">#xltabr::set_style_path(&quot;style/DfT_styles_SARH.xlsx&quot;)</span>
+xltabr<span class="op">::</span><span class="kw">set_style_path</span>(<span class="st">&quot;data/sarh_dft_style.xlsx&quot;</span>)
+<span class="co">#not all these row heights are making it through, eg title, body, footer stay as 12, 15, etc </span>
+<span class="co">#top_headers changed to 26, 39... </span>
+<span class="co">#some must be being overwritten by default (well hidden)</span>
+
+<span class="co">#openxlsx::openXL(&quot;data/sarh_dft_style.xlsx&quot;) #uncomment to check styles</span>
+<span class="co">#NB only edit the style sheet in Excel (editing/saving in LibreOffice does not work; it saves stuff slightly differently)</span>
+
+ 
+<span class="co"># demo_sarh ----------------------------------------------------------------</span>
+<span class="co">#Search and Rescue Helicopter Taskings - by Base</span>
+
+<span class="co">#initialise</span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">initialise</span>()
+
+<span class="co">#titles</span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">add_title</span>(
+  <span class="dt">tab =</span> tab
+  , <span class="dt">title_text =</span> <span class="kw">set_text_title</span>(
+    <span class="dt">table_number =</span> <span class="st">&quot;DEMO-SARH&quot;</span>
+    , <span class="dt">table_name_subheader =</span> <span class="st">&quot; - by Base&quot;</span>
+    , <span class="dt">table_name_date =</span> table_name_date_<span class="dv">01</span>)
+  , <span class="dt">title_style_names =</span> set_style_title)
+
+<span class="co">#top headers</span>
+top_header_row_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;&quot;</span>, <span class="kw">dim</span>(demo_sarh)[<span class="dv">2</span>] <span class="op">-</span><span class="st"> </span><span class="kw">dim</span>(dplyr<span class="op">::</span><span class="kw">select_if</span>(demo_sarh, is.numeric))[<span class="dv">2</span>] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>) <span class="co">#add 1 back to account for Year which is type int, but we want to skip it</span>
+                      , <span class="kw">colnames</span>(dplyr<span class="op">::</span><span class="kw">select</span>(demo_sarh, <span class="dv">3</span><span class="op">:</span><span class="kw">dim</span>(demo_sarh)[<span class="dv">2</span>]))
+)
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">add_top_headers</span>(
+  <span class="dt">tab =</span> tab
+  , <span class="dt">top_headers =</span> top_header_row_<span class="dv">1</span>) <span class="co">#add_top_headers uses top_header1 by default</span>
+
+<span class="co">#body table</span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">add_body</span>(
+  <span class="dt">tab =</span> tab
+  , <span class="dt">df =</span> demo_sarh
+  , <span class="dt">row_style_names =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;body_right&quot;</span>, <span class="dv">3</span>), <span class="st">&quot;body_bold_right&quot;</span>) <span class="co">#auto repeats pattern</span>
+  , <span class="dt">fill_non_values_with =</span> <span class="kw">list</span>(<span class="dt">na =</span> <span class="ot">NULL</span>)
+    <span class="co">#list(na = &#39;:&#39;) this used to work... </span>
+)
+
+<span class="co">#footnotes</span>
+<span class="co">#set footer text</span>
+footer_text &lt;-<span class="st"> </span><span class="kw">set_text_footer</span>(footer_text_<span class="dv">01</span>, footer_text_<span class="dv">02</span>)
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">add_footer</span>(
+  <span class="dt">tab =</span> tab
+  , <span class="dt">footer_text =</span> footer_text
+  , <span class="dt">footer_style_names =</span> <span class="kw">set_style_footer</span>(footer_text))
+
+<span class="co">#auto merge title and footer cells to width of table</span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">auto_merge_title_cells</span>(tab)
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">auto_merge_footer_cells</span>(tab)
+
+<span class="co">#set column widths</span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">set_wb_widths</span>(tab, <span class="dt">body_header_col_widths =</span> table_column_width)
+
+<span class="co">#set row heights</span>
+<span class="co">#row height for footnotes - do not hardcode row</span>
+openxlsx<span class="op">::</span><span class="kw">setRowHeights</span>(
+  tab<span class="op">$</span>wb
+  , <span class="dt">sheet =</span> <span class="dv">1</span>
+  , <span class="dt">rows =</span> <span class="kw">footer_text_row</span>(<span class="dt">search_text =</span> footer_text_<span class="dv">02</span>)[<span class="dv">1</span>] <span class="co">#footer_text_02 has 2 rows, only want the first</span>
+  , <span class="dt">heights =</span> <span class="dv">2</span><span class="op">*</span><span class="fl">12.75</span>)
+
+<span class="co">#set data and styles </span>
+tab &lt;-<span class="st"> </span>xltabr<span class="op">::</span><span class="kw">write_data_and_styles_to_wb</span>(tab)
+
+<span class="co">#add further non-xltabr formatting</span>
+<span class="co">#enable hyperlinks in header and footer </span>
+<span class="kw">set_title_hyperlink</span>()
+
+<span class="co">#rename worksheet</span>
+openxlsx<span class="op">::</span><span class="kw">renameWorksheet</span>(<span class="dt">wb =</span> tab<span class="op">$</span>wb, <span class="dt">sheet =</span> <span class="st">&quot;Sheet1&quot;</span>, <span class="dt">newName =</span> <span class="st">&quot;DEMOSARH&quot;</span>)
+
+<span class="co">#View and save output</span>
+<span class="co">#view output</span>
+openxlsx<span class="op">::</span><span class="kw">openXL</span>(tab<span class="op">$</span>wb) 
+<span class="co">#save output</span>
+openxlsx<span class="op">::</span><span class="kw">saveWorkbook</span>(tab<span class="op">$</span>wb, <span class="dt">file =</span> <span class="st">&quot;data/sarh_demo.xlsx&quot;</span>, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
 </div>
 <div id="sav" class="section level3">
-<h3><span class="header-section-number">3.3.4</span> .sav</h3>
+<h3><span class="header-section-number">3.3.5</span> .sav</h3>
+<ul>
+<li>haven to open SPSS, STAT, SAS files</li>
+</ul>
 </div>
 </div>
 <div id="connecting-to-databases" class="section level2">
@@ -1559,7 +1796,7 @@ dragon
 <div id="gcp" class="section level3">
 <h3><span class="header-section-number">3.4.2</span> GCP</h3>
 <ul>
-<li>BigQuery - bigrquery</li>
+<li>BigQuery - bigrquery C&amp;C talk</li>
 </ul>
 
 </div>
