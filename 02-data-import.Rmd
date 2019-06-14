@@ -6,16 +6,6 @@ This chapter is for code examples of data importing/exporting and interactions w
 
 ```{r message=FALSE}
 library(tidyverse)
-library(DBI)
-library(dbplyr)
-library(haven)
-library(bigrquery)
-library(fs)
-library(haven)
-```
-
-```{r message=FALSE}
-library(tidyverse)
 library(fs) #cross-platform file systems operations (based on libuv C library)
 library(knitr) #general purpose tool for dynamic report generation in R 
 library(kableExtra) #presentation of complex tables with customizable styles
