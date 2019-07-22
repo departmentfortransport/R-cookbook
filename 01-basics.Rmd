@@ -43,6 +43,109 @@ Include a saved file of the sessionInfo() output, this command prints out the ve
 
 R works in RAM, so its memory is only as good as the amount of RAM you have 
 
+
+## Assignement operators `<-` vs `=`
+
+To assign or to equal? These are not always the same thing. In R to assign a value to a variable it is advised to use `<-` rather than `=`. The latter is generally used for setting parameters inside functions, eg, `my_string <- stringr::str_match(string = "abc", pattern = "a")`. More on assignment operators [here](https://stat.ethz.ch/R-manual/R-patched/library/base/html/assignOps.html).
+
+## Arithmetic operators
+
+- addition
+```{r}
+1 + 2
+```
+ - subtraction
+```{r}
+5 - 4
+```
+- multiplication
+```{r}
+2 * 2
+```
+- division
+```{r}
+3 / 2
+```
+- exponent
+```{r}
+3 ^ 2
+```
+- modulus (remainder on divsion)
+```{r}
+14 %% 6 
+```
+- integer division
+```{r}
+50 %/% 8
+```
+
+
+## Relational operators
+
+- less than
+```{r}
+3.14 < 3.142
+```
+
+- greater than
+```{r}
+3.14159 > 3
+```
+
+- less than or equal to
+```{r}
+3 <= 3.14
+3.14 <= 3.14
+```
+
+- greater than or equal to
+```{r}
+3 >= 3.14
+3.14 >= 3.14
+```
+
+- equal to
+```{r}
+3 == 3.14159
+```
+
+- not equal to
+```{r}
+3 != 3.14159
+```
+
+
+## Logical operators
+
+- not `!` 
+```{r}
+x <- c(TRUE, 0, FALSE, -4)
+!x
+```
+
+- element-wise and `&`
+```{r}
+y <- c(3.14, FALSE, TRUE, 0)
+x & y
+```
+
+- first element and `&&`
+```{r}
+x && y
+```
+
+- element-wise or `|`
+```{r}
+x | y
+```
+
+- first element or `||`
+```{r}
+z <- c(0, FALSE, 8)
+y || z
+```
+
+
 ## Vectors
 
 ### Types {#vector-types}
