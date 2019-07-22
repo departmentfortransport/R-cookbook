@@ -10,10 +10,12 @@
 
 A few of the common R relations are
 
-- R is the programming language, born in 1997, based on S ([honest](https://en.wikipedia.org/wiki/R_(programming_language)))
-- RStudio is a useful integrated development environment (IDE) that makes it cleaner to write, run and organise R code
-- Rproj is the file extension for an R project, essentially a working directory marker
+- R is the programming language, born in 1997, based on S, [honest](https://en.wikipedia.org/wiki/R_(programming_language)).
+- RStudio is a useful integrated development environment (IDE) that makes it cleaner to write, run and organise R code.
+- Rproj is the file extension for an R project, essentially a working directory marker, shortens file paths, keep everything relevant to your project together and easy to reference.
 - packages are collections of functions written to make specific tasks easier, eg the `stringr` package contains functions to work with strings. Packages are often referred to as libraries in other programing languages.
+- .R is the file extension for a basic R script in which anything not commented out with `#` is code that is run.
+- .Rmd is the file extension for Rmarkdown an R package useful for producing reports. A .Rmd script is different to a .R script in that the default is text rather than code. Code is placed in code chunks - similar to how a Jupyter Notebook looks.
 
 ## DfT R/RStudio - subject to change
 
@@ -26,17 +28,20 @@ Whistle stop tour of R favourite IDE - with pics!
 
 ## Projects
 
-Why you should work in an R project, how to set up and project happiness...
-
-### sessionInfo()
+Why you should work in an R project, how to set up and project happiness. See this section of [Beginner R Featuring Pokemon](https://matt-dray.github.io/beginner-r-feat-pkmn/#3_project_working) by Matt Dray.
 
 ### folders
 
 data, output, images
 
-## Rmarkdown
+### sessionInfo()
+
+Include a saved file of the sessionInfo() output, this command prints out the versions of all the packages currently loaded. This information is essential when passing on code as packages can be updated and code breaking changes made.
 
 
+## R memory
+
+R works in RAM, so its memory is only as good as the amount of RAM you have 
 
 ## Vectors
 
