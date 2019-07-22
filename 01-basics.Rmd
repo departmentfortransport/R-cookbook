@@ -6,6 +6,38 @@
 
 **TO BE COMPLETED**
 
+## R family
+
+A few of the common R relations are
+
+- R is the programming language, born in 1997, based on S ([honest](https://en.wikipedia.org/wiki/R_(programming_language)))
+- RStudio is a useful integrated development environment (IDE) that makes it cleaner to write, run and organise R code
+- Rproj is the file extension for an R project, essentially a working directory marker
+- packages are collections of functions written to make specific tasks easier, eg the `stringr` package contains functions to work with strings. Packages are often referred to as libraries in other programing languages.
+
+## DfT R/RStudio - subject to change
+
+Which version of R/RStudio should I use at DfT? A good question. Currently the 'best' verion of R we have available on network is linked to RStudio version 11543. This can be accessed via the Citrix app on the Windows 10 devices, or via Citrix desktop. The local version of RStudio on the Windows 10 devices is currently unusable (user testing is ongoing to change this).
+
+
+## RStudio IDE
+
+Whistle stop tour of R favourite IDE - with pics!
+
+## Projects
+
+Why you should work in an R project, how to set up and project happiness...
+
+### sessionInfo()
+
+### folders
+
+data, output, images
+
+## Rmarkdown
+
+
+
 ## Vectors
 
 ### Types {#vector-types}
