@@ -427,7 +427,7 @@ pet_house_1 <- readxl::excel_sheets(path = path) %>%
   ) 
 ```
 
-```{r echo=FALSE, eval=FALSE}
+```{r echo=FALSE}
 pet_house_1 %>% 
   knitr::kable() %>% 
   kableExtra::kable_styling(full_width = F, position = "left")
