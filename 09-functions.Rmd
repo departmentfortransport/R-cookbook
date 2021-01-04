@@ -1,0 +1,14 @@
+# Functions {#functions}
+
+```{r include=FALSE}
+# Every file must contain at least one R chunk due to the linting process.
+```
+
+## User defined functions (UDFs)
+
+A non-exhaustive list of possible reasons for writing your own UDF,
+- you are repeating some code chunk changing only a few variables each time.
+- you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.
+- tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.
+- easier to update, just update the function rather than edit potentially multiple code chunks.
+- you are writing a package/library
