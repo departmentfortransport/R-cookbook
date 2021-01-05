@@ -15,7 +15,7 @@ library(dbplyr) #database connection
 library(haven) #for importing/exporting SPSS, Stata, and SAS files
 library(bigrquery) #connecting to GCP BigQuery
 library(openxlsx) #formatting xlsx outputs
-library(xltabr) #MoJ RAP enabler built on openxlsx
+#library(xltabr) #MoJ RAP enabler built on openxlsx
 ```
 
 ## Star functions

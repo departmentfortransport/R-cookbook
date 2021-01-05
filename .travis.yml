@@ -50,4 +50,3 @@ install:
   - R -e "install.packages('base64enc')"
   - R -e "install.packages('mime')"
   - R -e "install.packages('xfun')"
-  - R -e "devtools::install_version('xltabr', version = '0.1.2', repos = 'http://cran.us.r-project.org')"
