@@ -16,8 +16,5 @@ Imports: rmarkdown,
   DT,
   dbplyr,
   haven,
-  openxlsx,
-  xltabr,
   plotly,
   leaflet
-  

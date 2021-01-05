@@ -22,8 +22,8 @@ addons:
             - libgeos-dev
             - libprotoc-dev
             - libnetcdf-dev
-            
-install: 
+
+install:
   - R -e "install.packages('sf')"
   - R -e "install.packages('tmap')"
   - R -e "install.packages('rmapshaper')"
@@ -38,8 +38,6 @@ install:
   - R -e "install.packages('dbplyr')"
   - R -e "install.packages('haven')"
   - R -e "install.packages('bigrquery')"
-  - R -e "install.packages('openxlsx')"
-  - R -e "install.packages('xltabr')"
   - R -e "install.packages('readr')"
   - R -e "install.packages('reshape2')"
   - R -e "install.packages('tidyr')"
