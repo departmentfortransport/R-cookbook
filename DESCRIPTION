@@ -17,7 +17,6 @@ Imports: rmarkdown,
   dbplyr,
   haven,
   openxlsx,
-  xltabr,
   plotly,
   leaflet
-  
+Remotes: moj-analytical-services/xltabr
