@@ -31,7 +31,7 @@ A non-exhaustive list of possible reasons for writing your own UDF,
 
 Below is an example of the syntax for defining a function named `state_animal_age`. The list of named arguments are included in brackets `()` with defaults. The function code sits inside braces `{}`, and returns a single string of the concatenated inputs. 
 
-```{r}
+```{r echo=TRUE}
 state_animal_age <- function(animal = "animal type", age = 0) {
   #function takes animal name as a string and current age and pastes them together
   #output is single string
@@ -50,11 +50,11 @@ state_animal_age("tortoise", 169)
 
 ## Function with `purrr` structure
 
-The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use `purrr::map` (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3.6 and below.
+The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use `purrr::map` (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3 **.xlsx and .xls** section and below.
 
 Using the function above that takes two inputs I can use `purrr::map2` to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.  
 
-```{r}
+```{r echo=TRUE}
 animal_list = c('cat', 'dog', 'elephant')
 age_list = c(12, 7, 42)
 
