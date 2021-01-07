@@ -24,7 +24,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor" />
 
 
-<meta name="date" content="2021-01-06" />
+<meta name="date" content="2021-01-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -53,7 +53,7 @@
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.16/datatables.js"></script>
+<script src="libs/datatables-binding-0.17/datatables.js"></script>
 <link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
@@ -68,12 +68,12 @@
 <link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
 <script src="libs/leaflet-1.3.1/leaflet.js"></script>
 <link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
 <script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
 <link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="libs/leaflet-binding-2.0.3/leaflet.js"></script>
+<script src="libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
 <script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
-<script src="libs/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
 
 
 <style type="text/css">
@@ -318,6 +318,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>10</b> Functions</a><ul>
 <li class="chapter" data-level="10.1" data-path="functions.html"><a href="functions.html#user-defined-functions-udfs"><i class="fa fa-check"></i><b>10.1</b> User defined functions (UDFs)</a></li>
+<li class="chapter" data-level="10.2" data-path="functions.html"><a href="functions.html#top-tips-for-writing-functions"><i class="fa fa-check"></i><b>10.2</b> Top tips for writing functions</a></li>
+<li class="chapter" data-level="10.3" data-path="functions.html"><a href="functions.html#function-structure"><i class="fa fa-check"></i><b>10.3</b> Function structure</a></li>
+<li class="chapter" data-level="10.4" data-path="functions.html"><a href="functions.html#function-with-purrr-structure"><i class="fa fa-check"></i><b>10.4</b> Function with <code>purrr</code> structure</a></li>
+<li class="chapter" data-level="10.5" data-path="functions.html"><a href="functions.html#further-reading"><i class="fa fa-check"></i><b>10.5</b> Further reading</a></li>
+<li class="chapter" data-level="10.6" data-path="functions.html"><a href="functions.html#function-to-create-folder-structure-for-r-project"><i class="fa fa-check"></i><b>10.6</b> Function to create folder structure for R project</a></li>
 </ul></li>
 </ul>
 
@@ -338,14 +343,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="functions" class="section level1">
 <h1><span class="header-section-number">Chapter 10</span> Functions</h1>
+<p>This chapter contains the basics of how to write a function, links to more complete instructions, and examples of functions.</p>
 <div id="user-defined-functions-udfs" class="section level2">
 <h2><span class="header-section-number">10.1</span> User defined functions (UDFs)</h2>
-<p>A non-exhaustive list of possible reasons for writing your own UDF,
-- you are repeating some code chunk changing only a few variables each time.
-- you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.
-- tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.
-- easier to update, just update the function rather than edit potentially multiple code chunks.
-- you are writing a package/library</p>
+<p>A non-exhaustive list of possible reasons for writing your own UDF,</p>
+<ul>
+<li>you are repeating some code chunk changing only a few variables each time.</li>
+<li>you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.</li>
+<li>tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.</li>
+<li>easier to update, just update the function rather than edit potentially multiple code chunks.</li>
+<li>prevents copy/paste errors</li>
+<li>you are writing a package/library</li>
+</ul>
+</div>
+<div id="top-tips-for-writing-functions" class="section level2">
+<h2><span class="header-section-number">10.2</span> Top tips for writing functions</h2>
+<ul>
+<li>name the function something sensible that gives you a clue what it does, usually containing a verb, and making sure that it doesn’t conflict with names of other functions in use.</li>
+<li>write some description of what the function is intended for and the expected outcome, including what it needs to work properly, eg it might take an integer value argument only, and therefore fail if given a double.</li>
+<li>make your function as independent as possible, use <code>name_space::function</code> syntax if it uses functions from other packages so they don’t have to be loaded (they will have to be installed though).</li>
+<li>recommend passing named arguments rather than relying on global variables (again name your arguments clearly).</li>
+<li>recommend giving arguments default values, this shows an example of the type of variable that is expected here.</li>
+<li>note that variables assigned inside a function will not appear in the global environment unless explicitly returned.</li>
+<li>using an explicit return statement is useful if the function is complex, otherwise the output will be the final evaluated expression.</li>
+</ul>
+</div>
+<div id="function-structure" class="section level2">
+<h2><span class="header-section-number">10.3</span> Function structure</h2>
+<p>Below is an example of the syntax for defining a function named <code>state_animal_age</code>. The list of named arguments are included in brackets <code>()</code> with defaults. The function code sits inside braces <code>{}</code>, and returns a single string of the concatenated inputs.</p>
+<pre><code>#&gt; [1] &quot;animal type: 0&quot;
+#&gt; [1] &quot;potoo: 2&quot;
+#&gt; [1] &quot;tortoise: 169&quot;</code></pre>
+</div>
+<div id="function-with-purrr-structure" class="section level2">
+<h2><span class="header-section-number">10.4</span> Function with <code>purrr</code> structure</h2>
+<p>The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use <code>purrr::map</code> (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3.6 and below.</p>
+<p>Using the function above that takes two inputs I can use <code>purrr::map2</code> to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.</p>
+<pre><code>#&gt; [[1]]
+#&gt; [1] &quot;cat: 12&quot;
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] &quot;dog: 7&quot;
+#&gt; 
+#&gt; [[3]]
+#&gt; [1] &quot;elephant: 42&quot;</code></pre>
+</div>
+<div id="further-reading" class="section level2">
+<h2><span class="header-section-number">10.5</span> Further reading</h2>
+<p><a href="https://r4ds.had.co.nz/functions.html">Functions chapter of R for Data Science by Hadley Wickham</a></p>
+</div>
+<div id="function-to-create-folder-structure-for-r-project" class="section level2">
+<h2><span class="header-section-number">10.6</span> Function to create folder structure for R project</h2>
 
 </div>
 </div>

@@ -24,7 +24,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor" />
 
 
-<meta name="date" content="2021-01-06" />
+<meta name="date" content="2021-01-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -53,7 +53,7 @@
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.16/datatables.js"></script>
+<script src="libs/datatables-binding-0.17/datatables.js"></script>
 <link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
@@ -68,12 +68,12 @@
 <link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
 <script src="libs/leaflet-1.3.1/leaflet.js"></script>
 <link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
 <script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
 <link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="libs/leaflet-binding-2.0.3/leaflet.js"></script>
+<script src="libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
 <script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
-<script src="libs/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
 
 
 <style type="text/css">
@@ -318,6 +318,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>10</b> Functions</a><ul>
 <li class="chapter" data-level="10.1" data-path="functions.html"><a href="functions.html#user-defined-functions-udfs"><i class="fa fa-check"></i><b>10.1</b> User defined functions (UDFs)</a></li>
+<li class="chapter" data-level="10.2" data-path="functions.html"><a href="functions.html#top-tips-for-writing-functions"><i class="fa fa-check"></i><b>10.2</b> Top tips for writing functions</a></li>
+<li class="chapter" data-level="10.3" data-path="functions.html"><a href="functions.html#function-structure"><i class="fa fa-check"></i><b>10.3</b> Function structure</a></li>
+<li class="chapter" data-level="10.4" data-path="functions.html"><a href="functions.html#function-with-purrr-structure"><i class="fa fa-check"></i><b>10.4</b> Function with <code>purrr</code> structure</a></li>
+<li class="chapter" data-level="10.5" data-path="functions.html"><a href="functions.html#further-reading"><i class="fa fa-check"></i><b>10.5</b> Further reading</a></li>
+<li class="chapter" data-level="10.6" data-path="functions.html"><a href="functions.html#function-to-create-folder-structure-for-r-project"><i class="fa fa-check"></i><b>10.6</b> Function to create folder structure for R project</a></li>
 </ul></li>
 </ul>
 
@@ -351,13 +356,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">9.3</span> Reading in Spatial Data</h2>
 <p>Let’s have a look at some data. We can read in our data as a spatial object using the <strong>st_read</strong> funciton from the {sf} package (if it is saved in an .shp format and has necessary metadata). We’ll be working with some shapefiles which represent local authorities which are sourced from the ONS.</p>
 <p><em>Reading in Spatial Data</em></p>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="spatial.html#cb223-1"></a>LAs &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_read</span>(<span class="st">&quot;data/LAs&quot;</span>)</span>
-<span id="cb223-2"><a href="spatial.html#cb223-2"></a><span class="co">#&gt; Reading layer `LAs&#39; from data source `/home/travis/build/departmentfortransport/R-cookbook/data/LAs&#39; using driver `ESRI Shapefile&#39;</span></span>
-<span id="cb223-3"><a href="spatial.html#cb223-3"></a><span class="co">#&gt; Simple feature collection with 382 features and 2 fields</span></span>
-<span id="cb223-4"><a href="spatial.html#cb223-4"></a><span class="co">#&gt; geometry type:  MULTIPOLYGON</span></span>
-<span id="cb223-5"><a href="spatial.html#cb223-5"></a><span class="co">#&gt; dimension:      XY</span></span>
-<span id="cb223-6"><a href="spatial.html#cb223-6"></a><span class="co">#&gt; bbox:           xmin: 364.2663 ymin: 9909.1 xmax: 655599.6 ymax: 1218502</span></span>
-<span id="cb223-7"><a href="spatial.html#cb223-7"></a><span class="co">#&gt; proj4string:    +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs</span></span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="spatial.html#cb224-1"></a>LAs &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_read</span>(<span class="st">&quot;data/LAs&quot;</span>)</span>
+<span id="cb224-2"><a href="spatial.html#cb224-2"></a><span class="co">#&gt; Reading layer `LAs&#39; from data source `/home/travis/build/departmentfortransport/R-cookbook/data/LAs&#39; using driver `ESRI Shapefile&#39;</span></span>
+<span id="cb224-3"><a href="spatial.html#cb224-3"></a><span class="co">#&gt; Simple feature collection with 382 features and 2 fields</span></span>
+<span id="cb224-4"><a href="spatial.html#cb224-4"></a><span class="co">#&gt; geometry type:  MULTIPOLYGON</span></span>
+<span id="cb224-5"><a href="spatial.html#cb224-5"></a><span class="co">#&gt; dimension:      XY</span></span>
+<span id="cb224-6"><a href="spatial.html#cb224-6"></a><span class="co">#&gt; bbox:           xmin: 364.2663 ymin: 9909.1 xmax: 655599.6 ymax: 1218502</span></span>
+<span id="cb224-7"><a href="spatial.html#cb224-7"></a><span class="co">#&gt; proj4string:    +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs</span></span></code></pre></div>
 <p>Looking at the message we get when we load in our data, we can find out some basic information about our sf dataframe:</p>
 <ul>
 <li>It tells us that it is a “Simple feature collection with 391 features and 10 fields”. In other words, this is telling us that it is an sf dataframe of 391 observations (features) and 10 variables (fields).</li>
@@ -367,18 +372,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>We can also ask R to give us all of this info with the <strong>st_geometry</strong> function.</p>
 <p><em>Inspect spatial data</em></p>
-<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="spatial.html#cb224-1"></a>sf<span class="op">::</span><span class="kw">st_geometry</span>(LAs)</span>
-<span id="cb224-2"><a href="spatial.html#cb224-2"></a><span class="co">#&gt; Geometry set for 382 features </span></span>
-<span id="cb224-3"><a href="spatial.html#cb224-3"></a><span class="co">#&gt; geometry type:  MULTIPOLYGON</span></span>
-<span id="cb224-4"><a href="spatial.html#cb224-4"></a><span class="co">#&gt; dimension:      XY</span></span>
-<span id="cb224-5"><a href="spatial.html#cb224-5"></a><span class="co">#&gt; bbox:           xmin: 364.2663 ymin: 9909.1 xmax: 655599.6 ymax: 1218502</span></span>
-<span id="cb224-6"><a href="spatial.html#cb224-6"></a><span class="co">#&gt; proj4string:    +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs </span></span>
-<span id="cb224-7"><a href="spatial.html#cb224-7"></a><span class="co">#&gt; First 5 geometries:</span></span>
-<span id="cb224-8"><a href="spatial.html#cb224-8"></a><span class="co">#&gt; MULTIPOLYGON (((448874 536622.6, 453089.1 53411...</span></span>
-<span id="cb224-9"><a href="spatial.html#cb224-9"></a><span class="co">#&gt; MULTIPOLYGON (((451744.3 520566.4, 451788.8 520...</span></span>
-<span id="cb224-10"><a href="spatial.html#cb224-10"></a><span class="co">#&gt; MULTIPOLYGON (((478094.9 518835.6, 475360.6 516...</span></span>
-<span id="cb224-11"><a href="spatial.html#cb224-11"></a><span class="co">#&gt; MULTIPOLYGON (((448472.8 525830.1, 448796 52591...</span></span>
-<span id="cb224-12"><a href="spatial.html#cb224-12"></a><span class="co">#&gt; MULTIPOLYGON (((515719.3 428570.8, 515724.4 428...</span></span></code></pre></div>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="spatial.html#cb225-1"></a>sf<span class="op">::</span><span class="kw">st_geometry</span>(LAs)</span>
+<span id="cb225-2"><a href="spatial.html#cb225-2"></a><span class="co">#&gt; Geometry set for 382 features </span></span>
+<span id="cb225-3"><a href="spatial.html#cb225-3"></a><span class="co">#&gt; geometry type:  MULTIPOLYGON</span></span>
+<span id="cb225-4"><a href="spatial.html#cb225-4"></a><span class="co">#&gt; dimension:      XY</span></span>
+<span id="cb225-5"><a href="spatial.html#cb225-5"></a><span class="co">#&gt; bbox:           xmin: 364.2663 ymin: 9909.1 xmax: 655599.6 ymax: 1218502</span></span>
+<span id="cb225-6"><a href="spatial.html#cb225-6"></a><span class="co">#&gt; proj4string:    +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs </span></span>
+<span id="cb225-7"><a href="spatial.html#cb225-7"></a><span class="co">#&gt; First 5 geometries:</span></span>
+<span id="cb225-8"><a href="spatial.html#cb225-8"></a><span class="co">#&gt; MULTIPOLYGON (((448874 536622.6, 453089.1 53411...</span></span>
+<span id="cb225-9"><a href="spatial.html#cb225-9"></a><span class="co">#&gt; MULTIPOLYGON (((451744.3 520566.4, 451788.8 520...</span></span>
+<span id="cb225-10"><a href="spatial.html#cb225-10"></a><span class="co">#&gt; MULTIPOLYGON (((478094.9 518835.6, 475360.6 516...</span></span>
+<span id="cb225-11"><a href="spatial.html#cb225-11"></a><span class="co">#&gt; MULTIPOLYGON (((448472.8 525830.1, 448796 52591...</span></span>
+<span id="cb225-12"><a href="spatial.html#cb225-12"></a><span class="co">#&gt; MULTIPOLYGON (((515719.3 428570.8, 515724.4 428...</span></span></code></pre></div>
 </div>
 <div id="crs-projections" class="section level2">
 <h2><span class="header-section-number">9.4</span> CRS Projections</h2>
@@ -387,51 +392,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The OSGB1936 system is best suited to mapping the UK or areas within it. It is a projected system, which means it projects the 3d curve of the earth into a 2d object. An advantage of this is that eastings (the x-axis of this projection) remains consistent at all northings (the y-axis). For example, a 1000 unit change in eastings is a 1km change <em>anywhere</em>, whereas a 1 unit change in longitude is a different distance depending on the latitude, as the earth gets narrower the further away you get from the equator.</p>
 <p>Complexities aside, practically what this means is that you will always want <em>all</em> of you’re spatial data to be in the same CRS, otherwise spatial joins and mapping functions will start throwing up errors. We can change the crs projection very easily with the {sf} function <strong>st_transform</strong>.</p>
 <p><em>Changing Coordinate Reference System</em></p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="spatial.html#cb225-1"></a>LAs &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_transform</span>(LAs, <span class="dt">crs =</span> <span class="dv">27700</span>)</span>
-<span id="cb225-2"><a href="spatial.html#cb225-2"></a></span>
-<span id="cb225-3"><a href="spatial.html#cb225-3"></a>sf<span class="op">::</span><span class="kw">st_crs</span>(LAs)</span>
-<span id="cb225-4"><a href="spatial.html#cb225-4"></a><span class="co">#&gt; Coordinate Reference System:</span></span>
-<span id="cb225-5"><a href="spatial.html#cb225-5"></a><span class="co">#&gt;   User input: EPSG:27700 </span></span>
-<span id="cb225-6"><a href="spatial.html#cb225-6"></a><span class="co">#&gt;   wkt:</span></span>
-<span id="cb225-7"><a href="spatial.html#cb225-7"></a><span class="co">#&gt; PROJCS[&quot;OSGB 1936 / British National Grid&quot;,</span></span>
-<span id="cb225-8"><a href="spatial.html#cb225-8"></a><span class="co">#&gt;     GEOGCS[&quot;OSGB 1936&quot;,</span></span>
-<span id="cb225-9"><a href="spatial.html#cb225-9"></a><span class="co">#&gt;         DATUM[&quot;OSGB_1936&quot;,</span></span>
-<span id="cb225-10"><a href="spatial.html#cb225-10"></a><span class="co">#&gt;             SPHEROID[&quot;Airy 1830&quot;,6377563.396,299.3249646,</span></span>
-<span id="cb225-11"><a href="spatial.html#cb225-11"></a><span class="co">#&gt;                 AUTHORITY[&quot;EPSG&quot;,&quot;7001&quot;]],</span></span>
-<span id="cb225-12"><a href="spatial.html#cb225-12"></a><span class="co">#&gt;             TOWGS84[446.448,-125.157,542.06,0.15,0.247,0.842,-20.489],</span></span>
-<span id="cb225-13"><a href="spatial.html#cb225-13"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;6277&quot;]],</span></span>
-<span id="cb225-14"><a href="spatial.html#cb225-14"></a><span class="co">#&gt;         PRIMEM[&quot;Greenwich&quot;,0,</span></span>
-<span id="cb225-15"><a href="spatial.html#cb225-15"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],</span></span>
-<span id="cb225-16"><a href="spatial.html#cb225-16"></a><span class="co">#&gt;         UNIT[&quot;degree&quot;,0.0174532925199433,</span></span>
-<span id="cb225-17"><a href="spatial.html#cb225-17"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]],</span></span>
-<span id="cb225-18"><a href="spatial.html#cb225-18"></a><span class="co">#&gt;         AUTHORITY[&quot;EPSG&quot;,&quot;4277&quot;]],</span></span>
-<span id="cb225-19"><a href="spatial.html#cb225-19"></a><span class="co">#&gt;     PROJECTION[&quot;Transverse_Mercator&quot;],</span></span>
-<span id="cb225-20"><a href="spatial.html#cb225-20"></a><span class="co">#&gt;     PARAMETER[&quot;latitude_of_origin&quot;,49],</span></span>
-<span id="cb225-21"><a href="spatial.html#cb225-21"></a><span class="co">#&gt;     PARAMETER[&quot;central_meridian&quot;,-2],</span></span>
-<span id="cb225-22"><a href="spatial.html#cb225-22"></a><span class="co">#&gt;     PARAMETER[&quot;scale_factor&quot;,0.9996012717],</span></span>
-<span id="cb225-23"><a href="spatial.html#cb225-23"></a><span class="co">#&gt;     PARAMETER[&quot;false_easting&quot;,400000],</span></span>
-<span id="cb225-24"><a href="spatial.html#cb225-24"></a><span class="co">#&gt;     PARAMETER[&quot;false_northing&quot;,-100000],</span></span>
-<span id="cb225-25"><a href="spatial.html#cb225-25"></a><span class="co">#&gt;     UNIT[&quot;metre&quot;,1,</span></span>
-<span id="cb225-26"><a href="spatial.html#cb225-26"></a><span class="co">#&gt;         AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],</span></span>
-<span id="cb225-27"><a href="spatial.html#cb225-27"></a><span class="co">#&gt;     AXIS[&quot;Easting&quot;,EAST],</span></span>
-<span id="cb225-28"><a href="spatial.html#cb225-28"></a><span class="co">#&gt;     AXIS[&quot;Northing&quot;,NORTH],</span></span>
-<span id="cb225-29"><a href="spatial.html#cb225-29"></a><span class="co">#&gt;     AUTHORITY[&quot;EPSG&quot;,&quot;27700&quot;]]</span></span></code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="spatial.html#cb226-1"></a>LAs &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_transform</span>(LAs, <span class="dt">crs =</span> <span class="dv">27700</span>)</span>
+<span id="cb226-2"><a href="spatial.html#cb226-2"></a></span>
+<span id="cb226-3"><a href="spatial.html#cb226-3"></a>sf<span class="op">::</span><span class="kw">st_crs</span>(LAs)</span>
+<span id="cb226-4"><a href="spatial.html#cb226-4"></a><span class="co">#&gt; Coordinate Reference System:</span></span>
+<span id="cb226-5"><a href="spatial.html#cb226-5"></a><span class="co">#&gt;   User input: EPSG:27700 </span></span>
+<span id="cb226-6"><a href="spatial.html#cb226-6"></a><span class="co">#&gt;   wkt:</span></span>
+<span id="cb226-7"><a href="spatial.html#cb226-7"></a><span class="co">#&gt; PROJCS[&quot;OSGB 1936 / British National Grid&quot;,</span></span>
+<span id="cb226-8"><a href="spatial.html#cb226-8"></a><span class="co">#&gt;     GEOGCS[&quot;OSGB 1936&quot;,</span></span>
+<span id="cb226-9"><a href="spatial.html#cb226-9"></a><span class="co">#&gt;         DATUM[&quot;OSGB_1936&quot;,</span></span>
+<span id="cb226-10"><a href="spatial.html#cb226-10"></a><span class="co">#&gt;             SPHEROID[&quot;Airy 1830&quot;,6377563.396,299.3249646,</span></span>
+<span id="cb226-11"><a href="spatial.html#cb226-11"></a><span class="co">#&gt;                 AUTHORITY[&quot;EPSG&quot;,&quot;7001&quot;]],</span></span>
+<span id="cb226-12"><a href="spatial.html#cb226-12"></a><span class="co">#&gt;             TOWGS84[446.448,-125.157,542.06,0.15,0.247,0.842,-20.489],</span></span>
+<span id="cb226-13"><a href="spatial.html#cb226-13"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;6277&quot;]],</span></span>
+<span id="cb226-14"><a href="spatial.html#cb226-14"></a><span class="co">#&gt;         PRIMEM[&quot;Greenwich&quot;,0,</span></span>
+<span id="cb226-15"><a href="spatial.html#cb226-15"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],</span></span>
+<span id="cb226-16"><a href="spatial.html#cb226-16"></a><span class="co">#&gt;         UNIT[&quot;degree&quot;,0.0174532925199433,</span></span>
+<span id="cb226-17"><a href="spatial.html#cb226-17"></a><span class="co">#&gt;             AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]],</span></span>
+<span id="cb226-18"><a href="spatial.html#cb226-18"></a><span class="co">#&gt;         AUTHORITY[&quot;EPSG&quot;,&quot;4277&quot;]],</span></span>
+<span id="cb226-19"><a href="spatial.html#cb226-19"></a><span class="co">#&gt;     PROJECTION[&quot;Transverse_Mercator&quot;],</span></span>
+<span id="cb226-20"><a href="spatial.html#cb226-20"></a><span class="co">#&gt;     PARAMETER[&quot;latitude_of_origin&quot;,49],</span></span>
+<span id="cb226-21"><a href="spatial.html#cb226-21"></a><span class="co">#&gt;     PARAMETER[&quot;central_meridian&quot;,-2],</span></span>
+<span id="cb226-22"><a href="spatial.html#cb226-22"></a><span class="co">#&gt;     PARAMETER[&quot;scale_factor&quot;,0.9996012717],</span></span>
+<span id="cb226-23"><a href="spatial.html#cb226-23"></a><span class="co">#&gt;     PARAMETER[&quot;false_easting&quot;,400000],</span></span>
+<span id="cb226-24"><a href="spatial.html#cb226-24"></a><span class="co">#&gt;     PARAMETER[&quot;false_northing&quot;,-100000],</span></span>
+<span id="cb226-25"><a href="spatial.html#cb226-25"></a><span class="co">#&gt;     UNIT[&quot;metre&quot;,1,</span></span>
+<span id="cb226-26"><a href="spatial.html#cb226-26"></a><span class="co">#&gt;         AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],</span></span>
+<span id="cb226-27"><a href="spatial.html#cb226-27"></a><span class="co">#&gt;     AXIS[&quot;Easting&quot;,EAST],</span></span>
+<span id="cb226-28"><a href="spatial.html#cb226-28"></a><span class="co">#&gt;     AXIS[&quot;Northing&quot;,NORTH],</span></span>
+<span id="cb226-29"><a href="spatial.html#cb226-29"></a><span class="co">#&gt;     AUTHORITY[&quot;EPSG&quot;,&quot;27700&quot;]]</span></span></code></pre></div>
 <p>This changes the CRS projection from the WGS84 system to the OSGB1936 system, converting all of the coordinates to the new system. We can use the crs argument to change to any number of different projections.
 Note that this only works if the spatial object has data on the coordinate reference system already. If your data is missing <em>all</em> of this information, you will have to set the crs manually (if you know what the CRS projection <em>should be</em>):</p>
 <p><em>Setting Coordinate Reference System</em></p>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="spatial.html#cb226-1"></a>sf<span class="op">::</span><span class="kw">st_crs</span>(sf_object) &lt;-<span class="st"> </span><span class="dv">27700</span></span></code></pre></div>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="spatial.html#cb227-1"></a>sf<span class="op">::</span><span class="kw">st_crs</span>(sf_object) &lt;-<span class="st"> </span><span class="dv">27700</span></span></code></pre></div>
 </div>
 <div id="manipulating-spatial-data" class="section level2">
 <h2><span class="header-section-number">9.5</span> Manipulating Spatial Data</h2>
 <p>As mentiond above, one of the key advantages of working with spatial data in {sf} format is that we can use tidyverse functions to manipulate our data. Let’s show this in action by creating a new variable.</p>
 <p>The variable “lad19cd” has a unique code for each local authority. All codes begin with a letter, followed by a numeric series. The letter refers to the country (“E” for England, “W” for Wales, “S” for Scotland, and “N” for Northern Ireland). We can use this to create a new variable called “country” for each feature.</p>
 <p><em>Manipulating {sf} data with dplyr</em></p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="spatial.html#cb227-1"></a>LAs &lt;-<span class="st"> </span>LAs <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">country =</span> dplyr<span class="op">::</span><span class="kw">case_when</span>(stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;W&quot;</span>) <span class="op">~</span><span class="st"> &quot;Wales&quot;</span>,</span>
-<span id="cb227-2"><a href="spatial.html#cb227-2"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;S&quot;</span>) <span class="op">~</span><span class="st"> &quot;Scotland&quot;</span>,</span>
-<span id="cb227-3"><a href="spatial.html#cb227-3"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;N&quot;</span>) <span class="op">~</span><span class="st"> &quot;Northern Ireland&quot;</span>,</span>
-<span id="cb227-4"><a href="spatial.html#cb227-4"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;E&quot;</span>) <span class="op">~</span><span class="st"> &quot;England&quot;</span>))</span>
-<span id="cb227-5"><a href="spatial.html#cb227-5"></a></span>
-<span id="cb227-6"><a href="spatial.html#cb227-6"></a>LAs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(country) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="spatial.html#cb228-1"></a>LAs &lt;-<span class="st"> </span>LAs <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">country =</span> dplyr<span class="op">::</span><span class="kw">case_when</span>(stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;W&quot;</span>) <span class="op">~</span><span class="st"> &quot;Wales&quot;</span>,</span>
+<span id="cb228-2"><a href="spatial.html#cb228-2"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;S&quot;</span>) <span class="op">~</span><span class="st"> &quot;Scotland&quot;</span>,</span>
+<span id="cb228-3"><a href="spatial.html#cb228-3"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;N&quot;</span>) <span class="op">~</span><span class="st"> &quot;Northern Ireland&quot;</span>,</span>
+<span id="cb228-4"><a href="spatial.html#cb228-4"></a>                             stringr<span class="op">::</span><span class="kw">str_detect</span>(lad19cd, <span class="st">&quot;E&quot;</span>) <span class="op">~</span><span class="st"> &quot;England&quot;</span>))</span>
+<span id="cb228-5"><a href="spatial.html#cb228-5"></a></span>
+<span id="cb228-6"><a href="spatial.html#cb228-6"></a>LAs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(country) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
 <div class="kable-table">
 
 <table>
@@ -484,63 +489,63 @@ Wales
 <p>As we can see, we’ve manipulated our data in exactly the same way as we would have with a flat dataframe.We can also join spatial and non-spatial data together in the same way we normally would with dataframes.
 Let’s take some population data and join it to our Local Authorities.</p>
 <p><em>Joining Spatial and non-spatial data</em></p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="spatial.html#cb228-1"></a><span class="kw">summary</span>(LAs_pop)</span>
-<span id="cb228-2"><a href="spatial.html#cb228-2"></a><span class="co">#&gt;    lad19cd            population      </span></span>
-<span id="cb228-3"><a href="spatial.html#cb228-3"></a><span class="co">#&gt;  Length:437         Min.   :    2242  </span></span>
-<span id="cb228-4"><a href="spatial.html#cb228-4"></a><span class="co">#&gt;  Class :character   1st Qu.:  104503  </span></span>
-<span id="cb228-5"><a href="spatial.html#cb228-5"></a><span class="co">#&gt;  Mode  :character   Median :  147997  </span></span>
-<span id="cb228-6"><a href="spatial.html#cb228-6"></a><span class="co">#&gt;                     Mean   :  960204  </span></span>
-<span id="cb228-7"><a href="spatial.html#cb228-7"></a><span class="co">#&gt;                     3rd Qu.:  276374  </span></span>
-<span id="cb228-8"><a href="spatial.html#cb228-8"></a><span class="co">#&gt;                     Max.   :66435550  </span></span>
-<span id="cb228-9"><a href="spatial.html#cb228-9"></a><span class="co">#&gt;                     NA&#39;s   :7</span></span></code></pre></div>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="spatial.html#cb229-1"></a><span class="kw">summary</span>(LAs_pop)</span>
+<span id="cb229-2"><a href="spatial.html#cb229-2"></a><span class="co">#&gt;    lad19cd            population      </span></span>
+<span id="cb229-3"><a href="spatial.html#cb229-3"></a><span class="co">#&gt;  Length:437         Min.   :    2242  </span></span>
+<span id="cb229-4"><a href="spatial.html#cb229-4"></a><span class="co">#&gt;  Class :character   1st Qu.:  104503  </span></span>
+<span id="cb229-5"><a href="spatial.html#cb229-5"></a><span class="co">#&gt;  Mode  :character   Median :  147997  </span></span>
+<span id="cb229-6"><a href="spatial.html#cb229-6"></a><span class="co">#&gt;                     Mean   :  960204  </span></span>
+<span id="cb229-7"><a href="spatial.html#cb229-7"></a><span class="co">#&gt;                     3rd Qu.:  276374  </span></span>
+<span id="cb229-8"><a href="spatial.html#cb229-8"></a><span class="co">#&gt;                     Max.   :66435550  </span></span>
+<span id="cb229-9"><a href="spatial.html#cb229-9"></a><span class="co">#&gt;                     NA&#39;s   :7</span></span></code></pre></div>
 <p>This dataframe of local authority populations has 2 variables, local authority code (lad19cd) and population. We can use a {dplyr} <strong>left_join</strong> to join this to our {sf} dataframe as we would with a flat dataframe.</p>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="spatial.html#cb229-1"></a>LAs &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(LAs, LAs_pop, <span class="dt">by =</span> <span class="st">&quot;lad19cd&quot;</span>)</span>
-<span id="cb229-2"><a href="spatial.html#cb229-2"></a></span>
-<span id="cb229-3"><a href="spatial.html#cb229-3"></a>LAs<span class="op">$</span>population &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(LAs<span class="op">$</span>population)</span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="spatial.html#cb230-1"></a>LAs &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(LAs, LAs_pop, <span class="dt">by =</span> <span class="st">&quot;lad19cd&quot;</span>)</span>
+<span id="cb230-2"><a href="spatial.html#cb230-2"></a></span>
+<span id="cb230-3"><a href="spatial.html#cb230-3"></a>LAs<span class="op">$</span>population &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(LAs<span class="op">$</span>population)</span></code></pre></div>
 </div>
 <div id="spatial-analysis---joins" class="section level2">
 <h2><span class="header-section-number">9.6</span> Spatial Analysis - Joins</h2>
 <p>A common task we might want to conduct is to manipulated a spatial object based on a relationship with another spatial object. To do this, we will use the <strong>st_join</strong> function from the {sf} package. The <strong>st_join</strong> allows us to join data on a number of different relationships, the simplest of which examines whether an object intersects another object - i.e. if there is any point where the geometries of both objects are identical. This could be where two lines cross, where two different spatial points objects have the same gemoetry, or it could be a point falling within the bounds of a polygon.</p>
 <p>Let’s look at some data representing the coordinates of road traffic accidents in Great Britain.</p>
 <p><em>Read in csv</em></p>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="spatial.html#cb230-1"></a><span class="kw">class</span>(crash_data)</span>
-<span id="cb230-2"><a href="spatial.html#cb230-2"></a><span class="co">#&gt; [1] &quot;data.frame&quot;</span></span>
-<span id="cb230-3"><a href="spatial.html#cb230-3"></a><span class="kw">names</span>(crash_data)</span>
-<span id="cb230-4"><a href="spatial.html#cb230-4"></a><span class="co">#&gt; [1] &quot;Location_Easting_OSGR&quot;  &quot;Location_Northing_OSGR&quot; &quot;Date&quot;                  </span></span>
-<span id="cb230-5"><a href="spatial.html#cb230-5"></a><span class="co">#&gt; [4] &quot;Number_of_Casualties&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="spatial.html#cb231-1"></a><span class="kw">class</span>(crash_data)</span>
+<span id="cb231-2"><a href="spatial.html#cb231-2"></a><span class="co">#&gt; [1] &quot;data.frame&quot;</span></span>
+<span id="cb231-3"><a href="spatial.html#cb231-3"></a><span class="kw">names</span>(crash_data)</span>
+<span id="cb231-4"><a href="spatial.html#cb231-4"></a><span class="co">#&gt; [1] &quot;Location_Easting_OSGR&quot;  &quot;Location_Northing_OSGR&quot; &quot;Date&quot;                  </span></span>
+<span id="cb231-5"><a href="spatial.html#cb231-5"></a><span class="co">#&gt; [4] &quot;Number_of_Casualties&quot;</span></span></code></pre></div>
 <p>Our crash data is in a flat csv format, BUT it has variables representing the easting and northing of where each acccident took place. We can use this to turn our crash data into an sf object with the function <strong>st_as_sf</strong>. We take our dataset, define which variables R should use to define coordinates in the “coords” argument, and define the “crs” that those coordinates are plotted in.</p>
 <p><em>Transforming flat data frames to spatial data</em></p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="spatial.html#cb231-1"></a>crashes &lt;-<span class="st"> </span>crash_data <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(Location_Easting_OSGR) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(Location_Northing_OSGR)) <span class="op">%&gt;%</span></span>
-<span id="cb231-2"><a href="spatial.html#cb231-2"></a>sf<span class="op">::</span><span class="kw">st_as_sf</span>(<span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;Location_Easting_OSGR&quot;</span>,<span class="st">&quot;Location_Northing_OSGR&quot;</span>), <span class="dt">crs =</span> <span class="dv">27700</span>)</span>
-<span id="cb231-3"><a href="spatial.html#cb231-3"></a></span>
-<span id="cb231-4"><a href="spatial.html#cb231-4"></a>sf<span class="op">::</span><span class="kw">st_geometry</span>(crashes)</span>
-<span id="cb231-5"><a href="spatial.html#cb231-5"></a><span class="co">#&gt; Geometry set for 122580 features </span></span>
-<span id="cb231-6"><a href="spatial.html#cb231-6"></a><span class="co">#&gt; geometry type:  POINT</span></span>
-<span id="cb231-7"><a href="spatial.html#cb231-7"></a><span class="co">#&gt; dimension:      XY</span></span>
-<span id="cb231-8"><a href="spatial.html#cb231-8"></a><span class="co">#&gt; bbox:           xmin: 84654 ymin: 10235 xmax: 655275 ymax: 1209512</span></span>
-<span id="cb231-9"><a href="spatial.html#cb231-9"></a><span class="co">#&gt; CRS:            EPSG:27700</span></span>
-<span id="cb231-10"><a href="spatial.html#cb231-10"></a><span class="co">#&gt; First 5 geometries:</span></span>
-<span id="cb231-11"><a href="spatial.html#cb231-11"></a><span class="co">#&gt; POINT (529150 182270)</span></span>
-<span id="cb231-12"><a href="spatial.html#cb231-12"></a><span class="co">#&gt; POINT (542020 184290)</span></span>
-<span id="cb231-13"><a href="spatial.html#cb231-13"></a><span class="co">#&gt; POINT (531720 182910)</span></span>
-<span id="cb231-14"><a href="spatial.html#cb231-14"></a><span class="co">#&gt; POINT (541450 183220)</span></span>
-<span id="cb231-15"><a href="spatial.html#cb231-15"></a><span class="co">#&gt; POINT (543580 176500)</span></span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="spatial.html#cb232-1"></a>crashes &lt;-<span class="st"> </span>crash_data <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(Location_Easting_OSGR) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(Location_Northing_OSGR)) <span class="op">%&gt;%</span></span>
+<span id="cb232-2"><a href="spatial.html#cb232-2"></a>sf<span class="op">::</span><span class="kw">st_as_sf</span>(<span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;Location_Easting_OSGR&quot;</span>,<span class="st">&quot;Location_Northing_OSGR&quot;</span>), <span class="dt">crs =</span> <span class="dv">27700</span>)</span>
+<span id="cb232-3"><a href="spatial.html#cb232-3"></a></span>
+<span id="cb232-4"><a href="spatial.html#cb232-4"></a>sf<span class="op">::</span><span class="kw">st_geometry</span>(crashes)</span>
+<span id="cb232-5"><a href="spatial.html#cb232-5"></a><span class="co">#&gt; Geometry set for 122580 features </span></span>
+<span id="cb232-6"><a href="spatial.html#cb232-6"></a><span class="co">#&gt; geometry type:  POINT</span></span>
+<span id="cb232-7"><a href="spatial.html#cb232-7"></a><span class="co">#&gt; dimension:      XY</span></span>
+<span id="cb232-8"><a href="spatial.html#cb232-8"></a><span class="co">#&gt; bbox:           xmin: 84654 ymin: 10235 xmax: 655275 ymax: 1209512</span></span>
+<span id="cb232-9"><a href="spatial.html#cb232-9"></a><span class="co">#&gt; CRS:            EPSG:27700</span></span>
+<span id="cb232-10"><a href="spatial.html#cb232-10"></a><span class="co">#&gt; First 5 geometries:</span></span>
+<span id="cb232-11"><a href="spatial.html#cb232-11"></a><span class="co">#&gt; POINT (529150 182270)</span></span>
+<span id="cb232-12"><a href="spatial.html#cb232-12"></a><span class="co">#&gt; POINT (542020 184290)</span></span>
+<span id="cb232-13"><a href="spatial.html#cb232-13"></a><span class="co">#&gt; POINT (531720 182910)</span></span>
+<span id="cb232-14"><a href="spatial.html#cb232-14"></a><span class="co">#&gt; POINT (541450 183220)</span></span>
+<span id="cb232-15"><a href="spatial.html#cb232-15"></a><span class="co">#&gt; POINT (543580 176500)</span></span></code></pre></div>
 <p>The crashes sf dataframe holds information on all reported road traffic accidents in the UK since 2005. It has a number of variables for each accident, such as the accident severity, number of vehicles, number of casualties, time of day, and road and weather conditions.</p>
 <p>Let’s have a look at the most severe accidents (accidents with 5 or more casualties).</p>
 <p><em>Quick map of spatial data</em></p>
-<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="spatial.html#cb232-1"></a>crashes <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Number_of_Casualties <span class="op">&gt;=</span><span class="st"> </span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>tmap<span class="op">::</span><span class="kw">qtm</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="spatial.html#cb233-1"></a>crashes <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Number_of_Casualties <span class="op">&gt;=</span><span class="st"> </span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>tmap<span class="op">::</span><span class="kw">qtm</span>()</span></code></pre></div>
 <p><img src="image/crashesq.png" /></p>
 <p>The <strong>qtm</strong> function is a useful function from {tmap} that let’s us quickly create maps with a minimum number of arguments. This is often useful for sense-checking data and can help you spot errors in data manipulation when working with spatial data. Here, for example, we can see that our data largely makes sense, so our conversion to {sf} was likely correct. We can (roughly) make out the shape of Great Britain, and we see some clusters around major cities (London, Birmingham, Manchester etc.). We can also see that we don’t appear to have data for Northern Ireland in this dataset (either that or Northern Irish drivers are much safer drivers).</p>
 <p>Let’s see can we work out which Local Authority has had the most road traffic casualties in this period.
 We can use a <strong>spatial join</strong> to assign a local authority to each road traffic accident. This works similarly to a {dplyr} left_join, with all of the variables from the <strong>y</strong> table being added to each observation of the <strong>x</strong> table which match eachother by a defined variable. The difference here is that the two tables are joined based on a shared <strong>geometry</strong>, rather than a shared value of a variable. The shared geometry here being whether a point intersects with a polygon (in other words, whether the point falls within a polygon).</p>
 <p><em>Joining spatial data</em></p>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="spatial.html#cb233-1"></a>crashes_join &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_join</span>(crashes, LAs, <span class="dt">join =</span> st_intersects) <span class="co"># essentially a left_join of LAs to crashes</span></span>
-<span id="cb233-2"><a href="spatial.html#cb233-2"></a>crashes_join<span class="op">$</span>LA_name &lt;-<span class="st"> </span><span class="kw">as.character</span>(crashes_join<span class="op">$</span>LA_name)</span>
-<span id="cb233-3"><a href="spatial.html#cb233-3"></a></span>
-<span id="cb233-4"><a href="spatial.html#cb233-4"></a>LAs_casualties &lt;-<span class="st"> </span>crashes_join <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(LA_name) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(<span class="dt">casualties =</span> <span class="kw">sum</span>(Number_of_Casualties)) <span class="co"># making an sf data frame called LAs_casualties which is the result of a simple group_by and summarise.</span></span>
-<span id="cb233-5"><a href="spatial.html#cb233-5"></a><span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span></span>
-<span id="cb233-6"><a href="spatial.html#cb233-6"></a></span>
-<span id="cb233-7"><a href="spatial.html#cb233-7"></a>LAs_casualties <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(<span class="kw">desc</span>(casualties)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(LA_name, casualties) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="spatial.html#cb234-1"></a>crashes_join &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw">st_join</span>(crashes, LAs, <span class="dt">join =</span> st_intersects) <span class="co"># essentially a left_join of LAs to crashes</span></span>
+<span id="cb234-2"><a href="spatial.html#cb234-2"></a>crashes_join<span class="op">$</span>LA_name &lt;-<span class="st"> </span><span class="kw">as.character</span>(crashes_join<span class="op">$</span>LA_name)</span>
+<span id="cb234-3"><a href="spatial.html#cb234-3"></a></span>
+<span id="cb234-4"><a href="spatial.html#cb234-4"></a>LAs_casualties &lt;-<span class="st"> </span>crashes_join <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(LA_name) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(<span class="dt">casualties =</span> <span class="kw">sum</span>(Number_of_Casualties)) <span class="co"># making an sf data frame called LAs_casualties which is the result of a simple group_by and summarise.</span></span>
+<span id="cb234-5"><a href="spatial.html#cb234-5"></a><span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span></span>
+<span id="cb234-6"><a href="spatial.html#cb234-6"></a></span>
+<span id="cb234-7"><a href="spatial.html#cb234-7"></a>LAs_casualties <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(<span class="kw">desc</span>(casualties)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(LA_name, casualties) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span></code></pre></div>
 <div class="kable-table">
 
 <table>
@@ -608,9 +613,9 @@ NA
 </div>
 <p>We can see that Birmingham has had more casualties in this period than any other local authority.</p>
 <p>The <em>LAs_casualties</em> dataset that we created above has the same local authorities names as our original <em>LAs</em> sf dataframe, meaning we can easily left_join this table to our original LAs_shapefile. But first, we will turn it into a flat dataframe (ie, with no geographic information) with the <strong>st_set_geometry</strong> function. If we did not get rid of the geometry before left_joining, we would create a “geometry_collection” object for each local authority, which would be a mess of polygons and points within those polygons for each feature. This is because our <strong>group_by</strong> function above also grouped together the geometries of the observations it was grouping together. If we look at the outout above, we can see that the geometry type of LAs_casualties is “MULTIPOINT”, so the “Birmingham” observation has 3,532 points representing where each road accident happened, rather than outlining the polygon of Birmingham in any meaningful way.</p>
-<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="spatial.html#cb234-1"></a>LAs_casualties &lt;-<span class="st"> </span>LAs_casualties <span class="op">%&gt;%</span><span class="st"> </span>sf<span class="op">::</span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>)</span>
-<span id="cb234-2"><a href="spatial.html#cb234-2"></a></span>
-<span id="cb234-3"><a href="spatial.html#cb234-3"></a>LAs &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(LAs, LAs_casualties, <span class="dt">by =</span> <span class="st">&quot;LA_name&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="spatial.html#cb235-1"></a>LAs_casualties &lt;-<span class="st"> </span>LAs_casualties <span class="op">%&gt;%</span><span class="st"> </span>sf<span class="op">::</span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>)</span>
+<span id="cb235-2"><a href="spatial.html#cb235-2"></a></span>
+<span id="cb235-3"><a href="spatial.html#cb235-3"></a>LAs &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(LAs, LAs_casualties, <span class="dt">by =</span> <span class="st">&quot;LA_name&quot;</span>)</span></code></pre></div>
 <p>We now have our casualties data joined to our original local authorities shapefile. We can now use this to make graphical representations of our data.</p>
 </div>
 <div id="plotting-and-simplifying" class="section level2">
@@ -620,7 +625,7 @@ NA
 <p>We can see that our polygon is quite detailed. While this detail is desirable for when we conduct our spatial analysis, if we want to plot all of our local authorities at the same time, it can be better to plot simplified polygons. This is for 3 reasons. First, simplification means that R can create and output plots quicker; Second, outputs will have a smaller file size (particularly useful for interactive plots or when we share our outputs); and third, sometimes simplified polygons actually look better in plots as too-detailed borders can come out looking murky due to over-plotting, particularly in static plots.</p>
 <p>To alleviate this, we can simplify our geometry features before plotting. For this, we will use the function <strong>ms_simplify</strong> from the package {rmapshaper}. This function simplifies spatial data while maintaining key topology. Simplifying functions in other packages can do funny things such leave gaps between polygons with internal borders when simplifying. <strong>ms_simplify</strong> doesn’t do this.</p>
 <p><em>Simplifying Spatial Data</em></p>
-<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="spatial.html#cb235-1"></a>LAs_simp &lt;-<span class="st"> </span>rmapshaper<span class="op">::</span><span class="kw">ms_simplify</span>(LAs, <span class="dt">keep =</span> <span class="fl">0.05</span>, <span class="dt">keep_shapes =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="spatial.html#cb236-1"></a>LAs_simp &lt;-<span class="st"> </span>rmapshaper<span class="op">::</span><span class="kw">ms_simplify</span>(LAs, <span class="dt">keep =</span> <span class="fl">0.05</span>, <span class="dt">keep_shapes =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>This command creates a new sf data frame called “LAs_simp”, which has all the same information as the original LAs sf dataframe, but has a simplified geometry with fewer points. The “keep” argument specifies how much geographic information we want to hold onto. Here we only keep 5% of the original points. The “keep_shapes” argument specifies whether or not we want to allow the function to delete some features entirely for simplification purposes. This can be useful for polygons with lots of small islands as individual entries (where you are indifferent to whether or not you keep all islands in your dataset), BUT use with caution, as if you simplify too much R might delete entire features (observations) to fulfill the simplification. Here we set “keep_shapes = TRUE”" so we don’t lose any features.</p>
 <p>Let’s have a look at the difference between our original and our simplified polygon:</p>
 <p><img src="image/CornwallCompare.png" /></p>
@@ -638,55 +643,55 @@ NA
 <p>Similar to using {ggplot2}, the first layer of a tmap defines the spatial object that we wish to plot in the function <strong>tm_shape</strong>. We then add (+) an aesthetic element based on this spatial object Most often this aesthetic element will be one of type <strong>tm_polygons</strong>, <strong>tm_line</strong>, or <strong>tm_dots</strong>, depending on the spatial data type.</p>
 <p>Let’s see this in action, and map our local authorities based on how many road traffic casualties there were in each.</p>
 <p><em>Create static map in tmap</em></p>
-<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="spatial.html#cb236-1"></a>LAs &lt;-<span class="st"> </span>rmapshaper<span class="op">::</span><span class="kw">ms_simplify</span>(LAs, <span class="dt">keep =</span> <span class="fl">0.05</span>, <span class="dt">keep_shapes =</span> <span class="ot">TRUE</span>) <span class="co"># Simplifying polygons. Remember to only do this after you&#39;ve finished your spatial analysis, or to save the simplified version as a different name.</span></span>
-<span id="cb236-2"><a href="spatial.html#cb236-2"></a></span>
-<span id="cb236-3"><a href="spatial.html#cb236-3"></a>tmap<span class="op">::</span><span class="kw">tm_shape</span>(LAs) <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
-<span id="cb236-4"><a href="spatial.html#cb236-4"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks</span></span>
-<span id="cb236-5"><a href="spatial.html#cb236-5"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
-<span id="cb236-6"><a href="spatial.html#cb236-6"></a>             <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
-<span id="cb236-7"><a href="spatial.html#cb236-7"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span> <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
-<span id="cb236-8"><a href="spatial.html#cb236-8"></a>              ) <span class="op">+</span></span>
-<span id="cb236-9"><a href="spatial.html#cb236-9"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
-<span id="cb236-10"><a href="spatial.html#cb236-10"></a>           <span class="dt">lwd =</span> <span class="fl">0.3</span> <span class="co"># setting border width</span></span>
-<span id="cb236-11"><a href="spatial.html#cb236-11"></a>  ) <span class="op">+</span></span>
-<span id="cb236-12"><a href="spatial.html#cb236-12"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
-<span id="cb236-13"><a href="spatial.html#cb236-13"></a>            )</span></code></pre></div>
-<p><img src="image/static1.png" /></p>
-<p>One problem with this plot is that we still have Northern Ireland in the plot, and we only have NAs for northern Ireland (as our casualties dataset didn’t have accidents which happened there). To fix this, we can utilise a simple {dplyr} filter to remove features which have an <em>NA</em> value for casualties. We can then pipe a filtered sf dataframe into the <strong>tm_shape</strong> function.</p>
-<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="spatial.html#cb237-1"></a>LAs <span class="op">%&gt;%</span></span>
-<span id="cb237-2"><a href="spatial.html#cb237-2"></a><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
-<span id="cb237-3"><a href="spatial.html#cb237-3"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
-<span id="cb237-4"><a href="spatial.html#cb237-4"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks</span></span>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="spatial.html#cb237-1"></a>LAs &lt;-<span class="st"> </span>rmapshaper<span class="op">::</span><span class="kw">ms_simplify</span>(LAs, <span class="dt">keep =</span> <span class="fl">0.05</span>, <span class="dt">keep_shapes =</span> <span class="ot">TRUE</span>) <span class="co"># Simplifying polygons. Remember to only do this after you&#39;ve finished your spatial analysis, or to save the simplified version as a different name.</span></span>
+<span id="cb237-2"><a href="spatial.html#cb237-2"></a></span>
+<span id="cb237-3"><a href="spatial.html#cb237-3"></a>tmap<span class="op">::</span><span class="kw">tm_shape</span>(LAs) <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
+<span id="cb237-4"><a href="spatial.html#cb237-4"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks</span></span>
 <span id="cb237-5"><a href="spatial.html#cb237-5"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
-<span id="cb237-6"><a href="spatial.html#cb237-6"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
+<span id="cb237-6"><a href="spatial.html#cb237-6"></a>             <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
 <span id="cb237-7"><a href="spatial.html#cb237-7"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span> <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
-<span id="cb237-8"><a href="spatial.html#cb237-8"></a>             ) <span class="op">+</span></span>
-<span id="cb237-9"><a href="spatial.html#cb237-9"></a><span class="st">  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
+<span id="cb237-8"><a href="spatial.html#cb237-8"></a>              ) <span class="op">+</span></span>
+<span id="cb237-9"><a href="spatial.html#cb237-9"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
 <span id="cb237-10"><a href="spatial.html#cb237-10"></a>           <span class="dt">lwd =</span> <span class="fl">0.3</span> <span class="co"># setting border width</span></span>
 <span id="cb237-11"><a href="spatial.html#cb237-11"></a>  ) <span class="op">+</span></span>
-<span id="cb237-12"><a href="spatial.html#cb237-12"></a><span class="st">  </span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
-<span id="cb237-13"><a href="spatial.html#cb237-13"></a>           )</span></code></pre></div>
+<span id="cb237-12"><a href="spatial.html#cb237-12"></a><span class="st">  </span>tmap<span class="op">::</span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
+<span id="cb237-13"><a href="spatial.html#cb237-13"></a>            )</span></code></pre></div>
+<p><img src="image/static1.png" /></p>
+<p>One problem with this plot is that we still have Northern Ireland in the plot, and we only have NAs for northern Ireland (as our casualties dataset didn’t have accidents which happened there). To fix this, we can utilise a simple {dplyr} filter to remove features which have an <em>NA</em> value for casualties. We can then pipe a filtered sf dataframe into the <strong>tm_shape</strong> function.</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="spatial.html#cb238-1"></a>LAs <span class="op">%&gt;%</span></span>
+<span id="cb238-2"><a href="spatial.html#cb238-2"></a><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
+<span id="cb238-3"><a href="spatial.html#cb238-3"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
+<span id="cb238-4"><a href="spatial.html#cb238-4"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks</span></span>
+<span id="cb238-5"><a href="spatial.html#cb238-5"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
+<span id="cb238-6"><a href="spatial.html#cb238-6"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
+<span id="cb238-7"><a href="spatial.html#cb238-7"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span> <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
+<span id="cb238-8"><a href="spatial.html#cb238-8"></a>             ) <span class="op">+</span></span>
+<span id="cb238-9"><a href="spatial.html#cb238-9"></a><span class="st">  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
+<span id="cb238-10"><a href="spatial.html#cb238-10"></a>           <span class="dt">lwd =</span> <span class="fl">0.3</span> <span class="co"># setting border width</span></span>
+<span id="cb238-11"><a href="spatial.html#cb238-11"></a>  ) <span class="op">+</span></span>
+<span id="cb238-12"><a href="spatial.html#cb238-12"></a><span class="st">  </span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
+<span id="cb238-13"><a href="spatial.html#cb238-13"></a>           )</span></code></pre></div>
 <p><img src="image/static2.png" /></p>
 <p>Though this plot is useful, and gives us a sense of the distribution of accidents, it’s difficult to make out values of smaller local authorities. What would make this easier is if we changed our map to an interactive map. We can do this very easily, using the same chunk of code, by simply setting the <strong>tmap_mode</strong> to “view”.</p>
 <p><em>Create interactive map in tmap</em></p>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="spatial.html#cb238-1"></a><span class="kw">tmap_mode</span>(<span class="st">&quot;view&quot;</span>)</span>
-<span id="cb238-2"><a href="spatial.html#cb238-2"></a></span>
-<span id="cb238-3"><a href="spatial.html#cb238-3"></a>LAs <span class="op">%&gt;%</span></span>
-<span id="cb238-4"><a href="spatial.html#cb238-4"></a><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
-<span id="cb238-5"><a href="spatial.html#cb238-5"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
-<span id="cb238-6"><a href="spatial.html#cb238-6"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
-<span id="cb238-7"><a href="spatial.html#cb238-7"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
-<span id="cb238-8"><a href="spatial.html#cb238-8"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
-<span id="cb238-9"><a href="spatial.html#cb238-9"></a>             <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span> <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
-<span id="cb238-10"><a href="spatial.html#cb238-10"></a>              ) <span class="op">+</span></span>
-<span id="cb238-11"><a href="spatial.html#cb238-11"></a><span class="st"> </span>LAs <span class="op">%&gt;%</span></span>
-<span id="cb238-12"><a href="spatial.html#cb238-12"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
-<span id="cb238-13"><a href="spatial.html#cb238-13"></a><span class="kw">tm_shape</span>() <span class="op">+</span></span>
-<span id="cb238-14"><a href="spatial.html#cb238-14"></a><span class="st">  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
-<span id="cb238-15"><a href="spatial.html#cb238-15"></a>            <span class="dt">lwd =</span> <span class="fl">0.3</span> <span class="co"># setting border width</span></span>
-<span id="cb238-16"><a href="spatial.html#cb238-16"></a>  ) <span class="op">+</span></span>
-<span id="cb238-17"><a href="spatial.html#cb238-17"></a><span class="st">  </span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
-<span id="cb238-18"><a href="spatial.html#cb238-18"></a>            )</span></code></pre></div>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="spatial.html#cb239-1"></a><span class="kw">tmap_mode</span>(<span class="st">&quot;view&quot;</span>)</span>
+<span id="cb239-2"><a href="spatial.html#cb239-2"></a></span>
+<span id="cb239-3"><a href="spatial.html#cb239-3"></a>LAs <span class="op">%&gt;%</span></span>
+<span id="cb239-4"><a href="spatial.html#cb239-4"></a><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
+<span id="cb239-5"><a href="spatial.html#cb239-5"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
+<span id="cb239-6"><a href="spatial.html#cb239-6"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
+<span id="cb239-7"><a href="spatial.html#cb239-7"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
+<span id="cb239-8"><a href="spatial.html#cb239-8"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
+<span id="cb239-9"><a href="spatial.html#cb239-9"></a>             <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span> <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
+<span id="cb239-10"><a href="spatial.html#cb239-10"></a>              ) <span class="op">+</span></span>
+<span id="cb239-11"><a href="spatial.html#cb239-11"></a><span class="st"> </span>LAs <span class="op">%&gt;%</span></span>
+<span id="cb239-12"><a href="spatial.html#cb239-12"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
+<span id="cb239-13"><a href="spatial.html#cb239-13"></a><span class="kw">tm_shape</span>() <span class="op">+</span></span>
+<span id="cb239-14"><a href="spatial.html#cb239-14"></a><span class="st">  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;#000000&quot;</span>, <span class="co"># defining polygon border as black</span></span>
+<span id="cb239-15"><a href="spatial.html#cb239-15"></a>            <span class="dt">lwd =</span> <span class="fl">0.3</span> <span class="co"># setting border width</span></span>
+<span id="cb239-16"><a href="spatial.html#cb239-16"></a>  ) <span class="op">+</span></span>
+<span id="cb239-17"><a href="spatial.html#cb239-17"></a><span class="st">  </span><span class="kw">tm_layout</span>(<span class="dt">legend.outside =</span> <span class="ot">TRUE</span> <span class="co"># putting the legend outside the plot rather than inside</span></span>
+<span id="cb239-18"><a href="spatial.html#cb239-18"></a>            )</span></code></pre></div>
 <iframe src="image/interactive1.html" width="672" height="400px">
 </iframe>
 <p>It’s worth noting that some arguments in {tmap} are only availble in static plots, and some only available in interactive maps. However, R will just skip the arguments that don’t apply, so it wont break your code to leave them in. Here, the “legend.outside” argument is meaningless in an interactive plot, so is skipped by R when creating this interactive plot.</p>
@@ -694,42 +699,42 @@ NA
 <p>We can also make the map look a bit nicer by increasing the transparency of the polygons with the “alpha” argument.</p>
 <p>Finally we can pick from any number of basemaps. {tmap} leverages the {leaflet} package for basemaps, and you can find a list of available basemaps <a href="https://leaflet-extras.github.io/leaflet-providers/preview/">here</a>.</p>
 <p><em>Improving Interactive Map</em></p>
-<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="spatial.html#cb239-1"></a></span>
-<span id="cb239-2"><a href="spatial.html#cb239-2"></a><span class="kw">tm_basemap</span>(<span class="dt">server =</span> <span class="st">&quot;CartoDB.Positron&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># defining basemap</span></span>
-<span id="cb239-3"><a href="spatial.html#cb239-3"></a>LAs <span class="op">%&gt;%</span></span>
-<span id="cb239-4"><a href="spatial.html#cb239-4"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
-<span id="cb239-5"><a href="spatial.html#cb239-5"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
-<span id="cb239-6"><a href="spatial.html#cb239-6"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
-<span id="cb239-7"><a href="spatial.html#cb239-7"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
-<span id="cb239-8"><a href="spatial.html#cb239-8"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
-<span id="cb239-9"><a href="spatial.html#cb239-9"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span>, <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
-<span id="cb239-10"><a href="spatial.html#cb239-10"></a>              <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="co"># setting transparency</span></span>
-<span id="cb239-11"><a href="spatial.html#cb239-11"></a>             <span class="dt">popup.vars =</span> <span class="kw">c</span>(<span class="st">&quot;Local Authority&quot;</span> =<span class="st"> &quot;lad19nm&quot;</span>, <span class="st">&quot;casualties&quot;</span>), <span class="co"># setting variables to be seen on click</span></span>
-<span id="cb239-12"><a href="spatial.html#cb239-12"></a>              <span class="dt">id =</span> <span class="st">&quot;lad19nm&quot;</span> <span class="co"># Setting a variable to display when hovered over</span></span>
-<span id="cb239-13"><a href="spatial.html#cb239-13"></a>              ) </span></code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="spatial.html#cb240-1"></a></span>
+<span id="cb240-2"><a href="spatial.html#cb240-2"></a><span class="kw">tm_basemap</span>(<span class="dt">server =</span> <span class="st">&quot;CartoDB.Positron&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># defining basemap</span></span>
+<span id="cb240-3"><a href="spatial.html#cb240-3"></a>LAs <span class="op">%&gt;%</span></span>
+<span id="cb240-4"><a href="spatial.html#cb240-4"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
+<span id="cb240-5"><a href="spatial.html#cb240-5"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
+<span id="cb240-6"><a href="spatial.html#cb240-6"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
+<span id="cb240-7"><a href="spatial.html#cb240-7"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
+<span id="cb240-8"><a href="spatial.html#cb240-8"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
+<span id="cb240-9"><a href="spatial.html#cb240-9"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span>, <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
+<span id="cb240-10"><a href="spatial.html#cb240-10"></a>              <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="co"># setting transparency</span></span>
+<span id="cb240-11"><a href="spatial.html#cb240-11"></a>             <span class="dt">popup.vars =</span> <span class="kw">c</span>(<span class="st">&quot;Local Authority&quot;</span> =<span class="st"> &quot;lad19nm&quot;</span>, <span class="st">&quot;casualties&quot;</span>), <span class="co"># setting variables to be seen on click</span></span>
+<span id="cb240-12"><a href="spatial.html#cb240-12"></a>              <span class="dt">id =</span> <span class="st">&quot;lad19nm&quot;</span> <span class="co"># Setting a variable to display when hovered over</span></span>
+<span id="cb240-13"><a href="spatial.html#cb240-13"></a>              ) </span></code></pre></div>
 <iframe src="image/interactive2.html" width="672" height="400px">
 </iframe>
 <p>There are myriad aesthetic possibilities in {tmap} and related packages. It’s not uncommon for a map to be built first in {tmap}, before exported as {leaflet} map and further edited in the {leaflet} package, though we wont cover that here. It’s also possible to plot more than one spatial object at the same time. For example, layering polygons, points and lines from various shapefiles. Simply define the new spatial object with <strong>tm_shape</strong> and add aesthetics as before.</p>
 <p>Let’s see this in action, adding a layer to our map with the worst car accidents in our dataset (accidents with over 10 casualties).</p>
 <p><em>Mapping multiple spatial objects</em></p>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="spatial.html#cb240-1"></a><span class="kw">tm_basemap</span>(<span class="dt">server =</span> <span class="st">&quot;CartoDB.Positron&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># defining basemap</span></span>
-<span id="cb240-2"><a href="spatial.html#cb240-2"></a>LAs <span class="op">%&gt;%</span></span>
-<span id="cb240-3"><a href="spatial.html#cb240-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
-<span id="cb240-4"><a href="spatial.html#cb240-4"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
-<span id="cb240-5"><a href="spatial.html#cb240-5"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
-<span id="cb240-6"><a href="spatial.html#cb240-6"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
-<span id="cb240-7"><a href="spatial.html#cb240-7"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
-<span id="cb240-8"><a href="spatial.html#cb240-8"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span>, <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
-<span id="cb240-9"><a href="spatial.html#cb240-9"></a>              <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="co"># setting transparency</span></span>
-<span id="cb240-10"><a href="spatial.html#cb240-10"></a>              <span class="dt">popup.vars =</span> <span class="kw">c</span>(<span class="st">&quot;Local Authority&quot;</span> =<span class="st"> &quot;lad19nm&quot;</span>, <span class="st">&quot;casualties&quot;</span>),</span>
-<span id="cb240-11"><a href="spatial.html#cb240-11"></a>              <span class="dt">id =</span> <span class="st">&quot;lad19nm&quot;</span>) <span class="op">+</span></span>
-<span id="cb240-12"><a href="spatial.html#cb240-12"></a>crashes <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Number_of_Casualties <span class="op">==</span><span class="st"> </span><span class="dv">10</span>) <span class="op">%&gt;%</span></span>
-<span id="cb240-13"><a href="spatial.html#cb240-13"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining our second shapefile to use and plot in the same output as above</span></span>
-<span id="cb240-14"><a href="spatial.html#cb240-14"></a><span class="st">  </span><span class="kw">tm_dots</span>(<span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="co"># calling tm_dots on point objects</span></span>
-<span id="cb240-15"><a href="spatial.html#cb240-15"></a>          <span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="co"># making the dots partially transparent</span></span>
-<span id="cb240-16"><a href="spatial.html#cb240-16"></a>          <span class="dt">jitter =</span> <span class="fl">0.05</span>,  <span class="co"># adding a small amount of random jittering to points so overlayed points are visible</span></span>
-<span id="cb240-17"><a href="spatial.html#cb240-17"></a>          <span class="dt">id =</span> <span class="st">&quot;Number_of_Casualties&quot;</span></span>
-<span id="cb240-18"><a href="spatial.html#cb240-18"></a>  ) </span></code></pre></div>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="spatial.html#cb241-1"></a><span class="kw">tm_basemap</span>(<span class="dt">server =</span> <span class="st">&quot;CartoDB.Positron&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># defining basemap</span></span>
+<span id="cb241-2"><a href="spatial.html#cb241-2"></a>LAs <span class="op">%&gt;%</span></span>
+<span id="cb241-3"><a href="spatial.html#cb241-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(casualties)) <span class="op">%&gt;%</span></span>
+<span id="cb241-4"><a href="spatial.html#cb241-4"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining what shapefile to use</span></span>
+<span id="cb241-5"><a href="spatial.html#cb241-5"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;casualties&quot;</span>, <span class="co"># setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks.</span></span>
+<span id="cb241-6"><a href="spatial.html#cb241-6"></a>              <span class="dt">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="co"># the style option lets us define how we want the variable split</span></span>
+<span id="cb241-7"><a href="spatial.html#cb241-7"></a>              <span class="dt">n =</span> <span class="dv">5</span>, <span class="co"># number of quantiles</span></span>
+<span id="cb241-8"><a href="spatial.html#cb241-8"></a>              <span class="dt">pal =</span> <span class="st">&quot;YlGnBu&quot;</span>, <span class="co"># choose from a number of palettes available from rcolorbrewer, or define your own</span></span>
+<span id="cb241-9"><a href="spatial.html#cb241-9"></a>              <span class="dt">alpha =</span> <span class="fl">0.4</span>, <span class="co"># setting transparency</span></span>
+<span id="cb241-10"><a href="spatial.html#cb241-10"></a>              <span class="dt">popup.vars =</span> <span class="kw">c</span>(<span class="st">&quot;Local Authority&quot;</span> =<span class="st"> &quot;lad19nm&quot;</span>, <span class="st">&quot;casualties&quot;</span>),</span>
+<span id="cb241-11"><a href="spatial.html#cb241-11"></a>              <span class="dt">id =</span> <span class="st">&quot;lad19nm&quot;</span>) <span class="op">+</span></span>
+<span id="cb241-12"><a href="spatial.html#cb241-12"></a>crashes <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(Number_of_Casualties <span class="op">==</span><span class="st"> </span><span class="dv">10</span>) <span class="op">%&gt;%</span></span>
+<span id="cb241-13"><a href="spatial.html#cb241-13"></a><span class="kw">tm_shape</span>() <span class="op">+</span><span class="st"> </span><span class="co"># defining our second shapefile to use and plot in the same output as above</span></span>
+<span id="cb241-14"><a href="spatial.html#cb241-14"></a><span class="st">  </span><span class="kw">tm_dots</span>(<span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="co"># calling tm_dots on point objects</span></span>
+<span id="cb241-15"><a href="spatial.html#cb241-15"></a>          <span class="dt">alpha =</span> <span class="fl">0.7</span>, <span class="co"># making the dots partially transparent</span></span>
+<span id="cb241-16"><a href="spatial.html#cb241-16"></a>          <span class="dt">jitter =</span> <span class="fl">0.05</span>,  <span class="co"># adding a small amount of random jittering to points so overlayed points are visible</span></span>
+<span id="cb241-17"><a href="spatial.html#cb241-17"></a>          <span class="dt">id =</span> <span class="st">&quot;Number_of_Casualties&quot;</span></span>
+<span id="cb241-18"><a href="spatial.html#cb241-18"></a>  ) </span></code></pre></div>
 <iframe src="image/interactive3.html" width="672" height="400px">
 </iframe>
 </div>
@@ -739,8 +744,8 @@ NA
 <p>Most similar to the {sf} package is {sp}. sp objects hold the different spatial and non-spatial components of a dataset in different “slots”, creating a hierarchical data structure, where an observation in one slot is linked to an observation in another slot. This works similarly to a relational database in SQL. For example, if our local authorities were in sp format, we would access names of local authorities by calling something like “<a href="mailto:LAs_sp@data$lad19nm" class="email">LAs_sp@data$lad19nm</a>”. The “@” symbol specifies we want the dataframe “slot”, and then we call the variable with the “$” as usual. Other slots in an sp object are the bounding box, the proj4string (a way of defining the projection, essentially a long-form crs), and the spatial data (points, polygons etc.). A drawback of holding data like this is that you have to use base R to manipulate data. {dplyr} will not work with sp objects, making sp objects more cumbersome to work with.</p>
 <p>{sf} was developed to replace {sp}, but as {sf} is a relatively new package, there may be times when you encounter a function you need that only works on an {sp} object. When this happens, we can quickly convert objects back and forth between <em>sf</em> and <em>sp</em> with the following commands:</p>
 <p><em>Converting data from sf to sp objects</em></p>
-<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="spatial.html#cb241-1"></a>object_sp &lt;-<span class="st"> </span><span class="kw">as</span>(object_sf, <span class="dt">class =</span> <span class="st">&quot;SPATIAL&quot;</span>) <span class="co"># sf to sp object</span></span>
-<span id="cb241-2"><a href="spatial.html#cb241-2"></a>object_sf &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(object_sp) <span class="co"># sp to sf object</span></span></code></pre></div>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="spatial.html#cb242-1"></a>object_sp &lt;-<span class="st"> </span><span class="kw">as</span>(object_sf, <span class="dt">class =</span> <span class="st">&quot;SPATIAL&quot;</span>) <span class="co"># sf to sp object</span></span>
+<span id="cb242-2"><a href="spatial.html#cb242-2"></a>object_sf &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(object_sp) <span class="co"># sp to sf object</span></span></code></pre></div>
 <p>Another type of spatial data package to be aware of is the {raster} package. Raster objects are in a gridded data format: they define a rectangle, with a point of origin and an end point, and then define the number of rows and columns to split that rectangle into, making a grid of equal cell sizes. This format spares R from having to plot a polygon for every single grid square. It’s often used for altitude or temperature data, but can be used for a wide range of data (eg emissions, or calculating distance from features of interest across a defined spatial area). Raster objects are held in the {raster} package, though plotting can be done with {tmap}, {leaflet}, and a range of mapping packages.</p>
 </div>
 <div id="further-resources" class="section level2">
