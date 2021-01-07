@@ -58,7 +58,7 @@ Using the function above that takes two inputs I can use `purrr::map2` to iterat
 animal_list = c('cat', 'dog', 'elephant')
 age_list = c(12, 7, 42)
 
-purrr::map2(.x = string_list, .y = number_list, .f = state_animal_age)
+purrr::map2(.x = animal_list, .y = age_list, .f = state_animal_age)
 ```
 
 ## Further reading
