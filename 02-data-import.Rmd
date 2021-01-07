@@ -14,9 +14,18 @@ library(DBI) #database connection
 library(dbplyr) #database connection
 library(haven) #for importing/exporting SPSS, Stata, and SAS files
 library(bigrquery) #connecting to GCP BigQuery
-#library(openxlsx) #formatting xlsx outputs
-#library(xltabr) #MoJ RAP enabler built on openxlsx
 ```
+
+```{r echo=FALSE, eval=FALSE, message=FALSE}
+#libraries in the next code chunk are not needed to run code in this chapter but are listed as useful libraries
+#this message will not appear in the book
+```
+
+```{r eval=FALSE, message=FALSE}
+library(openxlsx) #formatting xlsx outputs
+library(xltabr) #MoJ RAP enabler built on openxlsx
+```
+
 
 ## Star functions
 

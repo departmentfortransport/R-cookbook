@@ -1,5 +1,7 @@
 # Functions {#functions}
 
+This chapter contains the basics of how to write a function, links to more complete instructions, and examples of functions.
+
 ```{r include=FALSE}
 # Every file must contain at least one R chunk due to the linting process.
 ```
@@ -7,8 +9,61 @@
 ## User defined functions (UDFs)
 
 A non-exhaustive list of possible reasons for writing your own UDF,
-- you are repeating some code chunk changing only a few variables each time.
-- you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.
-- tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.
-- easier to update, just update the function rather than edit potentially multiple code chunks.
-- you are writing a package/library
+
+* you are repeating some code chunk changing only a few variables each time.
+* you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.
+* tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.
+* easier to update, just update the function rather than edit potentially multiple code chunks.
+* prevents copy/paste errors
+* you are writing a package/library
+
+## Top tips for writing functions
+
+* name the function something sensible that gives you a clue what it does, usually containing a verb, and making sure that it doesn't conflict with names of other functions in use.
+* write some description of what the function is intended for and the expected outcome, including what it needs to work properly, eg it might take an integer value argument only, and therefore fail if given a double.
+* make your function as independent as possible, use `name_space::function` syntax if it uses functions from other packages so they don't have to be loaded (they will have to be installed though).
+* recommend passing named arguments rather than relying on global variables (again name your arguments clearly).
+* recommend giving arguments default values, this shows an example of the type of variable that is expected here.
+* note that variables assigned inside a function will not appear in the global environment unless explicitly returned.
+* using an explicit return statement is useful if the function is complex, otherwise the output will be the final evaluated expression.
+
+## Function structure
+
+Below is an example of the syntax for defining a function named `state_animal_age`. The list of named arguments are included in brackets `()` with defaults. The function code sits inside braces `{}`, and returns a single string of the concatenated inputs. 
+
+```{r}
+state_animal_age <- function(animal = "animal type", age = 0) {
+  #function takes animal name as a string and current age and pastes them together
+  #output is single string
+  return( paste(animal, age, sep = ': ') )
+}
+
+#run function with defaults
+state_animal_age()
+
+#run function passing inputs to argument names, order doesn't matter
+state_animal_age(age = 2, animal = "potoo")
+
+#run function passing inputs by position, order matters
+state_animal_age("tortoise", 169)
+```
+
+## Function with `purrr` structure
+
+The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use `purrr::map` (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3.6 and below.
+
+Using the function above that takes two inputs I can use `purrr::map2` to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.  
+
+```{r}
+animal_list = c('cat', 'dog', 'elephant')
+age_list = c(12, 7, 42)
+
+purrr::map2(.x = animal_list, .y = age_list, .f = state_animal_age)
+```
+
+## Further reading
+
+[Functions chapter of R for Data Science by Hadley Wickham](https://r4ds.had.co.nz/functions.html)
+
+## Function to create folder structure for R project
+
