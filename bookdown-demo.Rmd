@@ -1,6 +1,6 @@
 --- 
 title: "DfT R Cookbook"
-author: "Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Tim Taylor"
+author: "Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: 
@@ -17,191 +17,2831 @@ description: "Guidance and code examples for R usage for DfT and beyond"
 
 ---
 
+```{r include=FALSE}
+require(dplyr)
+require(knitr)
+
+options(knitr.table.format = "html")
+
+# Load example data for Road Casualties in Great Britain 1969-84
+data(mtcars)
+
+# Look at the data
+mtcars <- tibble::as.tibble(mtcars) %>%
+  # Add rows for dplyr example
+  tibble::rownames_to_column(var = "car")
+```
+
+
 # {-}
 
-Placeholder
+```{r echo=FALSE}
+knitr::include_graphics(path = "image/book_image_short.png")
+```
+
+
+# Why do we need _another_ book?
+
+`R` is a very flexible programming language, which inevitably means there are lots of ways to achieve the same result. This is true of all programming languages, but is particularly exaggerated in `R` which makes use of ['meta-programming'](http://adv-r.had.co.nz/). 
+
+For example, here is how to calculate a new variable using standard R and filter on a variable:
+```{r}
+# Calculate kilometers per litre from miles per gallon
+mtcars$kpl <- mtcars$mpg * 0.425144
+
+# Select cars with a horsepower greater than 250 & show only mpg and kpl columns
+mtcars[mtcars$hp > 250, c("car", "mpg", "kpl")]
+
+```
+
+Here's the same thing using {tidyverse} style R:
+```{r}
+
+mtcars %>%
+  # Calculate kilometers per litre
+  dplyr::mutate(
+    kpl = mpg * 0.425144
+  ) %>%
+  # Filter cars with a horsepower greater than 250
+  dplyr::filter(
+    hp > 250
+  ) %>%
+  # Take only the car, mpg, and newly created kpl columns
+  dplyr::select(car, mpg, kpl)
+```
+
+These coding styles are quite different. As people write more code across the Department, it will become increasingly important that code can be handed over to other R users. It is much easier to pick up code written by others if it uses the same coding style you are familiar with. 
+
+This is the main motivation for this book, to establish a way of coding that represents a sensible default for those who are new to R that is readily transferable across DfT. 
 
 
 ## Coding standards
+
+Related to this, the Data Science team maintain a [coding standards document](https://departmentfortransport.github.io/ds-processes/Coding_standards/r.html), that outlines some best practices when writing R code. This is not prescriptive and goes beyond the scope of this document, but might be useful for managing your R projects. 
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), "bookdown", "knitr", "rmarkdown"
+), "packages.bib")
+```
+
+
 ## Data
+
+The data used in this book is all derived from opensource data. As well as being availble fro the data folder on the github site [here][(https://github.com/departmentfortransport/R-cookbook/tree/master/data) you can also find the larger data sets at the links below.
+
+- [Road Safety Data](https://data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-safety-data)
+- Search and Rescue Helicopter data; SARH0112 record level data download available under **All data** at the bottom of this [webpage](https://www.gov.uk/government/statistical-data-sets/search-and-rescue-helicopter-sarh01).
+- Pokemon data, not sure of original source, but borrowed from Matt Dray [here](https://github.com/matt-dray/beginner-r-feat-pkmn/tree/master/data)
+- Port data; the port data can be downloaded by clicking on the table named [PORT0499](https://www.gov.uk/government/statistical-data-sets/port-and-domestic-waterborne-freight-statistics-port)
+
+
 ## Work in progress
+
+This book is not static - new chapters can be added and current chapters can be amended. Please let us know if you have suggestions by raising an issue [here](https://github.com/departmentfortransport/R-cookbook/issues).
+
+
 
 <!--chapter:end:index.Rmd-->
 
-
 # The basics {#basics}
 
-Placeholder
-
+```{r include=FALSE}
+# Every file must contain at least one R chunk due to the linting process.
+```
 
 ## R family
+
+A few of the common R relations are
+
+- R is the programming language, born in 1997, based on S, [honest](https://en.wikipedia.org/wiki/R_(programming_language)).
+- RStudio is a useful integrated development environment (IDE) that makes it cleaner to write, run and organise R code.
+- Rproj is the file extension for an R project, essentially a working directory marker, shortens file paths, keeps everything relevant to your project together and easy to reference.
+- packages are collections of functions written to make specific tasks easier, eg the {stringr} package contains functions to work with strings. Packages are often referred to as libraries in other programming languages.
+- .R is the file extension for a basic R script in which anything not commented out with `#` is code that is run.
+- .Rmd is the file extension for Rmarkdown an R package useful for producing reports. A .Rmd script is different to a .R script in that the default is text rather than code. Code is placed in code chunks - similar to how a Jupyter Notebook looks.
+
 ## DfT R/RStudio - subject to change
+
+Which version of R/RStudio should I use at DfT? A good question. Currently the 'best' version of R we have available on network is linked to RStudio version 11453. This can be accessed via the Citrix app on the Windows 10 devices, or via Citrix desktop. The local version of RStudio on the Windows 10 devices is currently unusable (user testing is ongoing to change this). There is also a 11423 version of RStudio available which uses slightly older versions of packages.
+
+
 ## RStudio IDE
+
+The RStudio integrated development environment has some very useful features which make writing and organising code a lot easier. It's divided into 3 panes; 
+
+
 ### Left (bottom left if you have scripts open)
+ 
+- this is the **Console** it shows you what code has been run and outputs.
+
 ### Top right; **Environment**, and other tabs
+
+- **Environment** tab shows what objects have been created in the global environment in the current session. 
+- **Connections** tab will show any connections you have set up this session, for example, to an SQL server.
+
 ### Bottom right
+
+- **Files** tab shows what directory you are in and the files there. 
+- **Plots** tab shows all the plot outputs created this session, you can navigate through them. 
+- **Packages** tab shows a list of installed packages, if the box in front of the package name is checked then this package has been loaded this session. 
+- **Help** tab can be used to search for help on a topic/package function, it also holds any output from `?function_name` help command that has been run in the console, again you can navigate through help topics using the left and right arrows. 
+- **Viewer** tab can be used to view local web content.
+
+For some pictures have a look at DfE's **R Training Course** [getting started with rstudio](https://dfe-analytical-services.github.io/r-training-course/getting-started-with-rstudio.html)
+
+Or Matt Dray's [Beginner R Featuring Pokemon: the RStudio interface](https://matt-dray.github.io/beginner-r-feat-pkmn/#4_the_rstudio_interface)
+
 ### Other handy buttons in RStudio IDE
+
+- top left new script icon; blank page with green circle and white cross.
+- top right project icon; 3D transparent light blue cube with R. Use this to create and open projects.
+
 ### RStudio menu bar a few pointers
+
+- **View** contains **Zoom In** **Zoom Out**
+- **Tools** -> **Global Options** contains many useful setting tabs such as **Appearance** where you can change the RStudio theme, and **Code** -> **Display** where you can set a margin vertical guideline (default is 80 characters).
+
 ## Projects
+
+Why you should work in an R project, how to set up and project happiness. See this section of [Beginner R Featuring Pokemon](https://matt-dray.github.io/beginner-r-feat-pkmn/#3_project_working) by Matt Dray.
+
 ### Folders
+
+When you set up a project it is good practise to include separate folders for different types of files such as
+
+- data; for the data your R code is using
+- output; for files creates by your code
+- R; all your code files, eg .R, .Rmd
+- images
+
 ### sessionInfo()
+
+Include a saved file of the sessionInfo() output, this command prints out the versions of all the packages currently loaded. This information is essential when passing on code as packages can be updated and code breaking changes made.
+
+
 ## R memory
+
+R works in RAM, so its memory is only as good as the amount of RAM you have - however this should be sufficient for most tasks. More info in the **Memory** chapter of Advanced R by Hadley Wickham [here](http://adv-r.had.co.nz/memory.html).
+
 ## A note on rounding
+
+For rounding numerical values we have the base function `round(x, digits = 0)`. This rounds the value of the first argument to the specified number of decimal places (default 0).
+
+```{r}
+round(c(-1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5))
+```
+
+For example, note that 1.5 and 2.5 both round to 2, which is probably not what you were expecting, this is generally referred to as 'round half to even'. The `round()` documentation explains all (`?round`)
+
+> Note that for rounding off a 5, the IEC 60559 standard (see also ‘IEEE 754’) 
+is expected to be used, *‘go to the even digit’*. Therefore `round(0.5)` is `0` 
+and `round(-1.5)` is `-2`. However, this is dependent on OS services and on 
+representation error (since e.g. `0.15` is not represented exactly, the
+rounding rule applies to the represented number and not to the printed number, 
+and so `round(0.15, 1)` could be either `0.1` or `0.2`).
+
+To implement what we consider normal rounding we can use the {janitor} package and the function `round_half_up`
+
+```{r, warning=FALSE}
+library(janitor)
+janitor::round_half_up(c(-1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5))
+```
+
+If we do not have access to the package (or do not want to depend on the package) then we can implement^[see [stackoverflow](https://stackoverflow.com/questions/12688717/round-up-from-5/12688836#12688836)
+
+
+```{r}
+round_half_up_v2 <- function(x, digits = 0) {
+  posneg <- sign(x)
+  z <- abs(x) * 10 ^ digits
+  z <- z + 0.5
+  z <- trunc(z)
+  z <- z / 10 ^ digits
+  z * posneg
+}
+
+round_half_up_v2(c(-1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5))
+```
+
+
 ## Assignment operators `<-` vs `=`
+
+To assign or to equal? These are not always the same thing. In R to assign a value to a variable it is advised to use `<-` rather than `=`. The latter is generally used for setting parameters inside functions, e.g., `my_string <- stringr::str_match(string = "abc", pattern = "a")`. More on assignment operators [here](https://stat.ethz.ch/R-manual/R-patched/library/base/html/assignOps.html).
+
 ## Arithmetic operators
+
+- addition
+```{r}
+1 + 2
+```
+ - subtraction
+```{r}
+5 - 4
+```
+- multiplication
+```{r}
+2 * 2
+```
+- division
+```{r}
+3 / 2
+```
+- exponent
+```{r}
+3 ^ 2
+```
+- modulus (remainder on divsion)
+```{r}
+14 %% 6 
+```
+- integer division
+```{r}
+50 %/% 8
+```
+
+
 ## Relational operators
+
+- less than
+```{r}
+3.14 < 3.142
+```
+
+- greater than
+```{r}
+3.14159 > 3
+```
+
+- less than or equal to
+```{r}
+3 <= 3.14
+3.14 <= 3.14
+```
+
+- greater than or equal to
+```{r}
+3 >= 3.14
+3.14 >= 3.14
+```
+
+- equal to
+```{r}
+3 == 3.14159
+```
+
+- not equal to
+```{r}
+3 != 3.14159
+```
+
+
 ## Logical operators
+
+Logical operations are possible only for numeric, logical or complex types. Note that 0 (or complex version 0 + 0i) is equivalent to `FALSE`, and all other numbers (numeric or complex) are equivalent to `TRUE`. 
+
+- not `!` 
+```{r}
+x <- c(TRUE, 0, FALSE, -4)
+!x
+```
+
+- element-wise and `&`
+```{r}
+y <- c(3.14, FALSE, TRUE, 0)
+x & y
+```
+
+- first element and `&&`
+```{r}
+x && y
+```
+
+- element-wise or `|`
+```{r}
+x | y
+```
+
+- first element or `||`
+```{r}
+z <- c(0, FALSE, 8)
+y || z
+```
+
+
 ## Vectors
+
 ### Types {#vector-types}
+
+There are four main atomic vector types that you are likely to come across
+when using R^[technically there are more, see 
+https://adv-r.hadley.nz/vectors-chap.html#atomic-vectors]; **logical** (`TRUE` 
+or `FALSE`), *double* (`3.142`), *integer* (`2L`) and *character* (`"Awesome"`)
+
+```{r}
+v1 <- TRUE
+typeof(v1)
+v1 <- FALSE
+typeof(v1)
+
+v2 <- 1.5
+typeof(v2)
+v2 <- 1
+typeof(v2)
+
+# integer values must be followed by an L to be stored as integers
+v3 <- 2
+typeof(v3)
+v3 <- 2L
+typeof(v3)
+
+v4 <- "Awesome"
+typeof(v4)
+```
+
+As well as the atomic vector types you will often encounter two other vector
+types; **Date** and **factor** . As well as some notes here this book also contains fuller sections on both
+
+- Chapter 5 [Working with dates and times]
+- Chapter 6 [Working with factors]
+
+Factor vectors are used to represent categorical data. They are actually integer vectors with two additional attributes, levels and class. At this stage it is not worth worrying too much about what attributes are, but is suffiecient to understand that, for factors, the levels attribute gives the possible categories, and combined with the integer values works much like a lookup table.  The `class` attribute is just "factor".
+
+
+```{r}
+ratings <- factor(c("good", "bad", "bad", "amazing"))
+typeof(ratings)
+attributes(ratings)
+```
+
+Date vectors are just vectors of class double with an additional class attribute set as "Date".  
+
+```{r}
+DfT_birthday <- lubridate::as_date("1919-08-14")
+
+typeof(DfT_birthday)
+attributes(DfT_birthday)
+```
+
+If we remove the class using `unclass()` we can reveal the value of the double, which is the number of days since "1970-01-01"^[a special date known as the Unix Epoch], since DfT's birthday is before this date, the double is negative.
+
+```{r}
+unclass(DfT_birthday)
+```
+
 ### Conversion between atomic vector types
+
+Converting between the atomic vector types is done using the `as.character`, `as.integer`, `as.logical` and `as.double` functions.
+
+```{r}
+value <- 1.5
+as.integer(value)
+as.character(value)
+as.logical(value)
+```
+
+Where it is not possible to convert a value you will get a warning message
+
+```{r}
+value <- "z"
+as.integer(value)
+```
+
+When combining different vector types, coercion will obey the following hierarchy: character, double, integer, logical.
+
+```{r}
+typeof(c(9.9, 3L, "pop", TRUE))
+typeof(c(9.9, 3L, TRUE))
+typeof(c(3L, TRUE))
+typeof(TRUE)
+```
 
 <!--chapter:end:01-basics.Rmd-->
 
-
 # Data Importing/Exporting and interaction with other programmes {#data-import}
 
-Placeholder
-
+This chapter is for code examples of data importing/exporting and interactions with other programmes and databases.
 
 ## Libraries
+
+```{r message=FALSE}
+library(tidyverse)
+library(fs) #cross-platform file systems operations (based on libuv C library)
+library(knitr) #general purpose tool for dynamic report generation in R 
+library(kableExtra) #presentation of complex tables with customizable styles
+library(DT) #presentation of tables (wrapper of JavaScript library DataTables)
+library(DBI) #database connection
+library(dbplyr) #database connection
+library(haven) #for importing/exporting SPSS, Stata, and SAS files
+library(bigrquery) #connecting to GCP BigQuery
+```
+
+```{r echo=FALSE, eval=FALSE, message=FALSE}
+#libraries in the next code chunk are not needed to run code in this chapter but are listed as useful libraries
+#this message will not appear in the book
+```
+
+```{r eval=FALSE, message=FALSE}
+library(openxlsx) #formatting xlsx outputs
+library(xltabr) #MoJ RAP enabler built on openxlsx
+```
+
+
 ## Star functions
+
+- `readxl::read_excel`
+- `readxl::excel_sheets`
+- `purrr::map_dfr`
+- `purrr::map_dfc`
+- `purrr::map2_dfc`
+- `fs::dir_ls`
+
 ## Navigating folders
+
+A couple of pointers to navigate from your working directory, which, if you're using R projects (it is highly recommended that you do) will be wherever the `.Rproj` file is located 
 ### Down
+
+To navigate down folders use `/`. The path given below saves the file **my_df.csv** in the **data** folder, which itself is inside the **monthly_work** folder
+```{r eval=FALSE}
+readr::write_csv(
+  x = my_dataframe
+  , path = "monthly_work/data/my_df.csv"
+)
+```
+
 ### Up
+
+To go up a folder use `../`. In particular you may need to do this when running Rmarkdown files. Rmarkdown files use their location as the working directory. If you have created an **R** folder, say, to stash all your scripts in, and a **data** folder to stash your data files in, then you will need to go up, before going down...
+
+The path below goes up one folder, then into the **data** folder, where the **lookup_table.csv** is located.
+```{r eval=FALSE}
+lookup_table <- readr::read_csv(
+  file = "../data/lookup_table.csv"
+)
+```
+
 ## .rds
+
+.rds is R's native file format, any object you create in R can be saved as a .rds file. The functions `readRDS` and `saveRDS` are base R functions.
+
+```{r eval=FALSE}
+#not run
+saveRDS(
+  object = my_model #specify the R object you want to save
+  , file = "2019_0418_my_model.rds" #give it a name, don't forget the file extension
+)
+```
+
+
 ## .csv
+
+We use the functions `read_csv` and `write_csv` from the {readr} package (which is part of the {tidyverse}). These are a little bit *cleverer* than their base counterparts, however, this cleverness can catch you out.
+
+The file **messy_pokemon_data.csv** contains pokemon go captures data which has been deliberately messed up a bit. `read_csv` imputes the column specification from the first 1000 rows, which is fine if your first 1000 rows are representative of the data type. If not then subsequent data that can't be coerced into the imputed data type will be replaced with NA. 
+
+Looking at the column specification below notice that `read_csv` has recognised **time_first_capture** as a time type, but not **date_first_capture** as date type. Given the information that **combat_power** should be numeric we can see that something is also amiss here as `read_csv` has guessed character type for this column.  
+```{r}
+pokemon <- readr::read_csv(
+  file = "data/messy_pokemon_data.csv"
+)
+```
+
+Let's have a quick look at some data from these columns
+```{r}
+pokemon %>% 
+  dplyr::select(species, combat_power, date_first_capture, time_first_capture) %>% 
+  dplyr::arrange(desc(combat_power)) %>% 
+  head()
+```
+
+The pokemon dataset has less than 1000 rows so `read_csv` has 'seen' the letters mixed in with some of the numbers in the **combat_power** column. It has guessed at character type because everything it has read in the column can be coerced to character type.
+
+What if there are more than 1000 rows? For example, say you have a numeric column, but there are some letters prefixed to the numbers in some of the post-row-1000 rows. These values are still meaningful to you, and with some data wrangling you can extract the actual numbers. Unfortunately `read_csv` has guessed at type double based on the first 1000 rows and since character type cannot be coerced into double, these values will be replaced with `NA`. If you have messy data like this the best thing to do is to force `read_csv` to read in as character type to preserve all values as they appear, you can then sort out the mess yourself.
+
+You can specify the column data type using the `col_types` argument. Below I have used a compact string of abbreviations (c = character, d = double, D = date, t = time) to specify the column types, see the help at `?read_csv` or the {readr} vignette for the full list. You can see I got many parsing failures, which I can access with `problems()`, which is a data frame of the values that `read_csv` was unable to coerce into the type I specified, and so has replaced with NA. 
+```{r}
+pokemon <- readr::read_csv(
+  file = "data/messy_pokemon_data.csv"
+  , col_types = "cdddcdcccDt"
+)
+# c = character, d = double, D = Date, t = time
+tibble::glimpse(pokemon)
+```
+
+Let's take a look at the problems.
+```{r}
+problems(pokemon) %>% 
+  head()
+```
+
+And since I know that there are problems with **combat_power** let's take a look there.
+```{r}
+problems(pokemon) %>% 
+  dplyr::filter(col == "combat_power") %>% 
+  head()
+  
+```
+
+The `problems()` feature in `read_csv` is super useful, it helps you isolate the problem data so you can fix it.
+
+Other arguments within `read_csv` that I will just mention, with their default settings are
+
+- `col_names = TRUE`: the first row on the input is used as the column names.
+- `na = c("", "NA")`: the default values to interpret as `NA`.
+- `trim_ws = TRUE`: by default trims leading/trailing white space. 
+- `skip = 0`: number of lines to skip before reading data.
+- `guess_max = min(1000, n_max)`: maximum number of records to use for guessing column type. NB the bigger this is the longer it will take to read in the data.
+
+ 
+
+
 ## .xlsx and .xls
+
+Excel workbooks come in many shapes and sizes. You may have one or many worksheets in one or many workbooks, there may only be certain cells that you are interested in. Below are a few examples of how to cope with these variations using functions from {readxl} and {purrr} to iterate over either worksheets and/or workbooks, the aim being to end up with all the data in a single tidy dataframe.
+
 ### Single worksheet - single workbook
+
+The simplest combination, you are interested in one rectangular dataset in a particular worksheet in one workbook. Leaving the defaults works fine on this dataset. Note that `readxl::read_excel` detects if the file is `.xlsx` or `.xls` and behaves accordingly.
+
+```{r}
+readxl::read_excel(path = "data/port0499.xlsx") %>% 
+  head()
+```
+
+Let's set a few of the other arguments, run `?read_excel` in the console to see the full list.
+```{r}
+readxl::read_excel(
+  path = "data/port0499.xlsx"
+  , sheet = 1 #number or name of sheet, default is first sheet
+  , col_names = TRUE #default
+  , col_types = "text" #a single type will recycle to all columns, specify each using character vector of the same length eg c("numeric", "text", ...)
+) %>% 
+  head()
+```
+
+
 ### Single worksheet - many workbooks
+
+For example, you collect pokemon go capture data from many different players, the data all has the same structure and you want to read it in and row bind into a single dataframe in R. 
+
+![](image/pokemon_player.png)
+
+<br/>
+The code below collects the names of the 3 excel workbooks using `fs::dir_ls`, and, as these are not the only files in that folder, I've specified them using regular expressions (regex). Then we use `purrr::map_dfr` to iterate and rowbind over this list of files, applying the function we supply, that is `readxl::read_excel`. Since we are only reading a single worksheet per workbook we don't need to supply any arguments to `readxl:read_excel`, the defaults will work fine, each workbook path is piped in, in turn. The `.id` argument in `purrr:map_dfr` adds the file path into a new column, which we have named "player" in this instance. The "dfr" in `map_dfr` refers to the output "data-frame-rowbound".
+
+```{r}
+pokemon <- fs::dir_ls(path = "data", regex = "pokemon_player_.\\.xlsx$")  %>% 
+  purrr::map_dfr(.f = readxl::read_excel, .id = "player")
+
+tibble::glimpse(pokemon)
+```
+
+
+Using `DT::datatable` for ease of viewing we can see that all 5 rows of data from each of the 3 workbooks has been read in, rowbound, and an id column has been added showing the workbook path.
+```{r}
+DT::datatable(data = pokemon)
+```
+
+
+Note that the `regex` argument in `fs::dir_ls` is applied to the full file path so if I had tried to specify that the file name starts with "pokemon" by front anchoring it using "^pokemon" this would return no results, since the full name is actually "data/pokemon...". Helpful regex links below.
+
+[regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
+
+[stringr cheatsheet including regex](http://edrub.in/CheatSheets/cheatSheetStringr.pdf)
+
 ### Many worksheets - single workbook
+
+You have a single workbook, but it contains many worksheets of interest, each containing rectangular data with the same structure. For example, you have a workbook containing pokemon go captures data, where each different data collection point has its own sheet. The data structure, column names and data types are consistent. You want to read in and combine these data into a single dataframe.
+
+The code below sets the location of the workbook and puts this in the object `path`. It then collects the names of all the sheets in that workbook using `readxl::excel_sheets`. Next `purrr::set_names` sets these names in a vector so that they can be used in the next step. This vector of names is implicitly assigned to the `.x` argument in `purrr::map_dfr` as it is the first thing passed to it. This means we can refer to it as `.x` in the function we are iterating, in this case `readxl::read_excel`. Finally, an id column is included, made up of the sheet names and named "sheet". The output is a single dataframe with all the sheets row bound together.
+
+```{r}
+path <- "data/multi_tab_messy_pokemon_data.xlsx"
+pokemon_collections <- readxl::excel_sheets(path = path) %>% 
+  purrr::set_names() %>% 
+   purrr::map_dfr(
+     ~ readxl::read_excel(path = path, sheet = .x)
+     , .id = "sheet"
+   )
+DT::datatable(data = pokemon_collections)
+```
+
 ### Many worksheets - many workbooks
+
+Now we can use the above two solutions to combine data from many worksheets spread across many workbooks. As before, the data is rectangular and has the same structure. For example, you receive a workbook every month, containing pokemon go captures data, and each data collection point has its own sheet. 
+
+![](image/pokemon_collection_point.png)
+
+
+We create a function to import and combine the sheets from a single workbook, and then iterate this function over all the workbooks using `purrr::map_df`.
+
+```{r}
+#function to combine sheets from a single workbook
+read_and_combine_sheets <- function(path){
+  readxl::excel_sheets(path = path) %>% 
+  purrr::set_names() %>% 
+   purrr::map_df(
+     ~ readxl::read_excel(path = path, sheet = .x)
+     , .id = "sheet"
+   )
+}
+#code to iterate over many workbooks
+pokemon_monthly_collections <- fs::dir_ls(
+  path = "data", regex = "pokemon_2019\\d{2}\\.xlsx$")  %>% 
+  purrr::map_df(
+    read_and_combine_sheets
+    , .id = "month"
+    )
+DT::datatable(data = pokemon_monthly_collections)
+```
+
 ### Non-rectangular data - single worksheet - single workbook
+
+You have received some kind of data entry form that has been done in excel in a more human readable, rather than machine readable, format. Some of the cells contain instructions and admin data so you only want the data held in specific cells. This is non-rectangular data, that is, the data of interest is dotted all over the place. In this example we have pet forms, and the data of interest is in cells **B2**, **D5** and **E8** only.
+
+Here's an image of what the data looks like.
+
+![](image/pet_form.png)
+
+Let's see what we get if we naively try to read it in.
+```{r message=FALSE}
+readxl::read_excel(
+  path = "data/pet_form_1.xlsx"
+) %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+It's not what we wanted, let's try again, now using the `range` argument
+```{r message=FALSE}
+readxl::read_excel(
+  path = "data/pet_form_1.xlsx"
+  , col_names = FALSE
+  , range = "A2:B2"
+) %>% 
+ knitr::kable() %>% 
+ kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+The `range` argument helps, we have picked up one bit of the data, and its name. The `range` argument uses the {cellranger} package which allows you to refer to ranges in Excel files in Excel style. However, we have 3 disconnected data points, we need to iterate, so it's {purrr} to the rescue once more.
+
+The code below demonstrates explicitly that the `.x` argument in `purrr::map_dfr` takes the vector of things that will be iterated over in the supplied function. In this case we are giving the `range` argument of `readxl::read_excel` three individual cells to iterate over. These will then be rowbound so we end up with a single dataframe comprising a single column, named "cells", containing 3 rows.
+```{r}
+pet_details <- purrr::map_dfr(
+    .x = c("B2", "D5", "E8")
+    , ~ readxl::read_excel(
+      path = "data/pet_form_1.xlsx"
+      , range = .x
+      , col_names = "cells" #assign name 
+      , col_types = "text" #have to use text to preserve all data in single column
+    ) 
+  )
+
+pet_details %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+This is an improvement, we have a dataframe named `pet_details` comprising a single "cells" column, which contains all the relevant data from this worksheet. 
+
+We could now try to reshape it, however, a better idea is to use `map_dfc` since we actually want to column bind these data rather than rowbind them. The read out from `tibble::glimpse` shows that the different variable types have been picked up, which is also helpful. The default naming of the columns gives a clue as to how the function works. 
+
+
+```{r}
+pet_details <- purrr::map_dfc(
+  .x = c("B2", "D5", "E8") #vector of specific cells containing the data
+  , ~ readxl::read_excel(
+    path = "data/pet_form_1.xlsx"
+    , range = .x
+    , col_names = FALSE
+  ) 
+)
+
+tibble::glimpse(pet_details)
+```
+
+```{r echo=FALSE}
+pet_details %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
+This is pretty close to what we want, the only sticking point is that we still don't have the correct column names. We could deal with this using `dplyr::rename`, but an even better idea is to use `purrr::map2_dfc`. The `map2` variant allows you to iterate over two arguments simultaneously (into the same function).
+
+```{r}
+pet_details_2 <- purrr::map2_dfc(
+  .x = c("B2", "D5", "E8") #vector of specific data cells
+  , .y = c("Name", "Age", "Species") #vector of column names
+  , ~ readxl::read_excel(
+    path = "data/pet_form_1.xlsx"
+    , range = .x
+    , col_names = .y
+  ) 
+)
+
+tibble::glimpse(pet_details_2)
+```
+
+```{r echo=FALSE}
+pet_details_2 %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+```
+
 ### Non-rectangular data - single worksheet - many workbooks
+
+Having solved for one workbook and worksheet, we can functionalise and iterate to gather the data from every workbook, two of which are shown below.
+
+![](image/pet_forms.png)
+
+<br/>
+The function `cells_to_rows` below iterates over `read_excel` reading each of the three cells from the worksheet, applying the corresponding column name as it goes. It takes three character or character vector inputs, `path`, `cells`, and `col_names`.
+
+```{r}
+cells_to_rows <- function(path, cells, col_names){
+  purrr::map2_dfc(
+    .x = cells
+    , .y = col_names
+    , ~ readxl::read_excel(
+      path = path
+      , range = .x
+      , col_names = .y
+    ) 
+  )
+}
+```
+
+Let's test it on the first pet form data, first setting the parameters to use in the function. 
+```{r}
+path <- "data/pet_form_1.xlsx"
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+pet_form_1 <- cells_to_rows(
+  path = path, cells = cells, col_names = col_names
+  )
+```
+
+```{r echo=FALSE}
+pet_form_1 %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+It works! So now we can iterate this over all the pet form workbooks, specifying the paths using regex as before. Note below we use `.x` in the `path` argument in the `cells_to_rows` function to refer to the vector of paths piped to `purrr::map_dfr` from `fs::dir_ls`. 
+```{r}
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+all_pet_forms <- fs::dir_ls(
+  path = "data", regex = "pet_form_\\d\\.xlsx$")  %>% 
+  purrr::map_dfr(
+    ~ cells_to_rows(path = .x, cells = cells, col_names = col_names)
+    , .id = "path"
+    )
+```
+
+```{r echo=FALSE}
+all_pet_forms %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
 ### Non-rectangular data - many worksheets - single workbook
+
+Now we have more than one worksheet in a single workbook, and the data looks like this, the workbook is from a "pet house" and each worksheet is pet details.
+
+![](image/pet_house.png)
+<br/>
+
+To incorporate the worksheets element we rejig the `cells_to_rows` function from above and give it a "sheet" argument, so it can be passed a specific sheet.
+
+```{r}
+sheet_cells_to_rows <- function(path, sheet, cells, col_names){
+  purrr::map2_dfc(
+    .x = cells
+    , .y = col_names
+    , ~ readxl::read_excel(
+      path = path
+      , sheet = sheet
+      , range = .x
+      , col_names = .y
+    ) 
+  )
+}
+```
+
+We now have the function `sheet_cells_to_rows` that can accept a list of worksheet names. As before we use `readxl::excel_sheets` to collect the worksheet names, first setting the other parameters
+```{r}
+path <- "data/pet_house_1.xlsx"
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+pet_house_1 <- readxl::excel_sheets(path = path) %>% 
+  purrr::set_names() %>% 
+  purrr::map_dfr(
+    ~ sheet_cells_to_rows(path = path
+                          , sheet = .x
+                          , cells = cells
+                          , col_names = col_names)
+    , .id = "sheet"
+  ) 
+```
+
+```{r echo=FALSE, eval=FALSE}
+pet_house_1 %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
 ### Non-rectangular data - many worksheets - many workbooks
+
+Finally we have many workbooks each containing many worksheets, each containing many cells, as before we want to read them in and combine.
+
+![](image/pet_houses.png)
+<br/>
+
+We could functionalise the code above that reads and combines the cells in many worksheets from a single workbook, but an alternative approach is used below. We create an anonymous function and use that on the fly. This is useful if the function is a one off, and not too complicated. The anonymous function below still depends on the `sheet_cells_to_rows` we created earlier though.
+
+```{r}
+cells <- c("B2", "D5", "E8")
+col_names <- c("Name", "Age", "Species")
+
+pet_house_all <- fs::dir_ls(
+  path = "data", regex = "pet_house_\\d\\.xlsx$")  %>% 
+  purrr::map_dfr(
+    function(path){
+      readxl::excel_sheets(path = path) %>% 
+        purrr::set_names() %>% 
+        purrr::map_dfr(
+          ~ sheet_cells_to_rows(path = path
+                                , sheet = .x
+                                , cells = cells
+                                , col_names = col_names)
+          , .id = "sheet"
+        )
+    }
+    , .id = "path"
+  )
+
+```
+
+```{r echo=FALSE}
+pet_house_all %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_styling(full_width = F, position = "left")
+
+```
+
+
+
 ## Exporting to .xlsx
+
+We recommend {openxlsx} and {xltabr} for writing and formatting tables to MS Excel. The latter is a wrapper built on {openxlsx} developed by MoJ and is specifically aimed at making it easier to produce publication ready tables. {xltabr} has one known drawback in that it applies the formatting cell by cell, so if your tables are massive (~100,000 rows) it will take too long, in this instance you should resort to {openxlsx}.
+
+[openxlsx manual](https://cran.r-project.org/web/packages/openxlsx/openxlsx.pdf)
+
+[xltabr manual](https://cran.r-project.org/web/packages/xltabr/xltabr.pdf)
+
+So you can see an example of the formatting available, here is a link to DfT's Search and Rescue Helicopter (SARH) statistics tables that are produced in R using {xltabr}.
+
+[SARH tables](https://www.gov.uk/government/statistical-data-sets/search-and-rescue-helicopter-sarh01)
+
+
+
 ## .sav
+
+Use {haven} to import SPSS, Stata and SAS files.
+
 ## SQL
+
+Below are links to DfT Coffee and Coding materials on the subject of connecting R to SQL
+
+[20181114_Connecting_R_to_SQL](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20181114_Connecting_R_to_SQL)
+
+[20190130_SQL_and_Excel_to_R](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20190130_SQL_and_Excel_to_R)
+
+
 ## GCP
+
 ### BigQuery
+
+Link below to DfT Coffee and Coding materials on how to use {bigrquery} to interact with GCP's BigQuery
+
+[20190403_bigrquery](https://github.com/departmentfortransport/coffee-and-coding/tree/master/20190403_bigrquery)
+
+
 ## Copy data to clipboard
+
+Normally when you have a table in a data frame in R, if you want to get this into a spreadsheet you will need to use functions like `writexl::write_xlsx` or the base `write.csv` to do so. Wouldn’t it be easier to simply copy the entire data frame to the clipboard, so that you can paste it in the spreadsheet yourself? Well try this:
+
+`write.table(df, "clipboard", sep="\t", col.names=TRUE)`
+
+**df** = data frame you want to copy
+**col.names** = if you want the column headers leave as TRUE. Just the data, change to FALSE
+
+If you get warnings about “too big for clipboard”, you can even specify what size of clipboard you want to copy to, such as:
+
+`write.table(df, "clipboard-16384", sep="\t", col.names=TRUE)`
+
+This tells the write.table to copy df to a clipboard with size 2^14.
 
 <!--chapter:end:02-data-import.Rmd-->
 
-
 # Table/Data Frame manipulation {#tables}
 
-Placeholder
+```{r include=FALSE}
+library(dplyr)
+library(readr)
+library(reshape2)
+library(tidyr)
+library(janitor)
+
+# Read in required data using public data.gov extract
+road_accidents <- readr::read_rds("data/road_accidents_2017.RDS")
+
+```
+
+
+This chapter provides an overview of code examples for table or data frame manipulation (a tidyverse data frame is referred to as a tibble).
+
+One of the main things you will have to do in any R project or RAP project will be manipulating the data that you are using in order to get it into the format you require.
+
+One of the main packages used to manipulate data is the {dplyr} package which we recommend and use throughout this book. The {dplyr} package (and others e.g. {tidyr}) are all part of the tidyverse. The tidyverse is a group of packages developed by Hadley Wickham and others and are all designed to work with each other. See https://www.tidyverse.org/ for more info.
+
+**Tidyverse packages and functions can be combined and layered using the pipe operator `%>%`.**
+
+{dplyr} is built to work with **tidy data**. To find out more about tidy data please look at the following link https://r4ds.had.co.nz/tidy-data.html but the general principles are:
+
+1. Each variables must have its own column
+2. Each observation must have its own row
+3. Each value must have its own cell
+
 
 
 ## Pivot and reshape tables
+
+There will be two examples for pivoting tables provided:
+
+* The {tidyr} package uses the gather/spread functions and is often used to create tidy data
+* The {reshape2} package is also a useful package to pivot tables and has added functionality such as providing totals of columns etc.
+
+
+We want to have the day of the week variable running along the top so each day of the week is its own column.
+
+```{r, echo = FALSE, results='asis'}
+# Create smaller dataset for example
+road_accidents_small <- road_accidents %>%
+  dplyr::group_by(Accident_Severity, Day_of_Week) %>%
+  dplyr::tally()
+
+knitr::kable(head(road_accidents_small),
+caption = "Number of road accidents by accident severity and weekday")
+
+```
+
+
+
+**{tidyr} package**
+
+Using the {tidyr} package, gather and spread functions can be used  to pivot the table views:
+
+- **gather** makes wide data longer i.e. variables running along the top can be "gathered" into rows running down.
+
+- **spread** makes long data wider i.e. one variable can be spread and run along the top with each value being a variable.
+
+**Note: Hadley Wickham is bringing out new versions of these packages called pivot_longer and pivot_wider which are not yet available on DfT laptops.**
+
+```{r}
+# Pivot table using tidyr package
+library(tidyr)
+road_accidents_weekdays <- road_accidents_small %>%
+  tidyr::spread(Day_of_Week, n)
+  
+```
+
+With the spread function above you need to first specify the variable you want to spread, in this case `Day_of_Week`, and then the variable that will be used to populate the columns (`n`).
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_weekdays),
+caption = "Number of road accidents by accident severity and weekday, tidyr::spread")
+
+```
+
+
+The opposite can also be done using the gather function: 
+
+```{r}
+# Pivot table using tidyr package
+library(tidyr)
+road_accidents_gather <- road_accidents_weekdays %>%
+  tidyr::gather(`1`, `2`, `3`, `4`, `5`, `6`, `7`, key = "weekday", value = "n")
+
+
+  
+```
+
+To use gather, specify which columns you want to be gathered into one column (in this case the individual weekday columns). The `key` is the name of the gathered column, and the `value` is the name of the values.
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_gather),
+caption = "Number of road accidents by accident severity and weekday, tidyr::gather")
+
+```
+
+**{reshape2} package**
+
+Again, this has two functions which can be used to pivot tables:
+
+- **melt** makes wide data longer 
+
+- **dcast** makes long data wider
+
+
+```{r}
+# Pivot table using reshape2 package
+library(reshape2)
+road_accidents_weekdays2 <- 
+  reshape2::dcast(road_accidents_small, Accident_Severity ~ 
+                    Day_of_Week, value.var = "n")
+  
+```
+
+With the `dcast` function above, after stating the name of the data frame, you need to specify the variable(s) you want in long format (multiple variables seperated by "+"), in this case Accident_Severity, and then the wide format variable(s) are put after the tilda (again multiple seperated by "+"). The `value.var` argument specifies which column will be used to populate the new columns, in this case it is n.
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_weekdays2),
+caption = "Number of road accidents by accident severity and weekday, reshape2::dcast")
+
+```
+
+If you want to create sums and totals of the tables this can also be done using {reshape2}. For example, taking the original table, we want to pivot it and sum each severity to get the total number of accidents per day.
+
+```{r}
+# Pivot table using reshape2 package
+library(reshape2)
+road_accidents_weekdays3 <- 
+reshape2::dcast(road_accidents_small, Accident_Severity ~ Day_of_Week,
+value.var = "n", sum, margins = "Accident_Severity")
+  
+```
+
+In this example, we use the `margins` argument to specify what we want to combine to create totals. So we want to add all the accident severity figures up for each weekday. Before using `margins` you need to specify how the margins are calculated, in this case we want a `sum`. Alternative options are to calculate the length, i.e. the number of rows.
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_weekdays3),
+caption = "Number of road accidents by accident severity and weekday plus totals, reshape2::dcast")
+
+```
+
+
+
+
+The opposite can also be done using the `melt` function.
+
+```{r}
+# Pivot table using reshape2 package
+library(reshape2)
+road_accidents_melt <- reshape2::melt(road_accidents_weekdays2, id.vars = "Accident_Severity",
+                                      measure.vars = c("1", "2", "3", "4", "5", "6", "7"),
+                                      variable.name = "Day_of_Week", value.name = "n")
+  
+```
+
+For the `melt` function you need to specify:
+
+
+`id.vars` = "variables to be kept as columns"
+
+`measure.vars` = c("variables to be created as one column")
+
+`variable.name` = "name of created column using the measure.vars"
+
+`value.name` = "name of value column"
+
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_melt),
+caption = "Number of road accidents by accident severity and weekday, reshape2::melt")
+```
+
+
 ## Dropping and selecting columns
+
+Use the {dplyr} select function to both select and drop columns.
+
+**Select columns**
+
+```{r}
+road_accidents_4_cols <- road_accidents %>%
+  dplyr::select(acc_index, Accident_Severity, Date, Police_Force)
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_4_cols),
+caption = "Four columns from road accidents 2017")
+```
+
+
+**Drop columns**
+
+ Note that to drop columns the difference is putting a "-" in front of the variable name.
+ 
+```{r}
+road_accidents_3_cols <- road_accidents_4_cols %>%
+  dplyr::select(-Police_Force)
+```
+
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_3_cols),
+caption = "Three columns from road accidents 2017")
+```
+ 
+
 ## Rename variables
+
+Use the **rename** function from {dplyr} to rename variables where the new variable name is on the left hand side of the **=** equals sign, and the old variable name is on the right hand.
+
+```{r}
+road_accidents_rename <- road_accidents_4_cols %>%
+  dplyr::rename(Date_of_Accident = Date)
+
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_rename),
+caption = "Rename date column to Date_of_Accident")
+```
+
 ## Filtering data
+
+Use the {dplyr} filter function to filter data.
+
+This example filters the data for slight severity accidents (accident severity 3).
+
+```{r}
+road_accidents_slight <- road_accidents_4_cols %>%
+  dplyr::filter(Accident_Severity == 3)
+```
+
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_slight),
+caption = "Slight severity road accidents 2017")
+```
+
+To filter multiple conditions:
+
+And operator
+```{r}
+road_accidents_filter <- road_accidents_4_cols %>%
+  dplyr::filter(Accident_Severity == 3 & Police_Force == 4)
+```
+
+Or operator
+```{r}
+road_accidents_filter2 <- road_accidents_4_cols %>%
+  dplyr::filter(Accident_Severity == 3 | Accident_Severity == 2)
+```
+
+**Note: filtering with characters must be wrapped in "quotation marks" e.g:**
+```{r, eval = FALSE}
+road_accidents_filter3 <- road_accidents %>%
+dplyr::filter(`Local_Authority_(Highway)` == "E09000010")
+
+```
+Also note that in the above example the variable is quoted in back ticks (`). This is because some variable names confuse R due to brackets and numbers and need to be wrapped in back ticks so R knows that everything inside the back ticks is a variable name.
+
 ## Group data 
+
+Use the {dplyr} group_by function to group data. This works in a similar manner to "GROUP BY" in SQL.
+
+The below example groups the data by accident severity and weekday, and creates totals for each group using the "tally" function.
+
+```{r}
+# Create grouped data set with counts
+road_accidents_small <- road_accidents %>%
+  dplyr::group_by(Accident_Severity, Day_of_Week) %>%
+  dplyr::tally()
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_small),
+caption = "Road accidents 2017 by accident severity and weekday")
+```
+
 ## Order data
+
+Use the {dplyr} arrange function to order data. This works in a similar manner to "ORDER BY" in SQL.
+
+This example orders the data by date and number of casualties.
+
+```{r include=FALSE}
+road_acc_7 <- road_accidents %>%
+  dplyr::sample_n(7)
+
+```
+
+
+```{r}
+# Order data by date and number of casualties
+road_accidents_ordered <- road_acc_7 %>%
+  dplyr::select(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) %>%
+  dplyr::arrange(Date, Number_of_Casualties)
+  
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_ordered),
+caption = "Road accidents 2017 ordered by date and number of casualties")
+```
+
 ## Get counts of data
+
+To get counts for groups of data, the {dplyr} tally function can be used in conjunction with the {dplyr} group by function. This groups the data into the required groups and then tallys how many records are in each group.
+
+```{r}
+# Create grouped data set with counts
+road_accidents_small <- road_accidents %>%
+  dplyr::group_by(Accident_Severity, Day_of_Week) %>%
+  dplyr::tally()
+```
+
+The above example creates groups by accident severity and weekday and counts how many accidents are in each group (one row equals one accident therefore the tally is counting accidents).
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_small),
+caption = "Road accidents 2017 by accident severity and weekday")
+```
+
+
+
 ## Combine tables
+
+When combining data from two tables there are two ways to do this in R:
+
+* Bind the tables by basically either appending the tables on the rows or columns
+* Join the tables using the {dplyr} version of SQL joins
+
+**Binding tables**
+
+Binding tables is mainly done to append tables by creating more rows, however tables can also be bound by adding more columns. Although it is recommended to use the {dplyr} join functions to combine columns (see 5.6).
+
+```{r include=FALSE}
+library(dplyr)
+
+# create three tables for example
+accidents_1 <- dplyr::filter(road_accidents_small, Accident_Severity == 1)
+accidents_2 <- dplyr::filter(road_accidents_small, Accident_Severity == 2)
+accidents_3 <- dplyr::filter(road_accidents_small, Accident_Severity == 3)
+
+```
+
+Here are three tables, one shows data for accident severity of 1, one for accident severity of 2, and one for accident severity of 3.
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(accidents_1, caption = "Number of fatal road accidents in 2017, by weekday")
+knitr::kable(accidents_2, caption = "Number of serious injury road accidents in 2017, by weekday")
+knitr::kable(accidents_3, caption = "Number of slight injury road accidents in 2017, by weekday")
+
+```
+
+To combine these tables we can use the bind_rows function from the {dplyr} package. Use bind_rows when you want to append the tables underneath one another to make one longer table, i.e. you want to add more rows.
+
+**Ensure that the column names for each table are exactly the same in each table.**
+
+```{r}
+# combine tables using bind_rows
+library(dplyr)
+
+all_accidents <- accidents_1 %>%
+  dplyr::bind_rows(accidents_2, accidents_3)
+  
+```
+
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(all_accidents, caption = "Road accident data 2017, bind_rows")
+
+```
+
+```{r include=FALSE}
+library(dplyr)
+
+# create two tables for example
+road_acc_1 <- head(dplyr::select(road_accidents, acc_index, Police_Force, Accident_Severity))
+road_acc_2 <- head(dplyr::select(road_accidents, acc_index, Date, Day_of_Week))
+
+```
+
+
 ## Joining tables
+
+
+Joins in R can be done using {dplyr}. This is generally to combine columns of data from two tables:
+
+
+```{r}
+# combine tables using left join
+library(dplyr)
+
+all_accidents_cols_join <- road_acc_1 %>%
+  dplyr::left_join(road_acc_2, by = "acc_index")
+```
+
+This uses the same principles as SQL, by specifying what the tables should be joined on using the **by =** argument. 
+
+
+{dplyr} has all the usual SQL joins for example, `inner_join`, `full_join`, `right_join`. All of these are used in the same way as the left join example above.
+
+Another useful join for data manipulation is an `anti_join`. This provides all the data that is not in the joined table. For example, the below snapshot of a table displays road accident totals broken down by accident severity and weekday:
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_small, caption = "Road accident data 2017 by accident severity and weekday"))
+
+```
+
+I am interested in creating two sub-groups of this data, a table for all accidents on a Monday (weekday 2), and all other accidents.
+
+First, I get the **Monday** data using the {dplyr} filter function (see 5.3).
+
+```{r include=FALSE}
+library(dplyr)
+
+# create filtered Monday table for example
+
+accidents_monday <- dplyr::filter(road_accidents_small, Day_of_Week == 2)
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(accidents_monday, caption = "Road accident data 2017 on a Monday by accident severity"))
+
+```
+
+Then, I can use an `anti-join` to create a table which has all of the data that is not in the above table:
+
+```{r}
+# create table of all rows not in the joined table
+library(dplyr)
+
+all_accidents_not_monday <- road_accidents_small %>%
+  dplyr::anti_join(accidents_monday, by = c("Accident_Severity", "Day_of_Week"))
+```
+
+The above code takes the initial table we want to get our data from (road_accidents_small) and anti joins accidents_monday. This says, "get all the rows from road_accidents_small that are not in accidents_monday". Again, note the need to specify what the join rows would be joined and compared by.
+
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(all_accidents_not_monday, caption = "Road accident data 2017 not on a Monday by accident severity")
+```
+
 ## Select specific columns in a join
+
+Doing a join with {dplyr} will join all columns from both tables, however sometimes not all columns from each table are needed.
+
+Let's look at some previous tables again:
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(road_acc_1, caption = "Police force and accident severity information for accidents")
+knitr::kable(road_acc_2, caption = "Date and weekday information for accidents")
+```
+
+Let's say we want **acc_index** and **Police_Force** from the first table, and **Date** from the second table.
+
+```{r}
+# select specific columns from each table and left join
+library(dplyr)
+
+road_acc_3 <- road_acc_1 %>%
+  dplyr::select(acc_index, Police_Force) %>%
+  dplyr::left_join(select(road_acc_2, acc_index, Date), by = "acc_index")
+```
+
+The above code takes the first table and uses the `select` statement to select the required columns from the first table. 
+
+Then within the `left_join` command, to select the data from the second table, you again add the `select` statement.
+
+**Note: you will need to select the joining variable in both tables but this will only appear once**
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(road_acc_3, caption = "Police force and Date information for specific accidents")
+```
+
 ## Sum rows or columns
+These solutions use the base R functions rather than {dplyr}.
+
 ### Sum rows
+
+To sum across a row:
+
+```{r}
+# sum across a row 
+road_accidents_weekdays$rowsum <- rowSums(road_accidents_weekdays, na.rm = TRUE) 
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(road_accidents_weekdays, caption = "Road accidents 2017 by accident severity and weekday")
+```
+
+To sum across specific rows:
+
+```{r}
+# sum across specific rows 
+road_accidents_weekdays$alldays <- road_accidents_weekdays$`1` + road_accidents_weekdays$`2`+
+                                    road_accidents_weekdays$`3`+ road_accidents_weekdays$`4`+
+                                    road_accidents_weekdays$`5`+ road_accidents_weekdays$`6`+
+                                    road_accidents_weekdays$`7`
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(road_accidents_weekdays[,-9], caption = "Road accidents 2017 by accident severity and weekday")
+```
+
 ### Sum columns
+ 
+To sum columns to get totals of each column, ***note this will appear as a console output not in a data object***:
+
+```{r, eval = FALSE}
+# sum columns
+colSums(road_accidents_weekdays, na.rm = TRUE) 
+```
+
+
+To get the totals of each column as a row in the data:
+
+```{r}
+# create total column
+road_accidents_weekdays <- road_accidents_weekdays %>%
+  janitor::adorn_totals("row")
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(road_accidents_weekdays[,-9:-10], caption = "Road accidents 2017 by accident severity and weekday")
+```
+
+
+{reshape2} can also be used to get column totals when pivoting a table (See 5.1).
+
 ## Replace NAs or other values
+
+```{r, include = FALSE}
+# Create dataset for example with nas (need to change -1 value to na as this is how NAs are represented in the road accident open data)
+
+# create nas
+road_accidents_na <- road_accidents %>%
+  dplyr::na_if(-1)
+
+# get smaller data set for example
+road_accidents_na <- road_accidents_na %>%
+  head(n = 7) %>%
+  dplyr::select(acc_index, `1st_Road_Class`, `2nd_Road_Class`, Junction_Control)
+
+```
+
+To replace all NAs in one column (Junction Control column) with a specific value:
+
+```{r}
+library (tidyr)
+# replace all NAs with value -1
+road_accidents_na$Junction_Control <- road_accidents_na$Junction_Control %>%
+  tidyr::replace_na(-1)
+
+```
+
+**Note: To replace NA with a character the character replacement must be wrapped in "quotation marks"**
+
+To replace all NAs in a data frame or tibble:
+
+```{r}
+
+# replace all NAs with value -1
+road_accidents_na <- road_accidents_na %>%
+  replace(is.na(.), -1)
+  
+
+```
+
+To replace values with NA, specify what value you want to be replaced with NA using the na_if function:
+
+```{r}
+
+# create nas
+road_accidents_na <- road_accidents_na %>%
+  dplyr::na_if(-1)
+  
+
+```
+**Note: to only create NAs in a specific column specify the column name in a similar manner to the first example in this section.**
+
+To replace values:
+```{r}
+
+# replace 1st_road_class 
+road_accidents_na <- road_accidents_na %>%
+  dplyr::mutate(`1st_Road_Class` = dplyr::case_when(`1st_Road_Class` == 3 ~ "A Road",
+                                      TRUE ~ as.character(`1st_Road_Class`)))
+  
+
+```
+
+The case_when function is similar to using CASE WHEN in SQL. 
+
+The TRUE argument indicates that if the values aren't included in the case_when then they should be whatever is after the tilda (~)  i.e. the equivalent of the ELSE statement in SQL.
+
+The "as.character" function says that everything that in `1st_Road_Class` isn't 3 should be kept as it is, this could be replaced by an arbitrary character or value e.g. "Other". This would make everything that is not a 3, coded as "Other". 
+
+You can have multiple case_when arguments for multiple values, they just need to be seperated with a comma. Multiple case_when statements for different variables can be layered using the pipe operator `%>%`.
+
+
 ## Reordering rows/columns
+
 ### Reordering rows
+
+Rows can be reordered by certain variables using the {dplyr} arrange function with examples in the **4.5 Order data** sub-chapter of this book. This will order the data in ascending order by the variables quoted. To order rows in descending order the ``desc()`` command can be used within the arrange function.
+
+```{r}
+# Order data by date and number of casualties
+road_accidents_ordered_desc <- road_acc_7 %>%
+  dplyr::select(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) %>%
+  dplyr::arrange(desc(Date), Number_of_Casualties)
+```
+
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_ordered_desc),
+caption = "Road accidents 2017 ordered by date (descending) and number of casualties")
+```
+
 ### Reordering columns
+
+Use the {dplyr} select statement to reorder columns, where the order of the variables quoted represents the order of the columns in the table.
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_accidents_4_cols),
+caption = "Four columns from road accidents 2017")
+```
+
+To reorder this table we do:
+
+```{r}
+table_reordered <- road_accidents_4_cols %>%
+  dplyr::select(Accident_Severity, Date, acc_index, Police_Force)
+```
+
+
+
 ## Creating new variables
+
+The {dplyr} mutate function can be used to create new variables based on current variables or other additional information. 
+
+For example, to create a new variable which is speed limit in km:
+
+```{r}
+road_acc_km <- road_acc_7 %>%
+  dplyr::mutate(speed_km = Speed_limit * 1.6)
+
+```
+
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(road_acc_km <- dplyr::select(road_acc_km, acc_index, Police_Force, Speed_limit, speed_km)),
+caption = "Road accidents by km/h")
+```
+
 ## Summarising data
+
+The {dplyr} summarise function can be used to summarise data (mean, median, sd, min, max, n_distinct). See https://dplyr.tidyverse.org/reference/summarise.html for more examples.
+
+For example, to get the mean number of accidents for each weekday:
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_small),
+caption = "Road accidents 2017, by severity and weekday")
+```
+
+The group by function is used with the summarise function to specify what groups the mean will be applied to, in this case weekday. 
+
+```{r}
+road_acc_mean <- road_accidents_small %>%
+  dplyr::group_by(Day_of_Week) %>%
+  dplyr::summarise(mean = mean(n))
+
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_acc_mean),
+caption = "Mean number of accidents in 2017, by weekday")
+```
+
+
 ## Look up tables
+
+Aside from importing a separate lookup data file into R, named vectors can be used as lookup tables.
+
+For example, to assign accident severity values with labels, named vectors can be used (**note: numbers must also be in quotation marks**):
+
+```{r}
+lookup_severity <- c("1" = "Fatal", "2" = "Serious", "3" = "Slight")
+```
+
+To convert the data and create a label variable (**note: the Accident_Severity variable values can be replaced with the lookup values by changing the name of the variable on the left to Accident_Severity**):
+
+```{r}
+road_accidents_small$Accident_Severity_label <- lookup_severity[road_accidents_small$Accident_Severity]
+```
+
+```{r, echo = FALSE, results='asis'}
+knitr::kable(head(road_accidents_small),
+caption = "Road accidents 2017, by severity and weekday")
+```
+
+
+
+
 
 <!--chapter:end:03-table-manipulation.Rmd-->
 
+```{r include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+```
 
 # Working with dates and times {#dates-times}
 
-Placeholder
 
+
+
+```{r include=FALSE}
+library(dplyr)
+library(readr)
+library(reshape2)
+library(tidyr)
+library(janitor)
+library(lubridate)
+
+# Read in required data using public data.gov extract
+road_accidents <- readr::read_rds("data/road_accidents_2017.RDS")
+
+# create character version of date to use in examples
+road_accidents$Date1 <- as.character(road_accidents$Date)
+
+```
+
+
+This chapter provides an overview of working with dates and times, for example extracting year or month from a date, and converting characters to a date.
+
+One of the main packages used to work with dates is **{lubridate}**.
+
+More information can be found on the {lubridate} cheatsheet at the following link: https://www.rstudio.com/resources/cheatsheets/
+
+Date vectors are just vectors of class double with an additional class attribute set as "Date".  
+
+```{r}
+DfT_birthday <- lubridate::as_date("1919-08-14")
+typeof(DfT_birthday)
+attributes(DfT_birthday)
+```
+
+If we remove the class using `unclass()` we can reveal the value of the double, which is the number of days since "1970-01-01"^[a special date known as the Unix Epoch], since DfT's birthday is before this date, the double is negative.
+
+```{r}
+unclass(DfT_birthday)
+```
+
+This chapter will be using the road accident data set:
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date, Police_Force,  Day_of_Week, Time)),
+caption = "Reported Road Accidents, 2017")
+
+```
 
 ## Working with dates
+
 ### Converting a character to a date 
+
+In R, dates can be converted to a specific date variable type in order to use the variable as a date.
+
+Having a variable as a date means that you can:
+
+ - extract the different elements of the date (year, month etc.)
+ - calculate differences between dates
+
+This can be done in the following way:
+
+- Identify the order of the year, month, day and use the appropriate function (ymd, mdy, dmy etc.)
+
+```{r, echo = TRUE}
+
+# convert date to date object
+
+# check class of date
+class(road_accidents$Date1)
+
+# look at the date variable and see what order it is in (year-m-d)
+# therefore use the ymd function
+road_accidents$Date1 <- lubridate::ymd(road_accidents$Date1)
+
+# now check class
+class(road_accidents$Date1)
+
+```
+
+
+
 ### Get year from date
+
+Use the **year** function from {lubridate}:
+
+```{r}
+
+road_accidents$Year <- lubridate::year(road_accidents$Date1)
+
+```
+
+*See Table 5.2 for output*
+
 ### Get month from date
+
+Use the **month** function from {lubridate}:
+
+```{r}
+
+road_accidents$Month <- lubridate::month(road_accidents$Date1)
+
+```
+
+*See Table 5.2 for output*
+
 ### Get day from date
+
+Use the **day** function from {lubridate}:
+
+```{r}
+
+road_accidents$Day <- lubridate::day(road_accidents$Date1)
+
+```
+
+*See Table 5.2 for output*
+
 ### Get weekday from date
+
+Use the **wday** function from {lubridate} to get the weekday label:
+
+```{r}
+
+road_accidents$weekday <- lubridate::wday(road_accidents$Date1)
+
+```
+
+*See Table 5.2 for output*
+
 ### Get quarter from date
+
+Use the **quarter** function from {lubridate}:
+
+```{r}
+
+road_accidents$Quarter <- lubridate::quarter(road_accidents$Date1)
+
+```
+
+*See Table 5.2 for output*
+
+```{r, include = FALSE}
+
+dates <- dplyr::select(road_accidents, Date1, Year, Quarter, Month, Day, weekday)
+
+```
+
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dates),
+caption = "Using lubridate to extract time information")
+
+```
+
+
 ### Find difference between two dates
+
+
+```{r, include = FALSE}
+
+# First create new date column so difference between two dates can be found
+
+road_accidents$Date2 <-round_date(road_accidents$Date1, unit = "month")
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date1, Date2)),
+caption = "Find difference between two dates")
+
+```
+
+Use the **as.duration** function to find the duration between two dates. The duration to be measured can be specified:
+
+- dhours
+- dweeks
+- ddays
+- dminutes
+- dyears
+
+To find out the number of days difference, the **as.duration** function calculates the duration in seconds so the duration must be divided by the desired duration (ddays) to convert to duration in days.
+
+```{r}
+
+road_accidents$date_diff <- 
+lubridate::as.duration(road_accidents$Date2 %--% road_accidents$Date1) / ddays(1)
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date1, Date2, date_diff)),
+caption = "Find difference between two dates")
+
+```
+
+
+The `%--%` operator is used to define an **interval**. So, this code is calculating the duration of the interval between `Date2` and `Date1`.
+
+The number after **ddays** indicates by how many units the duration is (i.e. one day).
+
+
 ### Convert month (integer to character)
+
+{base} R has a useful function which takes the month numbers and converts them to the corresponding text.
+
+```{r}
+
+road_accidents$Month_lab <- month.abb[road_accidents$Month]
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date, Month, Month_lab)),
+caption = "Convert month to character")
+
+```
+
 ### Convert month (character to integer)
+
+{base} R has a useful function which takes the month text and converts them to the corresponding number.
+
+```{r}
+ road_accidents$Month <- match(road_accidents$Month_lab,month.abb)
+
+```
+
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date, Month, Month_lab)),
+caption = "Convert month character to integer")
+
+```
+
+
+
 ### Merge separate date information into a date
+
+The {lubridate} package can be used in conjunction with the paste function to combine columns separate date information (e.g. year, month, day) into one date variable.
+
+```{r}
+
+road_accidents$date <- 
+paste(road_accidents$Year, road_accidents$Month, road_accidents$Day, sep="-") %>% 
+  ymd()%>%
+  as.Date()
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Date, Year, Month, Day, date)),
+caption = "Convert month to character")
+
+```
+
 ## Working with date-times
+
+A date-time stores date and time information.
+
+
 ### Converting a character to a date-time
+
+This is similar to converting a character to a date as mentioned above.
+
+This can be done in the following way:
+
+- Identify the order of the year, month, day, and time elements (hour, minute and second or just hour and minute) and use the appropriate function (ymd, mdy, dmy etc.)
+
+```{r, eval = FALSE}
+
+# convert date to date object
+
+# look at the date variable and see what order it is in (year-m-d, hms "2017-11-28 14:00)
+# therefore use the ymd_hm
+road_accidents$Date_time1 <- lubridate::ymd_hm(road_accidents$Date_time)
+
+```
+
+
 ### Extract date from date time variable
+
+Use the **date** function to extract the date from a date time variable.
+
+The year/month/day information can then be extracted from the date using the code examples above.
+
+```{r, eval = FALSE}
+
+
+road_accidents$Date2 <- lubridate::date(road_accidents$Date_time)
+
+```
+
 ### Convert character to hms (time) variable
+
+Convert time as character into a hms variable so the variable can manipulated as a time object.
+
+This can be done using the **{hms}** package.
+
+```{r}
+
+
+road_accidents$Time <- hms::as_hms(road_accidents$Time)
+
+```
+
 ### Extract hour from time
+
+Use the **hour** function from the {lubridate} package to extract hour information.
+
+```{r}
+
+
+road_accidents$hour <- lubridate::hour(road_accidents$Time)
+
+```
+
+*See Table 5.8 for output* 
+
 ### Extract minute from time
+
+Use the **minute** function from the {lubridate} package to extract minute information.
+
+```{r}
+
+
+road_accidents$minute <- lubridate::minute(road_accidents$Time)
+
+```
+
+*See Table 5.8 for output* 
+
 ### Extract second from time
+
+Use the **second** function from the {lubridate} package to extract second information.
+
+```{r}
+
+
+road_accidents$second <- lubridate::second(road_accidents$Time)
+
+```
+
+*See Table 5.8 for output* 
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, Time, hour, minute, second)),
+caption = "Extract time information")
+
+```
+
 ### Merge separate time information into one variable
+
+Hour, minute and second variables can be merged to create a time variable, and then converted to hms.
+
+```{r}
+
+# merge seperate time information
+road_accidents$time2 <- paste(road_accidents$hour,road_accidents$minute, road_accidents$second, sep=":")
+
+```
+
+```{r, eval = FALSE}
+# convert to hms
+road_accidents$time3 <- hms::as_hms(road_accidents$time2)
+
+```
+
+```{r, echo = FALSE, results='asis'}
+
+knitr::kable(head(dplyr::select(road_accidents, acc_index, hour, minute, second, time2)),
+caption = "Merge time information")
+
+```
+
+
 ### find the difference between two times
+
+Use the {base} r **difftime** function to find the difference between two times.
+
+Note: this can also be used to find the difference in days or weeks.
+
+Also note: the object must be hms/date to be able to calculate the difference.
+
+```{r}
+
+time_first <- hms::as.hms("11:00:00")
+time_second <- hms::as.hms("11:05:00")
+
+difference <- difftime(time_first, time_second, "mins" )
+
+```
+
+```{r, echo = TRUE }
+
+difference
+
+```
+
+Change the unit of measurement to get different time differences (for days and weeks you'll need a date rather than a hms).
+
+Units: "secs", "mins", "hours", "days", "weeks"
 
 <!--chapter:end:04-dates.Rmd-->
 
+```{r include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+```
 
 # Working with factors {#factors}
 
-Placeholder
-
-
 ## Common uses
+Within the department there are three main ways you are likely to make use of 
+factors:
+
+* Tabulation of data (in particular when you want to illustrate zero occurences
+of a particular value)
+* Ordering of data for output (e.g. bars in a graph)
+* Statistical models (e.g. in conjunction with `contrasts` when encoding 
+categorical data in formulae)
+
 ### Tabulation of data
+```{r}
+# define a simple character vector
+vehicles_observed <- c("car", "car", "bus", "car")
+class(vehicles_observed)
+table(vehicles_observed)
+
+# convert to factor with possible levels
+possible_vehicles <- c("car", "bus", "motorbike", "bicycle")
+vehicles_observed <- factor(vehicles_observed, levels = possible_vehicles)
+class(vehicles_observed)
+table(vehicles_observed)
+```
+
 ### Ordering of data for output
+```{r}
+# example 1
+vehicles_observed <- c("car", "car", "bus", "car")
+possible_vehicles <- c("car", "bus", "motorbike", "bicycle")
+vehicles_observed <- factor(vehicles_observed, levels = possible_vehicles)
+table(vehicles_observed)
+
+possible_vehicles <- c("bicycle", "bus", "car", "motorbike")
+vehicles_observed <- factor(vehicles_observed, levels = possible_vehicles)
+table(vehicles_observed)
+
+# example 2
+df <- iris[sample(1:nrow(iris), 100), ]
+ggplot(df, aes(Species)) + geom_bar()
+
+df$Species <- factor(df$Species, levels = c("versicolor", "virginica", "setosa"))
+ggplot(df, aes(Species)) + geom_bar()
+```
+
 ### Statistical models
+When building a regression model, R will automatically encode your independent 
+character variables using `contr.treatment` contrasts.  This means that each 
+level of the vector is contrasted with a baseline level (by default the first
+level once the vector has been converted to a factor).  If you want to change 
+the baseline level or use a different encoding methodology then you need to 
+work with factors.  To illustrate this we use the `Titanic` dataset.
+
+```{r}
+# load data and convert to one observation per row
+data("Titanic")
+df <- as.data.frame(Titanic)
+df <- df[rep(1:nrow(df), df[ ,5]), -5]
+rownames(df) <- NULL
+head(df)
+
+# For this example we convert all variables to characters
+df[] <- lapply(df, as.character)
+
+# save to temporary folder
+filename <- tempfile(fileext = ".csv")
+write.csv(df, filename, row.names = FALSE)
+
+# reload data with stringsAsFactors = FALSE
+new_df <- read.csv(filename, stringsAsFactors = FALSE)
+str(new_df)
+```
+
+First lets see what happens if we try and build a logistic regression model for
+survivals but using our newly loaded dataframe
+
+```{r, error = TRUE}
+model_1 <- glm(Survived ~ ., family = binomial, data = new_df)
+```
+
+This errors due to the **Survived** variable being a character vector.  Let's 
+convert it to a factor.
+
+```{r}
+new_df$Survived <- factor(new_df$Survived)
+model_2 <- glm(Survived ~ ., family = binomial, data = new_df)
+summary(model_2)
+```
+
+This works, but the baseline case for **Class** is `1st`.  What if we wanted it
+to be `3rd`.  We would first need to convert the variable to a factor and choose
+the appropriate level as a baseline
+
+```{r}
+new_df$Class <- factor(new_df$Class)
+levels(new_df$Class)
+contrasts(new_df$Class) <- contr.treatment(levels(new_df$Class), 3)
+model_3 <- glm(Survived ~ ., family = binomial, data = new_df)
+summary(model_3)
+```
+
 ## Other things to know about factors
+Working with factors can be tricky to both the new, and the experienced `R` 
+user.  This is as their behaviour is not always intuitive.  Below we illustrate
+three common areas of confusion
+
 ### Renaming factor levels
+```{r, error=TRUE}
+my_factor <- factor(c("Dog", "Cat", "Hippo", "Hippo", "Monkey", "Hippo"))
+my_factor
+
+# change Hippo to Giraffe
+## DO NOT DO THIS
+my_factor[my_factor == "Hippo"] <- "Giraffe"
+my_factor
+
+## reset factor
+my_factor <- factor(c("Dog", "Cat", "Hippo", "Hippo", "Monkey", "Hippo"))
+
+# change Hippo to Giraffe
+## DO THIS
+levels(my_factor)[levels(my_factor) == "Hippo"] <- "Giraffe"
+my_factor
+```
+
 ### Combining factors does not result in a factor
+```{r}
+names_1 <- factor(c("jon", "george", "bobby"))
+names_2 <- factor(c("laura", "claire", "laura"))
+c(names_1, names_2)
+
+# if you want concatenation of factors to give a factor than the help page for
+# c() suggest the following method is used:
+c.factor <- function(..., recursive=TRUE) unlist(list(...), recursive=recursive)
+c(names_1, names_2)
+
+# if you only wanted the result to be a character vector then you could also use
+c(as.character(names_1), as.character(names_2))
+```
+
+```{r, echo=FALSE}
+# stop it messing up later code
+rm(c.factor)
+```
+
 ### Numeric vectors that have been read as factors
+Sometimes we find a numeric vector is being stored as a factor
+(a common occurence when reading a csv from Excel with #N/A values)
+
+```{r}
+# example data set
+pseudo_excel_csv <- data.frame(names = c("jon", "laura", "ivy", "george"),
+                               ages = c(20, 22, "#N/A", "#N/A"))
+# save to temporary file
+filename <- tempfile(fileext = ".csv")
+write.csv(pseudo_excel_csv, filename, row.names = FALSE)
+
+# reload data
+df <- read.csv(filename)
+str(df)
+```
+
+to transform this to a numeric variable we can proceed as follows
+```{r check1234, error = TRUE}
+df$ages <- as.numeric(levels(df$ages)[df$ages])
+str(df)
+```
+
 ## Helpful packages
+If you find yourself having to manipulate factors often, then it may be worth
+spending some time with the tidyverse package 
+[forcats](https://forcats.tidyverse.org).  This was designed to make working
+with factors simpler.  There are many tutorials available online but a good 
+place to start is the official 
+[vignette](https://forcats.tidyverse.org/articles/forcats.html).
+
 
 <!--chapter:end:05-factors.Rmd-->
 
-
 # Plotting and Data Visualisations {#plots}
 
-Placeholder
+This chapter provides some examples of how to visualise data in R.
+
+For charts, we'll look at a few examples of how to create simple charts in base R but this chapter will focus mainly in using {ggplot2} to plot charts. For maps, we'll look at how to produce static choropleth maps using {ggplot2} and how to produce interactive maps using {leaflet}. 
 
 
+```{r include=FALSE}
+# Every file must contain at least one R chunk due to the linting process.
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(leaflet)
+```
 ## Plotting in base R
+
+Before we look at using {ggplot2}, we'll look at how to plot simple charts using functions in base R. We'll use road accident data from 2005 to 2017 to demonstrate how to create line and bar charts.
+
+```{r}
+# read in road accident data
+road_acc <- readr::read_csv(
+  file = "data/road_accidents_by_year_and_severity.csv")
+head(road_acc)
+```
+
+
 ### Line charts in base R ###
+
+We want to plot a line chart of total road accidents against year. First we need to group our data by accident year and summarise to get a total sum of accidents for each year:
+```{r}
+road_acc_total <- road_acc %>%
+  dplyr::group_by(accident_year) %>%
+  dplyr::summarise(total = sum(total))
+```
+
+We'll now use the base R function 'plot', specifying the x and y axis and well as the plot type 'l' for line charts:
+```{r}
+plot(
+  x = road_acc_total$accident_year,
+  y = road_acc_total$total,
+  type = "l"
+)
+```
+
+We can make our plot look better by specifying a colour, labelling the axes and giving our plot a title:
+```{r}
+plot(
+  x = road_acc_total$accident_year,
+  y = road_acc_total$total,
+  type = "l",
+  col = "red",
+  xlab = "Year",
+  ylab = "Total",
+  main = "Total road accidents per year, 2005 - 2017"
+)
+```
+
+We can also force our plot to start at 0:
+
+```{r}
+plot(
+  x = road_acc_total$accident_year,
+  y = road_acc_total$total,
+  type = "l",
+  col = "red",
+  xlab = "Year",
+  ylab = "Total",
+  main = "Total road accidents per year, 2005 - 2017",
+  ylim=c(0, max(road_acc_total$total))
+)
+```
+
+
 ### Bar charts in base R ###
+
+We want to plot a bar chart showing the total number of accidents of each severity in 2017. First let's filter the road accidents data for 2017:
+
+```{r}
+road_acc_2017 <- road_acc %>%
+  dplyr::filter(accident_year == 2017)
+road_acc_2017
+```
+
+To create a bar chart, we use the base R function 'barplot' and then specify the variable we want to plot as the height argument:
+```{r, echo=FALSE}
+options(scipen=999)
+```
+
+
+```{r, message=FALSE}
+barplot(height = road_acc_2017$total)
+```
+
+This isn't very useful as we can't see what the different severity types are. So we can specify these in the names.arg argument, as well as add a few extra features to make the plot look better:
+
+```{r}
+barplot(height = road_acc_2017$total,
+        names.arg = c("Fatal", "Serious", "Slight"),
+        width = 2, #width of the bars
+        col = "lightblue",
+        xlab = "Severity",
+        ylab = "Total accidents",
+        main = "Total accidents by severity, 2017")
+```
+
+
+
 ## Plotting withh {ggplot2}
+
+**What is {ggplot2}?**
+
+The 'gg' in {ggplot2} stands for 'grammar of graphics'. This is a way of thinking about plotting as having grammar elements that can be applied in succession to create a plot. This is the idea that you can build every graph from the same few components: a dataset, geoms (marks representing data points), a co-ordinate system and some other things.
+
+The ggplot() function from the {ggplot2} package is how you create these plots. You build up the graphical elements using the + symbol. Think about it as placing down a canvas and then adding layers on top.
+
+**Why should I use {ggplot2} instead of the plot functions in base R?**
+
+
+As with most things in R, there are multiple ways to do the same thing. This applies to creating visualisations as well. As will be demonstrated below we can replicate the graphs we have created above using {ggplot2} instead, pretty well. 
+
+One method is not necessarily better than the other, but at DfT we advocate using {ggplot2} when plotting charts. There is consistency in the way that {ggplot2} works which makes it easier to get to grips with for beginners. It is also part of the {tidyverse} which we have used earlier on in this cookbook so it shares the underlying design philosophy, grammar, and data structures. 
+
 ### Line charts with {ggplot2}
+
+When plotting with {ggplot2}, we start with the ggplot() function which creates a blank canvas, then the next layer we add is the plot type. For line charts, this would be ggplot() + geom_line(). Within these functions, we specify our data and our aesthetic mappings i.e. what variables to map to the x and y axes from the specified data. If we were create a simple line chart for total accidents against year, the code would read as follows:
+
+```{r}
+ggplot(data = road_acc_total) +
+  geom_line(mapping = aes(x = accident_year, y = total))
+```
+
+So a reusuable template for making graphs would be as below, with the bracketed sections in the code replaced with a dataset, a geom function and a collection of mappings:
+
+ggplot(data = name_of_dataset) +
+  geom_function(mapping = aes())
+
+
+You can find a range of different plot types available in {ggplot2}, as well as tips on how to use them in the {ggplot2} cheatsheet (https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf).
+
+Let's create the same the line chart we created with base R, showing total road accidents against year:
+
+```{r}
+ggplot(data = road_acc_total) +
+  geom_line(aes(x = accident_year, y = total), col = "red") +
+  xlab("Year") +
+  ylab("Total") +
+  ggtitle("Total road accidents per year, 2005 - 2017") +
+  scale_x_continuous(breaks = seq(2000, 2017, 2)) +
+  expand_limits(y=0) +
+  theme_classic()
+```
+
+Here we have specified the colour of the line (notice this is outside of the aes() function). We have also labelled the x and y axes and given the plot a title.
+We have used scale_x_continuous() function to specify the intervals in the year variable and have used a theme to set the style of our plot (more on this later).
+
 ### Aesthetic mappings
+
+To get more insight into our data, we can add a third variable to our plot by mapping it to an aesthetic. This is a visual property of the objects in our plot such as the size, the shape or the colour of our points. For example, if we want to see the total number of road accidents by severity type against year, we can map the 'name' variable to the colour aesthetic:
+
+```{r}
+ggplot(data = road_acc) +
+  geom_line(mapping = aes(x = accident_year, y = total, colour = name)) +
+  scale_x_continuous(breaks = seq(2000, 2017, 2))
+```
+
+So unlike before, we specify the colour within the aes() function, rather than outside of it.
+
 ### Bar charts with {ggplot2}
+
+When creating bar charts with {ggplot2}, we can use geom_bar() or geom_col(). geom_bar() makes the height of the bar proportional to the number of cases in each group while geom_col() enables the heights of the bars to represent values in the data. So if your data is not already grouped you can use geom_bar() like so:
+
+```{r, message=FALSE}
+messy_pokemon <- readr::read_csv(
+  file = "data/messy_pokemon_data.csv")
+head(messy_pokemon)
+ggplot(data = messy_pokemon) +
+  geom_bar(mapping = aes(x = weight_bin))
+```
+
+This has grouped our data by weight_bin with the height of the bars representing the number of pokemon in each weight bin.
+
+Let's recreate the total accidents by severity chart, now using {ggplot2} instead:
+
+```{r}
+ggplot(data = road_acc_2017) +
+  geom_col(mapping = aes(x = name, y = total), fill = "lightblue", col = "black")+
+  xlab("Severity") +
+  ylab("Total accidents") +
+  ggtitle("Total accidents by severity, 2017")+
+  theme_classic()
+```
+
+Here we have used geom_col() instead but our data is already grouped so we simply want the height of the bars to represent the values in the data i.e. the number of accidents of each type of severity.
+
+You could also use geom_bar() in this situation but you would need to add an extra argument: stat = "identity".
+
+
+```{r}
+ggplot(data = road_acc_2017) +
+  geom_bar(mapping = aes(x = name, y = total),  fill = "lightblue", col = "black", stat = "identity")+
+  xlab("Severity") +
+  ylab("Total accidents") +
+  ggtitle("Total accidents by severity, 2017") +
+  theme_classic()
+```
+
 ## DfT colours
+
+So far we've used colours built into R and referred to them by name e.g. red, lightlue etc. In order to make charts using DfT colours, we can specify what colours we want using hexcodes. For example, for the previous bar chart we can set the levels of severity to different DfT colours.
+
+```{r}
+ggplot(data = road_acc_2017) +
+  geom_col(mapping = aes(x = name, y = total, fill = name))+
+  xlab("Severity") +
+  ylab("Total accidents") +
+  ggtitle("Total accidents by severity, 2017") +
+  theme_classic() +
+  scale_fill_manual(values = c("#C99212", "#D25F15", "#006853"))
+```
+
+Here we map the name variable to the fill argument within the aesthetic.
+
+
+
 ## DfT Theme
+
+We mentioned themes earlier. Themes are used to set the style of your plot and can give your plots a consistent customized look. You can customise things such as titles, labels, fonts, background, gridlines, and legends. We have been using theme_classic() so far but {ggplot2} has a number of built-in themes that you can use for your plots available here: [https://ggplot2.tidyverse.org/reference/ggtheme.html](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+
+You can modify aspects of a theme using the theme() function. For example, for our previous accidents plot, we can remove the legend title and move the position of the plot title.
+
+```{r}
+ggplot(data = road_acc_2017) +
+  geom_col(mapping = aes(x = name, y = total, fill = name))+
+  xlab("Severity") +
+  ylab("Total accidents") +
+  ggtitle("Total accidents by severity, 2017") +
+  theme_classic() +
+  scale_fill_manual(values = c("#C99212", "#D25F15", "#006853"))+
+  theme(legend.title = element_blank(),
+        plot.title = element_text(hjust = 0.5))
+```
+
 ### Custom DfT Theme
+
+Instead of using the built-in themes, we can create our own theme to apply to our plots. Below I have created a 'DfT theme' for line charts which sets things such as the font types, sizes, axes lines and title positions to make the plot consistent with what we might put in a DfT publication.
+
+You can adjust and tweak this theme and the colours to create plots in the correct style for your own publications. 
+
+```{r}
+# set DfT colours
+dft_colour <- c("#006853", # dark green
+                    "#66A498", # light green
+                    "#D25F15", # orange
+                    "#E49F73", # light orange
+                    "#C99212", # yellow
+                    "#E9D3A0", # pale yellow
+                    "#0099A9", # blue
+                    "#99D6DD") # light blue
+# create theme
+# note: 'sans' in R refers to the font 'Arial' in Windows
+theme_dft <- ggplot2::theme(axis.text = element_text(family = "sans", size = 10, colour = "black"), # axis text
+                            axis.title.x = element_text(family = "sans", size = 13, colour = "black", # x axis title
+                                                        margin = margin(t = 10)),
+                            axis.title.y = element_blank(),
+                            plot.title = element_text(size = 16, family = "sans", hjust = 0.5),
+                            plot.subtitle = element_text(size = 13, colour = "black", hjust = -0.05,
+                                                         margin = margin(t = 10)),
+                            legend.key = element_blank(), # make the legend background blank
+                            legend.position = "bottom", # legend at the bottom
+                            legend.direction = "horizontal", # legend horizontal
+                            legend.title = element_blank(), # remove legend title
+                            legend.text = element_text(size = 9, family = "sans"),
+                            axis.ticks = element_blank(), # remove tick marks
+                            panel.grid = element_blank(), # remove grid lines
+                            panel.background = element_blank(), # remove background
+                            axis.line.x = element_line(size = 0.5, colour = "black"))  
+# use the DfT colours and the DfT theme for the accidents by severity line chart
+ggplot(data = road_acc) +
+  geom_line(mapping = aes(x = accident_year, y = total, colour = name), size = 1.5) +
+  labs(title = "Accidents by severity, 2005 to 2017", 
+       x = "Accident Year", 
+       y = "")+
+  scale_x_continuous(breaks = seq(2005, 2017, 2))+
+  scale_colour_manual(values = dft_colour) + #here is where you apply the dft colours
+  theme_dft #here we specify our custom theme
+```
+
+
 ## More {ggplot2} charts 
+
+This section provides more code examples for creating {ggplot2} themes, including the DfT theme code.
+
+First, some more record-level road accident data is read in which can be used with the charts. Note that the data is being read in as a .rds object. A .rds object is an R data object which can be read in as a data frame:
+
+```{r}
+# read in road accident data
+road_acc_data <- readr::read_rds("data/road_accidents_2017.RDS")
+head(road_acc_data)
+```
+
 ### Scatter plots
+
+The scatter plot example will plot the number of accidents in 2017 for each police force.
+
+To create a scatter plot use **geom_point** in the ggplot2 code.
+
+Note that to draw out a colour for the points, the code specifies which colour in the list of DfT colours (see DfT colours sub-chapter 7.4) the points will be. In this case, the third colour in the list will be the colour of the points.
+
+Labels are added to the scatter plot using **geom_text**. 
+
+```{r}
+# First get total number of accidents for each police force
+accident_pf <- road_acc_data %>%
+  dplyr::group_by(Police_Force) %>%
+  dplyr::tally()
+# use the DfT colours and the DfT theme for the accidents by police force scatter chart
+ggplot(data = accident_pf, aes(x = Police_Force, y = n)) +
+  geom_point(color = dft_colour[3], size = 1.5) +
+  labs(title = "Reported Road Accidents by Police Force", 
+       x = "Police Force", 
+       y = "Number of Accidents")+ 
+  scale_y_continuous(breaks = seq(0, 30000, 2000)) +     # set y axis to go from 0 to 30,000
+  geom_text(aes(label=Police_Force), size=3, hjust = 0, vjust = 0) +   # amend hjust and vjust to change position
+  theme_dft #here we specify our custom theme
+```
+
+The police forces are labelled with numbers, but the chart shows that police force 1 (Metropolitan Police) has the highest number of road accidents in 2017.
+
 ### Horizontal bar chart
+
+The scatter plot showing the number of accidents by police force could also be shown in a horizontal bar chart.
+
+Use **geom_col** plus **coord_flip** to create a horizontal bar chart.
+
+For the horizontal bar chart, bars will be shown in descending order, with the police force with the largest value at the top of the chart. This is done by ensuring the data is arranged by the number of accidents ("n").
+
+As this is categorical data, police force is made a factor, with each police force made a separate level.
+
+
+
+```{r}
+# Arrange police force data by size
+accident_pf <- arrange(accident_pf, n)
+# take a subset for charting purposes
+accident_pf_small <- dplyr::filter(accident_pf, n < 600)
+# Make police force a factor
+accident_pf_small$Police_Force <- 
+  factor(accident_pf_small$Police_Force, levels = accident_pf_small$Police_Force)
+# use the DfT colours and the DfT theme for the accidents by police force scatter chart
+ggplot(data = accident_pf_small) +
+  geom_col(mapping = aes(x = Police_Force, y = n, fill = Police_Force)) +
+  coord_flip() +         # make bar chart horizontal
+  labs(title = "Reported Road Accidents by Police Force, 2017", 
+       x = "Police Force", 
+       y = "Number of Accidents")+ 
+  scale_y_continuous(breaks = seq(0, 500, 50)) + # set y axis running from 0 to 500
+   scale_fill_manual(values = dft_colour) +
+  theme_dft +  #here we specify our custom theme
+  theme(legend.position = "none") # command to remove legends
+```
+
+
+The chart shows that police force 98 (Dumfries and Galloway) recorded the lowest number of accidents in 2017.
+
 ### Stacked bar chart
+
+This example will create a stacked bar chart showing the percentage of road accidents in each accident severity category, for each year.
+
+Creating a **percentage stacked bar** requires using the **geom_bar** command in ggplot2 and setting the position to **fill**.
+
+```{r}
+# Make accident year a factor so year on x-axis is labelled individually
+#(otherwise axis will be continuous)
+road_acc_year <- road_acc
+# make year a factor
+road_acc_year$accident_year <- as.factor(road_acc_year$accident_year)
+# use the DfT colours and the DfT theme for the accidents by police force scatter chart
+ggplot(data = road_acc_year, aes(fill = name, y=total, x= accident_year)) +
+  geom_bar(position="fill", stat="identity") +  # geom bar with position fill makes stacked bar
+  labs(title = "Percentage Accident Severity, by Year", 
+       x = "Accident Year", 
+       y = "% Accident Severity")+ 
+   scale_fill_manual(values = dft_colour) +
+  theme_dft 
+```
+
+If you want the stacked bar chart to show numbers instead of percentages use **position = "stack"** instead.
+
+```{r}
+# use the DfT colours and the DfT theme for the accidents by police force scatter chart
+ggplot(data = road_acc_year, aes(fill = name, y=total, x= accident_year)) +
+  geom_bar(position="stack", stat="identity") +
+  labs(title = "Number of accidents by severity, by Year", 
+       x = "Accident Year", 
+       y = "% Accident Severity")+ 
+   scale_fill_manual(values = dft_colour) +
+  theme_dft 
+```
+
 ## Interactive charts with {plotly}
+
+{plotly} is a graphing library which makes interactive html graphs. It uses the open source JavaScript graphing library plotly.js. It is great for building dashboards or allowing the user to interact with the data themselves.
+
+{plotly} is not necessarily good for publications as the charts are html but can be useful for exploratory analysis or QA notes. It allows you to zoom into certain parts of the chart and toggle between different categories.
+
+It can be used in two ways - either with {ggplot2} (easier option) or using the plot_ly() wrapper directly which gives you more control.
+
 ### {plotly} with {ggplot2}
+
+Taking our previous accidents by severity plot, we can simply assign this to an object and use the ggplotly() function to make it interactive.
+
+```{r, message=FALSE}
+library(plotly)
+road_acc_chart <- ggplot(data = road_acc) +
+  geom_line(mapping = aes(x = accident_year, y = total, colour = name), size = 1.5) +
+  labs(title = "Accidents by severity, 2005 to 2017", 
+       x = "Accident Year", 
+       y = "")+
+  scale_x_continuous(breaks = seq(2005, 2017, 2))+
+  scale_colour_manual(values = dft_colour) + 
+  theme_dft 
+plotly::ggplotly(road_acc_chart)
+```
+Since we set our legend to be horizontal in our DfT theme, we get a warning message as plotly.js does not support horizontal legend items yet.
+
 ### plot_ly()
+
+Using plot_ly() is similar to {ggplot2} in some ways as we build the plot in layers but we use the pipe operator rather than a plus sign, and the ~ sign before the variables in our data:
+
+```{r}
+plotly::plot_ly(road_acc, x = ~accident_year, y = ~total) %>% # specify the data and x and y axes
+  plotly::add_lines(color = ~name, colors = dft_colour[1:3]) %>% # colour lines by severity
+  plotly::layout(title = "Accidents by severity, 2005 to 2017",
+         xaxis = list(title = "Accident Year"),
+         yaxis = list(title = ""))
+```
+
+
+You can find more information about using {plotly} in R from the following websites:
+
+* Graphing library with example code: [https://plot.ly/r/](https://plot.ly/r/)
+
+* Cheat sheet: [https://images.plot.ly/plotly-documentation/images/r_cheat_sheet.pdf](https://images.plot.ly/plotly-documentation/images/r_cheat_sheet.pdf)
+
+* E-book: [https://plotly-r.com/index.html](https://plotly-r.com/index.html)
+
 ## Mapping in R
+
+There are a wide range of packages you can use to produce maps in R. For static choropleth maps, we're going to focus on using {ggplot2} which we are now familiar with.
+
 ### Mapping with {ggplot2}
+
+To complete.
+
 ### Mapping with {leaflet}
+
+The {leaflet} package can be used to create interactive maps in R. Similar to {ggplot2}, you start with a base map and then add layers (i.e. features). We're going to map some search and rescue helicopter data, using the longitude and latitude.
+
+```{r}
+library(leaflet)
+sarh <- readr::read_csv(file = "data/SARH_spatial.csv")
+head(sarh)
+#plot the interactive map using leaflet
+leaflet::leaflet(data = sarh) %>% 
+  leaflet::addProviderTiles(provider = providers$Esri.NatGeoWorldMap) %>%  #select the type of map you want to plot
+  leaflet::addMarkers(lng = ~longitude_new, 
+                      lat = ~ latitude_new, 
+                      popup = ~ htmltools::htmlEscape(Base), # what appears when you click on a data point
+                      label = ~ htmltools::htmlEscape(Domain) # what appears when you hover over a data point
+  )
+```
+
+If you want to save this as a static map, you could simply export is an image. More information on using {leaflet} in R can be found here: [https://rstudio.github.io/leaflet/](https://rstudio.github.io/leaflet/)
 
 <!--chapter:end:06-plotting.Rmd-->
 
-
 # DfT RAP guidance {#RAP}
 
-Placeholder
+This section provides a condensed version of the DfT RAP guidance written and amended by the DfT RAP committee.
+
+A more in-depth guide is available internally, please ask the DfT RAP committee for the file path.
 
 
 ## What
+
+This sub-chapter explains what a RAP project is using RAP levels amended from NHS Scotland RAP levels.
+
+Use the DfT RAP levels to ensure your DfT RAP project includes everything it should. A project is considered a RAP project at level 4a and above. 
+
+These RAP levels have been amended from the original [NHS Scotland RAP levels](https://www.isdscotland.org/About-ISD/Methodologies/_docs/Reproducible_Analytical_Pipelines_paper_v1.4.pdf) to reflect DfT processes and software capabilities. There is guidance for the descriptors below the RAP levels.
+
+![RAP levels key](image/levels_key.png)
+
+![RAP levels](image/rap_levels.png)
+DfT RAP levels guidance
+
+**Data file produced by code**
+Your code will produce the required data. This may involve some or all of cleaning, tidying, wrangling, analysing.
+
+**Outputs produced by code** 
+Your code will automate the production of publication ready outputs, for example formatted excel publication tables or reports.
+
+**QA of code**
+Your code has been quality assured by someone else, and all comments implemented. Your manager should sign off on the code at this point.
+
+**Documentation so others can independently run the code**
+Your code should be documented so that someone else can independently run the code. This could be through comments in the code, or a separate document, such as a README.md, providing guidance.
+
+**Well-structured data storage**
+Your project should have an organised hierarchy of files and folders (we recommend using an R project), with data and outputs stored appropriately. 
+
+**Create versions of code when milestones reached**
+You should create versions of your code whenever key milestones or sections have been completed. This will allow you to find previous versions of code if something goes wrong, or the code breaks. If version control is available (e.g. Github) then this could be implemented for more advanced version control.
+
+**R packages and versions documented**
+R packages and the versions used should be documented so that if other people use your code they can ensure they have the right packages and versions to run your code. Running sessionInfo() and RStudio.Version() after loading all libraries at the start of your code will output information about the packages and RStudio versions used. See the R-Cookbook for how to capture and print this information to a file.
+
+**Peer review of code**
+Your code will need to be peer reviewed. This is less in depth than QA’ing the code but will need to be done by an experienced R user or RAP champion. NOTE: it is part of the RAP champion role to peer review RAP projects.
+
+**Automated quality assurance of data**
+Your RAP project should include automated quality assurance of data, this could be an automated QA note, or tests and checks within the code.
+
+**Unit testing of functions and/or stress testing across all code**
+Where user defined functions are created, these should be unit tested – functions written to pass tests. Where functions are not used the code must stress tested and risks documented. For example, does the code work with previous years? Are the figures at the end as expected? What happens if the data fed into the code is different? What if there are columns missing?
+
+**All processes RAPped**
+All processes that make up the pipeline are RAPped. For example, for a publication this could include automation of processes such as data collection, data tidying, data wrangling, quality assurance, producing publication ready table, charts, dashboards etc.
+
+**Reproducible computing environment**
+Using a system like docker to create a reproducible computing environment.
+
+
 ## When
+
+Whilst incredibly powerful, RAP should not be seen as a solution for all the difficulties of statistics production. However, implementing even a few of the techniques can drive benefits in auditability, speed, quality, and knowledge transfer. There is a balance to be struck between ease of maintenance and the level of automation, and this is likely to differ for every publication or team.
+
+Sometimes it is difficult to decide if you should a RAP project or not. The following table should help you identify the benefits and risks for your individual problem:
+
+![advantages and disadvantages of RAP](image/adv_disadv.png)
+
+
 ## Additional resources
+
+There is are also quite a few links and resources which can help with a RAP project:
+
+[RAP govdown website](https://ukgovdatascience.github.io/rap-website/resource-nhs-nss-transforming-publications-toolkit.html) is a central repository for all things RAP across government, including lots of links.
+
+[RAP companion](https://ukgovdatascience.github.io/rap_companion/) comprehensive RAP guide.
+
+[RAP collaboration slack channel](https://govdatascience.slack.com/messages/C6H22U3H9/convo/C17V1PCCX-1560436755.005800/)
+Contact the wider RAP community for help on more complex issues through the GovDataScience slack domain (you need to be signed in for this link to work).
+
+[GSS RAP champions page](https://gss.civilservice.gov.uk/about-us/champion-networks/reproducible-analytical-pipeline-rap-champions/). Get in contact with RAP champions from DfT and across government.
+
 
 <!--chapter:end:07-RAP.Rmd-->
 
@@ -210,13 +2850,11 @@ Placeholder
 ```{r setup and read in zapmap, echo=FALSE, include=FALSE}
 library(dplyr) #manipulating data
 library(readr) #reading in data
-library(tmap) ## mapping software
-library(sf) 
-#library(rmapshaper)
-
+library(sf) # storing and manipulating spatial data
+library(htmltools) # for embedding html docs
 knitr::opts_chunk$set(echo = FALSE)
 
-Sys.setenv(TZ='UTC')
+Sys.setenv(TZ = "UTC")
 ```
 
 
@@ -238,10 +2876,7 @@ Let's have a look at some data. We can read in our data as a spatial object usin
 
 *Reading in Spatial Data*
 ```{r read in data, echo = TRUE, eval = TRUE, error = FALSE}
-LAs <- sf::st_read("data/ONS Geography")
-
-
-head(LAs)
+LAs <- sf::st_read("data/LAs")
 ```
 
 Looking at the message we get when we load in our data, we can find out some basic information about our sf dataframe:
@@ -254,7 +2889,7 @@ Looking at the message we get when we load in our data, we can find out some bas
 We can also ask R to give us all of this info with the **st_geometry** function.
 
 *Inspect spatial data*
-```{r echo = TRUE, eval = TRUE, error = FALSE}
+```{r 21, echo = TRUE, eval = TRUE, error = FALSE}
 sf::st_geometry(LAs)
 ```
 
@@ -269,7 +2904,7 @@ The OSGB1936 system is best suited to mapping the UK or areas within it. It is a
 Complexities aside, practically what this means is that you will always want *all* of you're spatial data to be in the same CRS, otherwise spatial joins and mapping functions will start throwing up errors. We can change the crs projection very easily with the {sf} function **st_transform**.
 
 *Changing Coordinate Reference System*
-```{r echo = TRUE, eval = TRUE, error = FALSE}
+```{r 20, echo = TRUE, eval = TRUE, error = FALSE}
 LAs <- sf::st_transform(LAs, crs = 27700)
 
 sf::st_crs(LAs)
@@ -279,7 +2914,7 @@ This changes the CRS projection from the WGS84 system to the OSGB1936 system, co
 Note that this only works if the spatial object has data on the coordinate reference system already. If your data is missing *all* of this information, you will have to set the crs manually (if you know what the CRS projection *should be*):
 
 *Setting Coordinate Reference System*
-```{r echo = TRUE, eval = FALSE, error = FALSE}
+```{r 19, echo = TRUE, eval = FALSE, error = FALSE}
 sf::st_crs(sf_object) <- 27700
 ```
 
@@ -291,44 +2926,32 @@ As mentiond above, one of the key advantages of working with spatial data in {sf
 The variable "lad19cd" has a unique code for each local authority. All codes begin with a letter, followed by a numeric series. The letter refers to the country ("E" for England, "W" for Wales, "S" for Scotland, and "N" for Northern Ireland). We can use this to create a new variable called "country" for each feature.
 
 *Manipulating {sf} data with dplyr*
-```{r, echo = TRUE, eval = TRUE, error = FALSE}
+```{r 18, echo = TRUE, eval = TRUE, error = FALSE}
 LAs <- LAs %>% dplyr::mutate(country = dplyr::case_when(stringr::str_detect(lad19cd, "W") ~ "Wales",
                              stringr::str_detect(lad19cd, "S") ~ "Scotland",
                              stringr::str_detect(lad19cd, "N") ~ "Northern Ireland",
                              stringr::str_detect(lad19cd, "E") ~ "England"))
 
-LAs %>% dplyr::group_by(country) %>% dplyr::tally()
+LAs %>% as.data.frame() %>% dplyr::group_by(country) %>% dplyr::tally()
 ```
 
 As we can see, we've manipulated our data in exactly the same way as we would have with a flat dataframe.We can also join spatial and non-spatial data together in the same way we normally would with dataframes.
 Let's take some population data and join it to our Local Authorities. 
 
 *Joining Spatial and non-spatial data*
-```{r, echo = FALSE, eval = TRUE, error = FALSE, warning = FALSE, message = FALSE}
+```{r 17, echo = FALSE, eval = TRUE, error = FALSE, warning = FALSE, message = FALSE}
 LAs_pop <- read_csv("data/LAs_Populations.csv")
-
-LAs_pop <- LAs_pop %>%
-  dplyr::rename(lad19cd = Code, population = `All ages`, LA_name = Name)
-
-LAs_pop <- LAs_pop %>%
-  dplyr::select(lad19cd, population)
 ```
-```{r, echo = TRUE, eval = TRUE, error = FALSE, message = FALSE}
+```{r 16, echo = TRUE, eval = TRUE, error = FALSE, message = FALSE}
 summary(LAs_pop)
 ```
 
 This dataframe of local authority populations has 2 variables, local authority code (lad19cd) and population. We can use a {dplyr} **left_join** to join this to our {sf} dataframe as we would with a flat dataframe.
 
-```{r, echo = TRUE, eval = TRUE, error = FALSE}
-
-names(LAs_pop)
-names(LAs)
-
+```{r 15, echo = TRUE, eval = TRUE, error = FALSE}
 LAs <- dplyr::left_join(LAs, LAs_pop, by = "lad19cd")
-```
-```{r, echo = FALSE, eval = TRUE, error = FALSE}
-LAs$population <- as.numeric(LAs$population)
 
+LAs$population <- as.numeric(LAs$population)
 ```
 
 ## Spatial Analysis - Joins
@@ -338,16 +2961,10 @@ A common task we might want to conduct is to manipulated a spatial object based 
 Let's look at some data representing the coordinates of road traffic accidents in Great Britain.
 
 *Read in csv*
-```{r, echo = FALSE, eval = TRUE, error = FALSE, warning = FALSE}
+```{r 14, echo = FALSE, eval = TRUE, error = FALSE, warning = FALSE}
 
 crash_data <- read.csv("data/road_traffic_accidents.csv")
 
-crash_data <- crash_data %>% dplyr::select(-Longitude, -Latitude, -Local_Authority_.District., -Local_Authority_.Highway.)
-
-crash_data$Date <- as.Date(crash_data$Date)
-
-
-crash_data <- crash_data %>% dplyr::filter(Date >= as.Date("01/01/2018"))
 ```
 ```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
 class(crash_data)
@@ -357,7 +2974,7 @@ names(crash_data)
 Our crash data is in a flat csv format, BUT it has variables representing the easting and northing of where each acccident took place. We can use this to turn our crash data into an sf object with the function **st_as_sf**. We take our dataset, define which variables R should use to define coordinates in the "coords" argument, and define the "crs" that those coordinates are plotted in.
 
 *Transforming flat data frames to spatial data*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
+```{r 13, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
 crashes <- crash_data %>% dplyr::filter(!is.na(Location_Easting_OSGR) & !is.na(Location_Northing_OSGR)) %>%
 sf::st_as_sf(coords = c("Location_Easting_OSGR","Location_Northing_OSGR"), crs = 27700)
 
@@ -369,10 +2986,10 @@ The crashes sf dataframe holds information on all reported road traffic accident
 Let's have a look at the most severe accidents (accidents with 5 or more casualties).
 
 *Quick map of spatial data*
-``` {r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
-
-crashes %>% dplyr::filter(Number_of_Casualties == 5) %>% tmap::qtm()
+``` {r 13i, echo = TRUE, eval = FALSE, error = FALSE, warning = FALSE}
+crashes %>% dplyr::filter(Number_of_Casualties >= 5) %>% tmap::qtm()
 ```
+![](image/crashesq.png)
 
 The **qtm** function is a useful function from {tmap} that let's us quickly create maps with a minimum number of arguments. This is often useful for sense-checking data and can help you spot errors in data manipulation when working with spatial data. Here, for example, we can see that our data largely makes sense, so our conversion to {sf} was likely correct. We can (roughly) make out the shape of Great Britain, and we see some clusters around major cities (London, Birmingham, Manchester etc.). We can also see that we don't appear to have data for Northern Ireland in this dataset (either that or Northern Irish drivers are much safer drivers).
 
@@ -380,25 +2997,23 @@ Let's see can we work out which Local Authority has had the most road traffic ca
 We can use a **spatial join** to assign a local authority to each road traffic accident. This works similarly to a {dplyr} left_join, with all of the variables from the **y** table being added to each observation of the **x** table which match eachother by a defined variable. The difference here is that the two tables are joined based on a shared **geometry**, rather than a shared value of a variable. The shared geometry here being whether a point intersects with a polygon (in other words, whether the point falls within a polygon). 
 
 *Joining spatial data*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
-
+```{r 12, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
 crashes_join <- sf::st_join(crashes, LAs, join = st_intersects) # essentially a left_join of LAs to crashes
-crashes_join$lad19nm <- as.character(crashes_join$lad19nm)
+crashes_join$LA_name <- as.character(crashes_join$LA_name)
 
-LAs_casualties <- crashes_join %>% dplyr::group_by(lad19nm) %>% dplyr::summarise(casualties = sum(Number_of_Casualties)) # making an sf data frame called LAs_casualties which is the result of a simple group_by and summarise.
+LAs_casualties <- crashes_join %>% dplyr::group_by(LA_name) %>% dplyr::summarise(casualties = sum(Number_of_Casualties)) # making an sf data frame called LAs_casualties which is the result of a simple group_by and summarise.
 
-LAs_casualties %>% dplyr::arrange(desc(casualties))
-
+LAs_casualties %>% as.data.frame() %>% dplyr::arrange(desc(casualties)) %>% select(LA_name, casualties) %>% head()
 ```
 
 We can see that Birmingham has had more casualties in this period than any other local authority.
 
 The *LAs_casualties* dataset that we created above has the same local authorities names as our original *LAs* sf dataframe, meaning we can easily left_join this table to our original LAs_shapefile. But first, we will turn it into a flat dataframe (ie, with no geographic information) with the **st_set_geometry** function. If we did not get rid of the geometry before left_joining, we would create a "geometry_collection" object for each local authority, which would be a mess of polygons and points within those polygons for each feature. This is because our **group_by** function above also grouped together the geometries of the observations it was grouping together. If we look at the outout above, we can see that the geometry type of LAs_casualties is "MULTIPOINT", so the "Birmingham" observation has 3,532 points representing where each road accident happened, rather than outlining the polygon of Birmingham in any meaningful way.
 
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
+```{r 11, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
 LAs_casualties <- LAs_casualties %>% sf::st_set_geometry(NULL)
 
-LAs <- dplyr::left_join(LAs, LAs_casualties, by = "lad19nm")
+LAs <- dplyr::left_join(LAs, LAs_casualties, by = "LA_name")
 
 ```
 
@@ -408,29 +3023,22 @@ We now have our casualties data joined to our original local authorities shapefi
 
 Let's have a look at one of our Local Authorities in isolation, Cornwall.
 
-```{r, echo = FALSE, eval = TRUE, error = FALSE}
-LAs %>% dplyr::filter(lad19nm == "Cornwall") %>% tmap::qtm()
-```
+![](image/Cornwall1.png)
 
 We can see that our polygon is quite detailed. While this detail is desirable for when we conduct our spatial analysis, if we want to plot all of our local authorities at the same time, it can be better to plot simplified polygons. This is for 3 reasons. First, simplification means that R can create and output plots quicker; Second, outputs will have a smaller file size (particularly useful for interactive plots or when we share our outputs); and third, sometimes simplified polygons actually look better in plots as too-detailed borders can come out looking murky due to over-plotting, particularly in static plots.
 
 To alleviate this, we can simplify our geometry features before plotting. For this, we will use the function **ms_simplify** from the package {rmapshaper}. This function simplifies spatial data while maintaining key topology. Simplifying functions in other packages can do funny things such leave gaps between polygons with internal borders when simplifying. **ms_simplify** doesn't do this.
 
 *Simplifying Spatial Data*
-```{r, echo = TRUE, eval = TRUE, error = FALSE}
-#LAs_simp <- rmapshaper::ms_simplify(LAs, keep = 0.05, keep_shapes = TRUE)
+```{r 10, echo = TRUE, eval = FALSE, error = FALSE}
+LAs_simp <- rmapshaper::ms_simplify(LAs, keep = 0.05, keep_shapes = TRUE)
 ```
 
 This command creates a new sf data frame called "LAs_simp", which has all the same information as the original LAs sf dataframe, but has a simplified geometry with fewer points. The "keep" argument specifies how much geographic information we want to hold onto. Here we only keep 5% of the original points. The "keep_shapes" argument specifies whether or not we want to allow the function to delete some features entirely for simplification purposes. This can be useful for polygons with lots of small islands as individual entries (where you are indifferent to whether or not you keep all islands in your dataset), BUT use with caution, as if you simplify too much R might delete entire features (observations) to fulfill the simplification. Here we set "keep_shapes = TRUE"" so we don't lose any features.
 
 Let's have a look at the difference between our original and our simplified polygon:
 
-```{r, echo = FALSE, eval = TRUE}
-Cornwall1 <- LAs %>% dplyr::filter(lad19nm == "Cornwall") %>% tmap::qtm(title = "Original")
-#Cornwall2 <- LAs_simp %>% dplyr::filter(lad19nm == "Cornwall") %>% tmap::qtm(title = "5%")
-
-#tmap::tmap_arrange(Cornwall1, Cornwall2)
-```
+![](image/CornwallCompare.png)
 
 Even with only 5% of the original points, we can see that we've held onto a lot of the information that we'd want if we were plotting these polygons.
 
@@ -450,9 +3058,8 @@ Similar to using {ggplot2}, the first layer of a tmap defines the spatial object
 Let's see this in action, and map our local authorities based on how many road traffic casualties there were in each.
 
 *Create static map in tmap*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
-
-#LAs <- rmapshaper::ms_simplify(LAs, keep = 0.05, keep_shapes = TRUE) # Simplifying polygons. Remember to only do this after you've finished your spatial analysis, or to save the simplified version as a different name.
+```{r 9, echo = TRUE, eval = FALSE, error = FALSE, warning = FALSE}
+LAs <- rmapshaper::ms_simplify(LAs, keep = 0.05, keep_shapes = TRUE) # Simplifying polygons. Remember to only do this after you've finished your spatial analysis, or to save the simplified version as a different name.
 
 tmap::tm_shape(LAs) + # defining what shapefile to use
   tmap::tm_polygons(col = "casualties", # setting the variable to map the colour aesthetic to. tmap takes variable names in quotation marks
@@ -465,12 +3072,13 @@ tmap::tm_shape(LAs) + # defining what shapefile to use
   ) +
   tmap::tm_layout(legend.outside = TRUE # putting the legend outside the plot rather than inside
             )
-
 ```
+
+![](image/static1.png)
 
 One problem with this plot is that we still have Northern Ireland in the plot, and we only have NAs for northern Ireland (as our casualties dataset didn't have accidents which happened there). To fix this, we can utilise a simple {dplyr} filter to remove features which have an *NA* value for casualties. We can then pipe a filtered sf dataframe into the **tm_shape** function.
 
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = FALSE}
+```{r 8, echo = TRUE, eval = FALSE, error = FALSE, warning = FALSE}
 LAs %>%
  dplyr::filter(!is.na(casualties)) %>%
 tm_shape() + # defining what shapefile to use
@@ -484,13 +3092,14 @@ tm_shape() + # defining what shapefile to use
   ) +
   tm_layout(legend.outside = TRUE # putting the legend outside the plot rather than inside
            )
-
 ```
+
+![](image/static2.png)
 
 Though this plot is useful, and gives us a sense of the distribution of accidents, it's difficult to make out values of smaller local authorities. What would make this easier is if we changed our map to an interactive map. We can do this very easily, using the same chunk of code, by simply setting the **tmap_mode** to "view".
 
 *Create interactive map in tmap*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = TRUE}
+```{r 7, echo = TRUE, eval = FALSE, error = FALSE, warning = TRUE}
 tmap_mode("view")
 
 LAs %>%
@@ -509,7 +3118,9 @@ tm_shape() +
   ) +
   tm_layout(legend.outside = TRUE # putting the legend outside the plot rather than inside
             )
-
+```
+``` {r 6, echo = FALSE, eval = TRUE, error = FALSE, verbose = TRUE, warning = TRUE}
+knitr::include_url("image/interactive1.html")
 ```
 
 It's worth noting that some arguments in {tmap} are only availble in static plots, and some only available in interactive maps. However, R will just skip the arguments that don't apply, so it wont break your code to leave them in. Here, the "legend.outside" argument is meaningless in an interactive plot, so is skipped by R when creating this interactive plot.
@@ -521,7 +3132,7 @@ We can also make the map look a bit nicer by increasing the transparency of the 
 Finally we can pick from any number of basemaps. {tmap} leverages the {leaflet} package for basemaps, and you can find a list of available basemaps [here](https://leaflet-extras.github.io/leaflet-providers/preview/).
 
 *Improving Interactive Map*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = TRUE}
+```{r 5, echo = TRUE, eval = FALSE, error = FALSE, warning = TRUE}
 
 tm_basemap(server = "CartoDB.Positron") + # defining basemap
 LAs %>%
@@ -535,7 +3146,9 @@ tm_shape() + # defining what shapefile to use
              popup.vars = c("Local Authority" = "lad19nm", "casualties"), # setting variables to be seen on click
               id = "lad19nm" # Setting a variable to display when hovered over
               ) 
-
+```
+``` {r 4, echo = FALSE, eval = TRUE, error = FALSE, verbose = TRUE, warning = TRUE}
+knitr::include_url("image/interactive2.html")
 ```
 
 There are myriad aesthetic possibilities in {tmap} and related packages. It's not uncommon for a map to be built first in {tmap}, before exported as {leaflet} map and further edited in the {leaflet} package, though we wont cover that here. It's also possible to plot more than one spatial object at the same time. For example, layering polygons, points and lines from various shapefiles. Simply define the new spatial object with **tm_shape** and add aesthetics as before.
@@ -543,8 +3156,7 @@ There are myriad aesthetic possibilities in {tmap} and related packages. It's no
 Let's see this in action, adding a layer to our map with the worst car accidents in our dataset (accidents with over 10 casualties).
 
 *Mapping multiple spatial objects*
-```{r, echo = TRUE, eval = TRUE, error = FALSE, warning = TRUE}
-
+```{r 3, echo = TRUE, eval = FALSE, error = FALSE, warning = TRUE}
 tm_basemap(server = "CartoDB.Positron") + # defining basemap
 LAs %>%
   filter(!is.na(casualties)) %>%
@@ -563,9 +3175,10 @@ tm_shape() + # defining our second shapefile to use and plot in the same output 
           jitter = 0.05,  # adding a small amount of random jittering to points so overlayed points are visible
           id = "Number_of_Casualties"
   ) 
-
 ```
-
+``` {r 2, echo = FALSE, eval = TRUE, error = FALSE, verbose = TRUE, warning = TRUE}
+knitr::include_url("image/interactive3.html")
+```
 
 ## Other Spatial Types
 We have worked only with the {sf} package here, but it's important to be aware of different types of spatial data formats that exist in R.
@@ -575,7 +3188,7 @@ Most similar to the {sf} package is {sp}. sp objects hold the different spatial 
 {sf} was  developed to replace {sp}, but as {sf} is a relatively new package, there may be times when you encounter a function you need that only works on an {sp} object. When this happens, we can quickly convert objects back and forth between *sf* and *sp* with the following commands:
 
 *Converting data from sf to sp objects*
-```{r, echo = TRUE, eval = FALSE, error = FALSE, warning = TRUE}
+```{r 1, echo = TRUE, eval = FALSE, error = FALSE, warning = TRUE}
 object_sp <- as(object_sf, class = "SPATIAL") # sf to sp object
 object_sf <- st_as_sf(object_sp) # sp to sf object
 ```
@@ -592,5 +3205,277 @@ There's also [this very good blog post](https://www.jessesadler.com/post/gis-wit
 
 For a more detailed overview of mapping in R, see [this amazing online book](https://geocompr.robinlovelace.net/) from Robin Lovelace. Of particular interest are Chapters 5 and 8, but the whole book is useful.
 
-<!--chapter:end:08-spatial.Rmd-->
+<!--chapter:end:08-Spatial.Rmd-->
+
+# Functions {#functions}
+
+This chapter contains the basics of how to write a function, links to more complete instructions, and examples of functions.
+
+```{r, include=FALSE}
+# Every file must contain at least one R chunk due to the linting process.
+```
+
+## User defined functions (UDFs)
+
+A non-exhaustive list of possible reasons for writing your own UDF,
+
+* you are repeating some code chunk changing only a few variables each time.
+* you want to apply the same set of commands to multiple instances of some object: it might be a dataframe, a text string, a document, an image etc.
+* tidier code, you can write the functions in a separate R file and load these functions by running that file when you load other packages.
+* easier to update, just update the function rather than edit potentially multiple code chunks.
+* prevents copy/paste errors
+* you are writing a package/library
+
+## Top tips for writing functions
+
+* name the function something sensible that gives you a clue what it does, usually containing a verb, and making sure that it doesn't conflict with names of other functions in use.
+* write some description of what the function is intended for and the expected outcome, including what it needs to work properly, eg it might take an integer value argument only, and therefore fail if given a double.
+* make your function as independent as possible, use `name_space::function` syntax if it uses functions from other packages so they don't have to be loaded (they will have to be installed though).
+* recommend passing named arguments rather than relying on global variables (again name your arguments clearly).
+* recommend giving arguments default values, this shows an example of the type of variable that is expected here.
+* note that variables assigned inside a function will not appear in the global environment unless explicitly returned.
+* using an explicit return statement is useful if the function is complex, otherwise the output will be the final evaluated expression.
+
+## Function structure
+
+Below is an example of the syntax for defining a function named `state_animal_age`. The list of named arguments are included in brackets `()` with defaults. The function code sits inside braces `{}`, and returns a single string of the concatenated inputs. 
+
+```{r, echo=TRUE}
+state_animal_age <- function(animal = "animal type", age = 0) {
+  #function takes animal name as a string and current age and pastes them together
+  #output is single string
+  return( paste(animal, age, sep = ': ') )
+}
+
+#run function with defaults
+state_animal_age()
+
+#run function passing inputs to argument names, order doesn't matter
+state_animal_age(age = 2, animal = "potoo")
+
+#run function passing inputs by position, order matters
+state_animal_age("tortoise", 169)
+```
+
+## Function with `purrr` structure
+
+The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use `purrr::map` (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3 **.xlsx and .xls** section and below.
+
+Using the function above that takes two inputs I can use `purrr::map2` to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.  
+
+```{r, echo=TRUE}
+animal_list = c('cat', 'dog', 'elephant')
+age_list = c(12, 7, 42)
+
+purrr::map2(.x = animal_list, .y = age_list, .f = state_animal_age)
+```
+
+## Add superscript to text function
+
+A function to add superscript to text when creating excel tables in R.
+
+Copy and paste the code below into R and save as it's own file. This script can then be run before your R code to create a function that can be used to add superscripts to text.
+
+An example of how to use the function is below the function code.
+
+```{r, eval = FALSE}
+#' Writes text to a cell within a workbook object and adds a superscript or a subscript
+#
+#' @param wb A workbook object
+#' @param sheet A sheet within the workbook object
+#' @param row The row number you want to write to
+#' @param col The column number you want to write to
+#' @param text The text (not including the superscript) you want written.
+#' @param superScriptText The text you want in the superscript
+#' @param position A number specifying how far along in the text you want the superscript to occur. Defaults to nchar(text), (ie, the last position)
+#' @param superOrSub TRUE or FALSE is you want to return a superscript or a subscript. Defaults to superscript (TRUE)
+#' @param size The size of the font. Defaults to 10
+#' @param colour The hex code of the colour of the text. Defaults to black (000000) 
+#' @param font The font. Defaults to Arial
+#' @param family Not sure what this is for. Leave it alone at 2 if you don't know either
+#' @param bold TRUE or FALSE if you want text to be bold
+#' @param italic TRUE or FALSE if you want text to be italic
+#' @param underlined TRUE or FALSE if you want text to be underlined
+
+
+addSuperScriptToCell <- function(wb,
+                                 sheet,
+                                 row,
+                                 col,
+                                 text,
+                                 superScriptText,
+                                 position = nchar(text),
+                                 superOrSub = TRUE,
+                                 size = '8',
+                                 colour = '000000',
+                                 font = 'Arial',
+                                 family = '2',
+                                 bold = FALSE,
+                                 italic = FALSE,
+                                 underlined = FALSE){
+  
+  placeholderText <- 'This is placeholder text that should not appear anywhere in your document.'
+  
+  openxlsx::writeData(wb = wb,
+                      sheet = sheet,
+                      x = placeholderText,
+                      startRow = row,
+                      startCol = col)
+  
+  #finds the string that you want to update
+  stringToUpdate <- which(sapply(wb$sharedStrings,
+                                 function(x){
+                                   grep(pattern = placeholderText,
+                                        x)
+                                 }
+  )
+  == 1)
+  
+  #splits the text into before and after the superscript
+  
+  preText <- stringr::str_sub(text,
+                              1,
+                              position)
+  
+  postText <- stringr::str_sub(text,
+                               position + 1,
+                               nchar(text))
+  
+  #formatting instructions
+  
+  sz    <- paste('<sz val =\"',size,'\"/>',
+                 sep = '')
+  col   <- paste('<color rgb =\"',colour,'\"/>',
+                 sep = '')
+  rFont <- paste('<rFont val =\"',font,'\"/>',
+                 sep = '')
+  fam   <- paste('<family val =\"',family,'\"/>',
+                 sep = '')
+  if(superOrSub){
+    vert <- '<vertAlign val=\"superscript\"/>'
+  } else{vert <- '<vertAlign val=\"subscript\"/>'}
+  
+  if(bold){
+    bld <- '<b/>'
+  } else{bld <- ''}
+  
+  if(italic){
+    itl <- '<i/>'
+  } else{itl <- ''}
+  
+  if(underlined){
+    uld <- '<u/>'
+  } else{uld <- ''}
+  
+  #run properties
+  
+  rPrText <- paste(sz,
+                   col,
+                   rFont,
+                   fam,
+                   bld,
+                   itl,
+                   uld,
+                   sep = '')
+  
+  rPrSuperText <- paste(vert,
+                        sz,
+                        col,
+                        rFont,
+                        fam,
+                        bld,
+                        itl,
+                        uld,
+                        sep = '')
+  
+  newString <- paste('<si><r><rPr>',
+                     rPrText,
+                     '</rPr><t xml:space="preserve">',
+                     preText,
+                     '</t></r><r><rPr>',
+                     rPrSuperText,
+                     '</rPr><t xml:space="preserve">',
+                     superScriptText,
+                     '</t></r><r><rPr>',
+                     rPrText,
+                     '</rPr><t xml:space="preserve">',
+                     postText,
+                     '</t></r></si>',
+                     sep = '')
+  
+  wb$sharedStrings[stringToUpdate] <- newString
+}
+```
+
+An example of using the superscript function in R:
+
+```{r, eval = FALSE}
+# add title with superscript
+# the superscript text specified in the function is what will appear as a superscript
+addSuperScriptToCell(wb = Table1,sheet = "SFR0101",row = 4,col = 1,text = "Publication table title",superScriptText = '1,2,3')
+```
+
+note: to use this function you will need to load an Excel workbook into R using the openxlsx package:
+
+```{r, eval = FALSE}
+# load the excel table 
+Table1 <- openxlsx::loadWorkbook("0101 template/sfr0101_template.xlsx")
+```
+
+## Function to produce multiple graphs
+
+A generic function to create multiple graphs based on a list e.g. a graph for each local authority.
+
+The function creates a list to iterate over to produce multiple graphs, in this case a list of local authorities.
+
+The function then uses a loop to basically create a graph for each value in the list. 
+
+The graphs are created using ggplot, where the data being used to create the graphs is subset based on the value it is currently using from the list. So, in this case the data is subset based on each local authority in the list and a graph is created using this subset of data. This is then looped for each local authority in the list.
+
+The function saves each graph as a png file in the working directory.
+
+
+```{r, eval = FALSE}
+# create graphing function
+    multiple.graph <- function(df, na.rm = TRUE, ...){
+      
+      # create list of local authorities in data to loop over 
+      la_list <- unique(df$local_authority)
+      
+      # create for loop to produce ggplot2 graphs 
+      for (i in seq_along(la_list)) { 
+        
+        # create plot for each LA in df 
+        plot <- 
+          ggplot(subset(df, df$local_authority==la_list[i]),
+                 aes(x = year)) +
+          geom_line(aes(y = serious_accidents), colour = "blue", size = 2) +
+          ylab("serious accident count") +
+          xlab("Year") +
+          theme_bw() +
+          ggtitle(paste(la_list[i], "comparison chart"))    # this produces a dynamic title which is updated based on the local authority currently being used from the list
+
+        
+         # save plots as .png
+        ggsave(plot, file=paste(la_list[i], ".png", sep=''), scale=2)
+        
+         # print plots to screen
+    print(plot)
+  }
+    }
+
+## run function
+multiple.graph(dataframe3)
+
+```
+
+
+## Further reading
+
+[Functions chapter of R for Data Science by Hadley Wickham](https://r4ds.had.co.nz/functions.html)
+
+## Function to create folder structure for R project
+
+
+<!--chapter:end:09-functions.Rmd-->
 
