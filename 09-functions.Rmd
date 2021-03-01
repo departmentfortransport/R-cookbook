@@ -2,7 +2,7 @@
 
 This chapter contains the basics of how to write a function, links to more complete instructions, and examples of functions.
 
-```{r include=FALSE}
+```{r, include=FALSE}
 # Every file must contain at least one R chunk due to the linting process.
 ```
 
@@ -31,7 +31,7 @@ A non-exhaustive list of possible reasons for writing your own UDF,
 
 Below is an example of the syntax for defining a function named `state_animal_age`. The list of named arguments are included in brackets `()` with defaults. The function code sits inside braces `{}`, and returns a single string of the concatenated inputs. 
 
-```{r echo=TRUE}
+```{r, echo=TRUE}
 state_animal_age <- function(animal = "animal type", age = 0) {
   #function takes animal name as a string and current age and pastes them together
   #output is single string
@@ -54,12 +54,212 @@ The scenario in which I most find myself writing functions is when I want to do 
 
 Using the function above that takes two inputs I can use `purrr::map2` to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.  
 
-```{r echo=TRUE}
+```{r, echo=TRUE}
 animal_list = c('cat', 'dog', 'elephant')
 age_list = c(12, 7, 42)
 
 purrr::map2(.x = animal_list, .y = age_list, .f = state_animal_age)
 ```
+
+## Add superscript to text function
+
+A function to add superscript to text when creating excel tables in R.
+
+Copy and paste the code below into R and save as it's own file. This script can then be run before your R code to create a function that can be used to add superscripts to text.
+
+An example of how to use the function is below the function code.
+
+```{r, eval = FALSE}
+#' Writes text to a cell within a workbook object and adds a superscript or a subscript
+#
+#' @param wb A workbook object
+#' @param sheet A sheet within the workbook object
+#' @param row The row number you want to write to
+#' @param col The column number you want to write to
+#' @param text The text (not including the superscript) you want written.
+#' @param superScriptText The text you want in the superscript
+#' @param position A number specifying how far along in the text you want the superscript to occur. Defaults to nchar(text), (ie, the last position)
+#' @param superOrSub TRUE or FALSE is you want to return a superscript or a subscript. Defaults to superscript (TRUE)
+#' @param size The size of the font. Defaults to 10
+#' @param colour The hex code of the colour of the text. Defaults to black (000000) 
+#' @param font The font. Defaults to Arial
+#' @param family Not sure what this is for. Leave it alone at 2 if you don't know either
+#' @param bold TRUE or FALSE if you want text to be bold
+#' @param italic TRUE or FALSE if you want text to be italic
+#' @param underlined TRUE or FALSE if you want text to be underlined
+
+
+addSuperScriptToCell <- function(wb,
+                                 sheet,
+                                 row,
+                                 col,
+                                 text,
+                                 superScriptText,
+                                 position = nchar(text),
+                                 superOrSub = TRUE,
+                                 size = '8',
+                                 colour = '000000',
+                                 font = 'Arial',
+                                 family = '2',
+                                 bold = FALSE,
+                                 italic = FALSE,
+                                 underlined = FALSE){
+  
+  placeholderText <- 'This is placeholder text that should not appear anywhere in your document.'
+  
+  openxlsx::writeData(wb = wb,
+                      sheet = sheet,
+                      x = placeholderText,
+                      startRow = row,
+                      startCol = col)
+  
+  #finds the string that you want to update
+  stringToUpdate <- which(sapply(wb$sharedStrings,
+                                 function(x){
+                                   grep(pattern = placeholderText,
+                                        x)
+                                 }
+  )
+  == 1)
+  
+  #splits the text into before and after the superscript
+  
+  preText <- stringr::str_sub(text,
+                              1,
+                              position)
+  
+  postText <- stringr::str_sub(text,
+                               position + 1,
+                               nchar(text))
+  
+  #formatting instructions
+  
+  sz    <- paste('<sz val =\"',size,'\"/>',
+                 sep = '')
+  col   <- paste('<color rgb =\"',colour,'\"/>',
+                 sep = '')
+  rFont <- paste('<rFont val =\"',font,'\"/>',
+                 sep = '')
+  fam   <- paste('<family val =\"',family,'\"/>',
+                 sep = '')
+  if(superOrSub){
+    vert <- '<vertAlign val=\"superscript\"/>'
+  } else{vert <- '<vertAlign val=\"subscript\"/>'}
+  
+  if(bold){
+    bld <- '<b/>'
+  } else{bld <- ''}
+  
+  if(italic){
+    itl <- '<i/>'
+  } else{itl <- ''}
+  
+  if(underlined){
+    uld <- '<u/>'
+  } else{uld <- ''}
+  
+  #run properties
+  
+  rPrText <- paste(sz,
+                   col,
+                   rFont,
+                   fam,
+                   bld,
+                   itl,
+                   uld,
+                   sep = '')
+  
+  rPrSuperText <- paste(vert,
+                        sz,
+                        col,
+                        rFont,
+                        fam,
+                        bld,
+                        itl,
+                        uld,
+                        sep = '')
+  
+  newString <- paste('<si><r><rPr>',
+                     rPrText,
+                     '</rPr><t xml:space="preserve">',
+                     preText,
+                     '</t></r><r><rPr>',
+                     rPrSuperText,
+                     '</rPr><t xml:space="preserve">',
+                     superScriptText,
+                     '</t></r><r><rPr>',
+                     rPrText,
+                     '</rPr><t xml:space="preserve">',
+                     postText,
+                     '</t></r></si>',
+                     sep = '')
+  
+  wb$sharedStrings[stringToUpdate] <- newString
+}
+```
+
+An example of using the superscript function in R:
+
+```{r, eval = FALSE}
+# add title with superscript
+# the superscript text specified in the function is what will appear as a superscript
+addSuperScriptToCell(wb = Table1,sheet = "SFR0101",row = 4,col = 1,text = "Publication table title",superScriptText = '1,2,3')
+```
+
+note: to use this function you will need to load an Excel workbook into R using the openxlsx package:
+
+```{r, eval = FALSE}
+# load the excel table 
+Table1 <- openxlsx::loadWorkbook("0101 template/sfr0101_template.xlsx")
+```
+
+## Function to produce multiple graphs
+
+A generic function to create multiple graphs based on a list e.g. a graph for each local authority.
+
+The function creates a list to iterate over to produce multiple graphs, in this case a list of local authorities.
+
+The function then uses a loop to basically create a graph for each value in the list. 
+
+The graphs are created using ggplot, where the data being used to create the graphs is subset based on the value it is currently using from the list. So, in this case the data is subset based on each local authority in the list and a graph is created using this subset of data. This is then looped for each local authority in the list.
+
+The function saves each graph as a png file in the working directory.
+
+
+```{r, eval = FALSE}
+# create graphing function
+    multiple.graph <- function(df, na.rm = TRUE, ...){
+      
+      # create list of local authorities in data to loop over 
+      la_list <- unique(df$local_authority)
+      
+      # create for loop to produce ggplot2 graphs 
+      for (i in seq_along(la_list)) { 
+        
+        # create plot for each LA in df 
+        plot <- 
+          ggplot(subset(df, df$local_authority==la_list[i]),
+                 aes(x = year)) +
+          geom_line(aes(y = serious_accidents), colour = "blue", size = 2) +
+          ylab("serious accident count") +
+          xlab("Year") +
+          theme_bw() +
+          ggtitle(paste(la_list[i], "comparison chart"))    # this produces a dynamic title which is updated based on the local authority currently being used from the list
+
+        
+         # save plots as .png
+        ggsave(plot, file=paste(la_list[i], ".png", sep=''), scale=2)
+        
+         # print plots to screen
+    print(plot)
+  }
+    }
+
+## run function
+multiple.graph(dataframe3)
+
+```
+
 
 ## Further reading
 

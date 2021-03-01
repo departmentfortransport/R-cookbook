@@ -370,6 +370,9 @@ Hour, minute and second variables can be merged to create a time variable, and t
 # merge seperate time information
 road_accidents$time2 <- paste(road_accidents$hour,road_accidents$minute, road_accidents$second, sep=":")
 
+```
+
+```{r, eval = FALSE}
 # convert to hms
 road_accidents$time3 <- hms::as_hms(road_accidents$time2)
 
@@ -377,7 +380,7 @@ road_accidents$time3 <- hms::as_hms(road_accidents$time2)
 
 ```{r, echo = FALSE, results='asis'}
 
-knitr::kable(head(dplyr::select(road_accidents, acc_index, hour, minute, second, time3)),
+knitr::kable(head(dplyr::select(road_accidents, acc_index, hour, minute, second, time2)),
 caption = "Merge time information")
 
 ```
