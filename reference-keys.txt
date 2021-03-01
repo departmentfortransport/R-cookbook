@@ -33,7 +33,7 @@ tab:unnamed-chunk-155
 tab:unnamed-chunk-157
 tab:unnamed-chunk-159
 tab:unnamed-chunk-166
-tab:unnamed-chunk-168
+tab:unnamed-chunk-169
 why-do-we-need-another-book
 coding-standards
 data
@@ -174,5 +174,7 @@ user-defined-functions-udfs
 top-tips-for-writing-functions
 function-structure
 function-with-purrr-structure
+add-superscript-to-text-function
+function-to-produce-multiple-graphs
 further-reading
 function-to-create-folder-structure-for-r-project
