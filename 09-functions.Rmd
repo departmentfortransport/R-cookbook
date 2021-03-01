@@ -61,6 +61,8 @@ age_list = c(12, 7, 42)
 purrr::map2(.x = animal_list, .y = age_list, .f = state_animal_age)
 ```
 
+## add superscript to text function
+
 ## Further reading
 
 [Functions chapter of R for Data Science by Hadley Wickham](https://r4ds.had.co.nz/functions.html)
