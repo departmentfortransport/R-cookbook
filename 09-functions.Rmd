@@ -69,7 +69,7 @@ Copy and paste the code below into R and save as it's own file. This script can 
 
 An example of how to use the function is below the function code.
 
-```{r, eval = FALSE}
+```{r eval = FALSE}
 #' Writes text to a cell within a workbook object and adds a superscript or a subscript
 #
 #' @param wb A workbook object
@@ -196,21 +196,25 @@ addSuperScriptToCell <- function(wb,
   
   wb$sharedStrings[stringToUpdate] <- newString
 }
+
 ```
 
 An example of using the superscript function in R:
 
-```{r, eval = FALSE}
+```{r eval = FALSE}
 # add title with superscript
 # the superscript text specified in the function is what will appear as a superscript
 addSuperScriptToCell(wb = Table1,sheet = "SFR0101",row = 4,col = 1,text = "Publication table title",superScriptText = '1,2,3')
+
 ```
 
 note: to use this function you will need to load an Excel workbook into R using the openxlsx package:
 
-```{r, eval = FALSE}
+```{r eval = FALSE}
+
 # load the excel table 
 Table1 <- openxlsx::loadWorkbook("0101 template/sfr0101_template.xlsx")
+
 ```
 
 ## Function to produce multiple graphs
@@ -226,7 +230,8 @@ The graphs are created using ggplot, where the data being used to create the gra
 The function saves each graph as a png file in the working directory.
 
 
-```{r, eval = FALSE}
+```{r eval = FALSE}
+
 # create graphing function
     multiple.graph <- function(df, na.rm = TRUE, ...){
       
