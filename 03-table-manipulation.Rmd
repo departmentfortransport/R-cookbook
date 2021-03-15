@@ -127,7 +127,7 @@ This example uses data from RAS30013 *"Reported casualty rates by road user type
 Firstly, the contents of the published table is read in (the last 10 years only), The adjusted data is rounded to the nearest whole number. The year field is changed to a character format so that it is displayed without the thousand separator comma.
 
 ```{r PublishedTable, include=TRUE}
-Accidents <- readxl::read_excel("Data/ras10013.xlsx") %>%
+Accidents <- readxl::read_excel("data/ras10013.xlsx") %>%
   dplyr::filter(Year>=2009) %>%
   dplyr::mutate(SeriousAdjusted=RoundC(SeriousAdjusted,0),
                 FatalSeriousAdjusted=RoundC(FatalSeriousAdjusted,0),
