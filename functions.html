@@ -24,7 +24,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor" />
 
 
-<meta name="date" content="2021-03-03" />
+<meta name="date" content="2021-03-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -373,180 +373,180 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="function-structure" class="section level2">
 <h2><span class="header-section-number">10.3</span> Function structure</h2>
 <p>Below is an example of the syntax for defining a function named <code>state_animal_age</code>. The list of named arguments are included in brackets <code>()</code> with defaults. The function code sits inside braces <code>{}</code>, and returns a single string of the concatenated inputs.</p>
-<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="functions.html#cb243-1"></a>state_animal_age &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">animal =</span> <span class="st">&quot;animal type&quot;</span>, <span class="dt">age =</span> <span class="dv">0</span>) {</span>
-<span id="cb243-2"><a href="functions.html#cb243-2"></a>  <span class="co">#function takes animal name as a string and current age and pastes them together</span></span>
-<span id="cb243-3"><a href="functions.html#cb243-3"></a>  <span class="co">#output is single string</span></span>
-<span id="cb243-4"><a href="functions.html#cb243-4"></a>  <span class="kw">return</span>( <span class="kw">paste</span>(animal, age, <span class="dt">sep =</span> <span class="st">&#39;: &#39;</span>) )</span>
-<span id="cb243-5"><a href="functions.html#cb243-5"></a>}</span>
-<span id="cb243-6"><a href="functions.html#cb243-6"></a></span>
-<span id="cb243-7"><a href="functions.html#cb243-7"></a><span class="co">#run function with defaults</span></span>
-<span id="cb243-8"><a href="functions.html#cb243-8"></a><span class="kw">state_animal_age</span>()</span>
-<span id="cb243-9"><a href="functions.html#cb243-9"></a><span class="co">#&gt; [1] &quot;animal type: 0&quot;</span></span>
-<span id="cb243-10"><a href="functions.html#cb243-10"></a></span>
-<span id="cb243-11"><a href="functions.html#cb243-11"></a><span class="co">#run function passing inputs to argument names, order doesn&#39;t matter</span></span>
-<span id="cb243-12"><a href="functions.html#cb243-12"></a><span class="kw">state_animal_age</span>(<span class="dt">age =</span> <span class="dv">2</span>, <span class="dt">animal =</span> <span class="st">&quot;potoo&quot;</span>)</span>
-<span id="cb243-13"><a href="functions.html#cb243-13"></a><span class="co">#&gt; [1] &quot;potoo: 2&quot;</span></span>
-<span id="cb243-14"><a href="functions.html#cb243-14"></a></span>
-<span id="cb243-15"><a href="functions.html#cb243-15"></a><span class="co">#run function passing inputs by position, order matters</span></span>
-<span id="cb243-16"><a href="functions.html#cb243-16"></a><span class="kw">state_animal_age</span>(<span class="st">&quot;tortoise&quot;</span>, <span class="dv">169</span>)</span>
-<span id="cb243-17"><a href="functions.html#cb243-17"></a><span class="co">#&gt; [1] &quot;tortoise: 169&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="functions.html#cb248-1"></a>state_animal_age &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">animal =</span> <span class="st">&quot;animal type&quot;</span>, <span class="dt">age =</span> <span class="dv">0</span>) {</span>
+<span id="cb248-2"><a href="functions.html#cb248-2"></a>  <span class="co">#function takes animal name as a string and current age and pastes them together</span></span>
+<span id="cb248-3"><a href="functions.html#cb248-3"></a>  <span class="co">#output is single string</span></span>
+<span id="cb248-4"><a href="functions.html#cb248-4"></a>  <span class="kw">return</span>( <span class="kw">paste</span>(animal, age, <span class="dt">sep =</span> <span class="st">&#39;: &#39;</span>) )</span>
+<span id="cb248-5"><a href="functions.html#cb248-5"></a>}</span>
+<span id="cb248-6"><a href="functions.html#cb248-6"></a></span>
+<span id="cb248-7"><a href="functions.html#cb248-7"></a><span class="co">#run function with defaults</span></span>
+<span id="cb248-8"><a href="functions.html#cb248-8"></a><span class="kw">state_animal_age</span>()</span>
+<span id="cb248-9"><a href="functions.html#cb248-9"></a><span class="co">#&gt; [1] &quot;animal type: 0&quot;</span></span>
+<span id="cb248-10"><a href="functions.html#cb248-10"></a></span>
+<span id="cb248-11"><a href="functions.html#cb248-11"></a><span class="co">#run function passing inputs to argument names, order doesn&#39;t matter</span></span>
+<span id="cb248-12"><a href="functions.html#cb248-12"></a><span class="kw">state_animal_age</span>(<span class="dt">age =</span> <span class="dv">2</span>, <span class="dt">animal =</span> <span class="st">&quot;potoo&quot;</span>)</span>
+<span id="cb248-13"><a href="functions.html#cb248-13"></a><span class="co">#&gt; [1] &quot;potoo: 2&quot;</span></span>
+<span id="cb248-14"><a href="functions.html#cb248-14"></a></span>
+<span id="cb248-15"><a href="functions.html#cb248-15"></a><span class="co">#run function passing inputs by position, order matters</span></span>
+<span id="cb248-16"><a href="functions.html#cb248-16"></a><span class="kw">state_animal_age</span>(<span class="st">&quot;tortoise&quot;</span>, <span class="dv">169</span>)</span>
+<span id="cb248-17"><a href="functions.html#cb248-17"></a><span class="co">#&gt; [1] &quot;tortoise: 169&quot;</span></span></code></pre></div>
 </div>
 <div id="function-with-purrr-structure" class="section level2">
 <h2><span class="header-section-number">10.4</span> Function with <code>purrr</code> structure</h2>
 <p>The scenario in which I most find myself writing functions is when I want to do the same thing to a set of similar objects. I write a function that does what I want to one object and then use <code>purrr::map</code> (or one of its siblings) to iterate through the complete list of objects. This greatly simplifies the entire process. For examples see Chapter 3 <strong>.xlsx and .xls</strong> section and below.</p>
 <p>Using the function above that takes two inputs I can use <code>purrr::map2</code> to iterate over two lists of these input values. Note that the corresponding values in each list form a pair of inputs for the function, so we get three outputs. Consider how this is different to iterating over nested lists, where, in this case, we would get nine outputs.</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="functions.html#cb244-1"></a>animal_list =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;cat&#39;</span>, <span class="st">&#39;dog&#39;</span>, <span class="st">&#39;elephant&#39;</span>)</span>
-<span id="cb244-2"><a href="functions.html#cb244-2"></a>age_list =<span class="st"> </span><span class="kw">c</span>(<span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">42</span>)</span>
-<span id="cb244-3"><a href="functions.html#cb244-3"></a></span>
-<span id="cb244-4"><a href="functions.html#cb244-4"></a>purrr<span class="op">::</span><span class="kw">map2</span>(<span class="dt">.x =</span> animal_list, <span class="dt">.y =</span> age_list, <span class="dt">.f =</span> state_animal_age)</span>
-<span id="cb244-5"><a href="functions.html#cb244-5"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb244-6"><a href="functions.html#cb244-6"></a><span class="co">#&gt; [1] &quot;cat: 12&quot;</span></span>
-<span id="cb244-7"><a href="functions.html#cb244-7"></a><span class="co">#&gt; </span></span>
-<span id="cb244-8"><a href="functions.html#cb244-8"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb244-9"><a href="functions.html#cb244-9"></a><span class="co">#&gt; [1] &quot;dog: 7&quot;</span></span>
-<span id="cb244-10"><a href="functions.html#cb244-10"></a><span class="co">#&gt; </span></span>
-<span id="cb244-11"><a href="functions.html#cb244-11"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb244-12"><a href="functions.html#cb244-12"></a><span class="co">#&gt; [1] &quot;elephant: 42&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="functions.html#cb249-1"></a>animal_list =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;cat&#39;</span>, <span class="st">&#39;dog&#39;</span>, <span class="st">&#39;elephant&#39;</span>)</span>
+<span id="cb249-2"><a href="functions.html#cb249-2"></a>age_list =<span class="st"> </span><span class="kw">c</span>(<span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">42</span>)</span>
+<span id="cb249-3"><a href="functions.html#cb249-3"></a></span>
+<span id="cb249-4"><a href="functions.html#cb249-4"></a>purrr<span class="op">::</span><span class="kw">map2</span>(<span class="dt">.x =</span> animal_list, <span class="dt">.y =</span> age_list, <span class="dt">.f =</span> state_animal_age)</span>
+<span id="cb249-5"><a href="functions.html#cb249-5"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb249-6"><a href="functions.html#cb249-6"></a><span class="co">#&gt; [1] &quot;cat: 12&quot;</span></span>
+<span id="cb249-7"><a href="functions.html#cb249-7"></a><span class="co">#&gt; </span></span>
+<span id="cb249-8"><a href="functions.html#cb249-8"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb249-9"><a href="functions.html#cb249-9"></a><span class="co">#&gt; [1] &quot;dog: 7&quot;</span></span>
+<span id="cb249-10"><a href="functions.html#cb249-10"></a><span class="co">#&gt; </span></span>
+<span id="cb249-11"><a href="functions.html#cb249-11"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb249-12"><a href="functions.html#cb249-12"></a><span class="co">#&gt; [1] &quot;elephant: 42&quot;</span></span></code></pre></div>
 </div>
 <div id="add-superscript-to-text-function" class="section level2">
 <h2><span class="header-section-number">10.5</span> Add superscript to text function</h2>
 <p>A function to add superscript to text when creating excel tables in R.</p>
 <p>Copy and paste the code below into R and save as it’s own file. This script can then be run before your R code to create a function that can be used to add superscripts to text.</p>
 <p>An example of how to use the function is below the function code.</p>
-<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="functions.html#cb245-1"></a><span class="co">#&#39; Writes text to a cell within a workbook object and adds a superscript or a subscript</span></span>
-<span id="cb245-2"><a href="functions.html#cb245-2"></a><span class="co">#</span></span>
-<span id="cb245-3"><a href="functions.html#cb245-3"></a><span class="co">#&#39; @param wb A workbook object</span></span>
-<span id="cb245-4"><a href="functions.html#cb245-4"></a><span class="co">#&#39; @param sheet A sheet within the workbook object</span></span>
-<span id="cb245-5"><a href="functions.html#cb245-5"></a><span class="co">#&#39; @param row The row number you want to write to</span></span>
-<span id="cb245-6"><a href="functions.html#cb245-6"></a><span class="co">#&#39; @param col The column number you want to write to</span></span>
-<span id="cb245-7"><a href="functions.html#cb245-7"></a><span class="co">#&#39; @param text The text (not including the superscript) you want written.</span></span>
-<span id="cb245-8"><a href="functions.html#cb245-8"></a><span class="co">#&#39; @param superScriptText The text you want in the superscript</span></span>
-<span id="cb245-9"><a href="functions.html#cb245-9"></a><span class="co">#&#39; @param position A number specifying how far along in the text you want the superscript to occur. Defaults to nchar(text), (ie, the last position)</span></span>
-<span id="cb245-10"><a href="functions.html#cb245-10"></a><span class="co">#&#39; @param superOrSub TRUE or FALSE is you want to return a superscript or a subscript. Defaults to superscript (TRUE)</span></span>
-<span id="cb245-11"><a href="functions.html#cb245-11"></a><span class="co">#&#39; @param size The size of the font. Defaults to 10</span></span>
-<span id="cb245-12"><a href="functions.html#cb245-12"></a><span class="co">#&#39; @param colour The hex code of the colour of the text. Defaults to black (000000) </span></span>
-<span id="cb245-13"><a href="functions.html#cb245-13"></a><span class="co">#&#39; @param font The font. Defaults to Arial</span></span>
-<span id="cb245-14"><a href="functions.html#cb245-14"></a><span class="co">#&#39; @param family Not sure what this is for. Leave it alone at 2 if you don&#39;t know either</span></span>
-<span id="cb245-15"><a href="functions.html#cb245-15"></a><span class="co">#&#39; @param bold TRUE or FALSE if you want text to be bold</span></span>
-<span id="cb245-16"><a href="functions.html#cb245-16"></a><span class="co">#&#39; @param italic TRUE or FALSE if you want text to be italic</span></span>
-<span id="cb245-17"><a href="functions.html#cb245-17"></a><span class="co">#&#39; @param underlined TRUE or FALSE if you want text to be underlined</span></span>
-<span id="cb245-18"><a href="functions.html#cb245-18"></a></span>
-<span id="cb245-19"><a href="functions.html#cb245-19"></a></span>
-<span id="cb245-20"><a href="functions.html#cb245-20"></a>addSuperScriptToCell &lt;-<span class="st"> </span><span class="cf">function</span>(wb,</span>
-<span id="cb245-21"><a href="functions.html#cb245-21"></a>                                 sheet,</span>
-<span id="cb245-22"><a href="functions.html#cb245-22"></a>                                 row,</span>
-<span id="cb245-23"><a href="functions.html#cb245-23"></a>                                 col,</span>
-<span id="cb245-24"><a href="functions.html#cb245-24"></a>                                 text,</span>
-<span id="cb245-25"><a href="functions.html#cb245-25"></a>                                 superScriptText,</span>
-<span id="cb245-26"><a href="functions.html#cb245-26"></a>                                 <span class="dt">position =</span> <span class="kw">nchar</span>(text),</span>
-<span id="cb245-27"><a href="functions.html#cb245-27"></a>                                 <span class="dt">superOrSub =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb245-28"><a href="functions.html#cb245-28"></a>                                 <span class="dt">size =</span> <span class="st">&#39;8&#39;</span>,</span>
-<span id="cb245-29"><a href="functions.html#cb245-29"></a>                                 <span class="dt">colour =</span> <span class="st">&#39;000000&#39;</span>,</span>
-<span id="cb245-30"><a href="functions.html#cb245-30"></a>                                 <span class="dt">font =</span> <span class="st">&#39;Arial&#39;</span>,</span>
-<span id="cb245-31"><a href="functions.html#cb245-31"></a>                                 <span class="dt">family =</span> <span class="st">&#39;2&#39;</span>,</span>
-<span id="cb245-32"><a href="functions.html#cb245-32"></a>                                 <span class="dt">bold =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb245-33"><a href="functions.html#cb245-33"></a>                                 <span class="dt">italic =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb245-34"><a href="functions.html#cb245-34"></a>                                 <span class="dt">underlined =</span> <span class="ot">FALSE</span>){</span>
-<span id="cb245-35"><a href="functions.html#cb245-35"></a>  </span>
-<span id="cb245-36"><a href="functions.html#cb245-36"></a>  placeholderText &lt;-<span class="st"> &#39;This is placeholder text that should not appear anywhere in your document.&#39;</span></span>
-<span id="cb245-37"><a href="functions.html#cb245-37"></a>  </span>
-<span id="cb245-38"><a href="functions.html#cb245-38"></a>  openxlsx<span class="op">::</span><span class="kw">writeData</span>(<span class="dt">wb =</span> wb,</span>
-<span id="cb245-39"><a href="functions.html#cb245-39"></a>                      <span class="dt">sheet =</span> sheet,</span>
-<span id="cb245-40"><a href="functions.html#cb245-40"></a>                      <span class="dt">x =</span> placeholderText,</span>
-<span id="cb245-41"><a href="functions.html#cb245-41"></a>                      <span class="dt">startRow =</span> row,</span>
-<span id="cb245-42"><a href="functions.html#cb245-42"></a>                      <span class="dt">startCol =</span> col)</span>
-<span id="cb245-43"><a href="functions.html#cb245-43"></a>  </span>
-<span id="cb245-44"><a href="functions.html#cb245-44"></a>  <span class="co">#finds the string that you want to update</span></span>
-<span id="cb245-45"><a href="functions.html#cb245-45"></a>  stringToUpdate &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">sapply</span>(wb<span class="op">$</span>sharedStrings,</span>
-<span id="cb245-46"><a href="functions.html#cb245-46"></a>                                 <span class="cf">function</span>(x){</span>
-<span id="cb245-47"><a href="functions.html#cb245-47"></a>                                   <span class="kw">grep</span>(<span class="dt">pattern =</span> placeholderText,</span>
-<span id="cb245-48"><a href="functions.html#cb245-48"></a>                                        x)</span>
-<span id="cb245-49"><a href="functions.html#cb245-49"></a>                                 }</span>
-<span id="cb245-50"><a href="functions.html#cb245-50"></a>  )</span>
-<span id="cb245-51"><a href="functions.html#cb245-51"></a>  <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)</span>
-<span id="cb245-52"><a href="functions.html#cb245-52"></a>  </span>
-<span id="cb245-53"><a href="functions.html#cb245-53"></a>  <span class="co">#splits the text into before and after the superscript</span></span>
-<span id="cb245-54"><a href="functions.html#cb245-54"></a>  </span>
-<span id="cb245-55"><a href="functions.html#cb245-55"></a>  preText &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_sub</span>(text,</span>
-<span id="cb245-56"><a href="functions.html#cb245-56"></a>                              <span class="dv">1</span>,</span>
-<span id="cb245-57"><a href="functions.html#cb245-57"></a>                              position)</span>
-<span id="cb245-58"><a href="functions.html#cb245-58"></a>  </span>
-<span id="cb245-59"><a href="functions.html#cb245-59"></a>  postText &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_sub</span>(text,</span>
-<span id="cb245-60"><a href="functions.html#cb245-60"></a>                               position <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,</span>
-<span id="cb245-61"><a href="functions.html#cb245-61"></a>                               <span class="kw">nchar</span>(text))</span>
-<span id="cb245-62"><a href="functions.html#cb245-62"></a>  </span>
-<span id="cb245-63"><a href="functions.html#cb245-63"></a>  <span class="co">#formatting instructions</span></span>
-<span id="cb245-64"><a href="functions.html#cb245-64"></a>  </span>
-<span id="cb245-65"><a href="functions.html#cb245-65"></a>  sz    &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;sz val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,size,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
-<span id="cb245-66"><a href="functions.html#cb245-66"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-67"><a href="functions.html#cb245-67"></a>  col   &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;color rgb =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,colour,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
-<span id="cb245-68"><a href="functions.html#cb245-68"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-69"><a href="functions.html#cb245-69"></a>  rFont &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;rFont val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,font,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
-<span id="cb245-70"><a href="functions.html#cb245-70"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-71"><a href="functions.html#cb245-71"></a>  fam   &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;family val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,family,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
-<span id="cb245-72"><a href="functions.html#cb245-72"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-73"><a href="functions.html#cb245-73"></a>  <span class="cf">if</span>(superOrSub){</span>
-<span id="cb245-74"><a href="functions.html#cb245-74"></a>    vert &lt;-<span class="st"> &#39;&lt;vertAlign val=</span><span class="ch">\&quot;</span><span class="st">superscript</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span></span>
-<span id="cb245-75"><a href="functions.html#cb245-75"></a>  } <span class="cf">else</span>{vert &lt;-<span class="st"> &#39;&lt;vertAlign val=</span><span class="ch">\&quot;</span><span class="st">subscript</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>}</span>
-<span id="cb245-76"><a href="functions.html#cb245-76"></a>  </span>
-<span id="cb245-77"><a href="functions.html#cb245-77"></a>  <span class="cf">if</span>(bold){</span>
-<span id="cb245-78"><a href="functions.html#cb245-78"></a>    bld &lt;-<span class="st"> &#39;&lt;b/&gt;&#39;</span></span>
-<span id="cb245-79"><a href="functions.html#cb245-79"></a>  } <span class="cf">else</span>{bld &lt;-<span class="st"> &#39;&#39;</span>}</span>
-<span id="cb245-80"><a href="functions.html#cb245-80"></a>  </span>
-<span id="cb245-81"><a href="functions.html#cb245-81"></a>  <span class="cf">if</span>(italic){</span>
-<span id="cb245-82"><a href="functions.html#cb245-82"></a>    itl &lt;-<span class="st"> &#39;&lt;i/&gt;&#39;</span></span>
-<span id="cb245-83"><a href="functions.html#cb245-83"></a>  } <span class="cf">else</span>{itl &lt;-<span class="st"> &#39;&#39;</span>}</span>
-<span id="cb245-84"><a href="functions.html#cb245-84"></a>  </span>
-<span id="cb245-85"><a href="functions.html#cb245-85"></a>  <span class="cf">if</span>(underlined){</span>
-<span id="cb245-86"><a href="functions.html#cb245-86"></a>    uld &lt;-<span class="st"> &#39;&lt;u/&gt;&#39;</span></span>
-<span id="cb245-87"><a href="functions.html#cb245-87"></a>  } <span class="cf">else</span>{uld &lt;-<span class="st"> &#39;&#39;</span>}</span>
-<span id="cb245-88"><a href="functions.html#cb245-88"></a>  </span>
-<span id="cb245-89"><a href="functions.html#cb245-89"></a>  <span class="co">#run properties</span></span>
-<span id="cb245-90"><a href="functions.html#cb245-90"></a>  </span>
-<span id="cb245-91"><a href="functions.html#cb245-91"></a>  rPrText &lt;-<span class="st"> </span><span class="kw">paste</span>(sz,</span>
-<span id="cb245-92"><a href="functions.html#cb245-92"></a>                   col,</span>
-<span id="cb245-93"><a href="functions.html#cb245-93"></a>                   rFont,</span>
-<span id="cb245-94"><a href="functions.html#cb245-94"></a>                   fam,</span>
-<span id="cb245-95"><a href="functions.html#cb245-95"></a>                   bld,</span>
-<span id="cb245-96"><a href="functions.html#cb245-96"></a>                   itl,</span>
-<span id="cb245-97"><a href="functions.html#cb245-97"></a>                   uld,</span>
-<span id="cb245-98"><a href="functions.html#cb245-98"></a>                   <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-99"><a href="functions.html#cb245-99"></a>  </span>
-<span id="cb245-100"><a href="functions.html#cb245-100"></a>  rPrSuperText &lt;-<span class="st"> </span><span class="kw">paste</span>(vert,</span>
-<span id="cb245-101"><a href="functions.html#cb245-101"></a>                        sz,</span>
-<span id="cb245-102"><a href="functions.html#cb245-102"></a>                        col,</span>
-<span id="cb245-103"><a href="functions.html#cb245-103"></a>                        rFont,</span>
-<span id="cb245-104"><a href="functions.html#cb245-104"></a>                        fam,</span>
-<span id="cb245-105"><a href="functions.html#cb245-105"></a>                        bld,</span>
-<span id="cb245-106"><a href="functions.html#cb245-106"></a>                        itl,</span>
-<span id="cb245-107"><a href="functions.html#cb245-107"></a>                        uld,</span>
-<span id="cb245-108"><a href="functions.html#cb245-108"></a>                        <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-109"><a href="functions.html#cb245-109"></a>  </span>
-<span id="cb245-110"><a href="functions.html#cb245-110"></a>  newString &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;si&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
-<span id="cb245-111"><a href="functions.html#cb245-111"></a>                     rPrText,</span>
-<span id="cb245-112"><a href="functions.html#cb245-112"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
-<span id="cb245-113"><a href="functions.html#cb245-113"></a>                     preText,</span>
-<span id="cb245-114"><a href="functions.html#cb245-114"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
-<span id="cb245-115"><a href="functions.html#cb245-115"></a>                     rPrSuperText,</span>
-<span id="cb245-116"><a href="functions.html#cb245-116"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
-<span id="cb245-117"><a href="functions.html#cb245-117"></a>                     superScriptText,</span>
-<span id="cb245-118"><a href="functions.html#cb245-118"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
-<span id="cb245-119"><a href="functions.html#cb245-119"></a>                     rPrText,</span>
-<span id="cb245-120"><a href="functions.html#cb245-120"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
-<span id="cb245-121"><a href="functions.html#cb245-121"></a>                     postText,</span>
-<span id="cb245-122"><a href="functions.html#cb245-122"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;/si&gt;&#39;</span>,</span>
-<span id="cb245-123"><a href="functions.html#cb245-123"></a>                     <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
-<span id="cb245-124"><a href="functions.html#cb245-124"></a>  </span>
-<span id="cb245-125"><a href="functions.html#cb245-125"></a>  wb<span class="op">$</span>sharedStrings[stringToUpdate] &lt;-<span class="st"> </span>newString</span>
-<span id="cb245-126"><a href="functions.html#cb245-126"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="functions.html#cb250-1"></a><span class="co">#&#39; Writes text to a cell within a workbook object and adds a superscript or a subscript</span></span>
+<span id="cb250-2"><a href="functions.html#cb250-2"></a><span class="co">#</span></span>
+<span id="cb250-3"><a href="functions.html#cb250-3"></a><span class="co">#&#39; @param wb A workbook object</span></span>
+<span id="cb250-4"><a href="functions.html#cb250-4"></a><span class="co">#&#39; @param sheet A sheet within the workbook object</span></span>
+<span id="cb250-5"><a href="functions.html#cb250-5"></a><span class="co">#&#39; @param row The row number you want to write to</span></span>
+<span id="cb250-6"><a href="functions.html#cb250-6"></a><span class="co">#&#39; @param col The column number you want to write to</span></span>
+<span id="cb250-7"><a href="functions.html#cb250-7"></a><span class="co">#&#39; @param text The text (not including the superscript) you want written.</span></span>
+<span id="cb250-8"><a href="functions.html#cb250-8"></a><span class="co">#&#39; @param superScriptText The text you want in the superscript</span></span>
+<span id="cb250-9"><a href="functions.html#cb250-9"></a><span class="co">#&#39; @param position A number specifying how far along in the text you want the superscript to occur. Defaults to nchar(text), (ie, the last position)</span></span>
+<span id="cb250-10"><a href="functions.html#cb250-10"></a><span class="co">#&#39; @param superOrSub TRUE or FALSE is you want to return a superscript or a subscript. Defaults to superscript (TRUE)</span></span>
+<span id="cb250-11"><a href="functions.html#cb250-11"></a><span class="co">#&#39; @param size The size of the font. Defaults to 10</span></span>
+<span id="cb250-12"><a href="functions.html#cb250-12"></a><span class="co">#&#39; @param colour The hex code of the colour of the text. Defaults to black (000000) </span></span>
+<span id="cb250-13"><a href="functions.html#cb250-13"></a><span class="co">#&#39; @param font The font. Defaults to Arial</span></span>
+<span id="cb250-14"><a href="functions.html#cb250-14"></a><span class="co">#&#39; @param family Not sure what this is for. Leave it alone at 2 if you don&#39;t know either</span></span>
+<span id="cb250-15"><a href="functions.html#cb250-15"></a><span class="co">#&#39; @param bold TRUE or FALSE if you want text to be bold</span></span>
+<span id="cb250-16"><a href="functions.html#cb250-16"></a><span class="co">#&#39; @param italic TRUE or FALSE if you want text to be italic</span></span>
+<span id="cb250-17"><a href="functions.html#cb250-17"></a><span class="co">#&#39; @param underlined TRUE or FALSE if you want text to be underlined</span></span>
+<span id="cb250-18"><a href="functions.html#cb250-18"></a></span>
+<span id="cb250-19"><a href="functions.html#cb250-19"></a></span>
+<span id="cb250-20"><a href="functions.html#cb250-20"></a>addSuperScriptToCell &lt;-<span class="st"> </span><span class="cf">function</span>(wb,</span>
+<span id="cb250-21"><a href="functions.html#cb250-21"></a>                                 sheet,</span>
+<span id="cb250-22"><a href="functions.html#cb250-22"></a>                                 row,</span>
+<span id="cb250-23"><a href="functions.html#cb250-23"></a>                                 col,</span>
+<span id="cb250-24"><a href="functions.html#cb250-24"></a>                                 text,</span>
+<span id="cb250-25"><a href="functions.html#cb250-25"></a>                                 superScriptText,</span>
+<span id="cb250-26"><a href="functions.html#cb250-26"></a>                                 <span class="dt">position =</span> <span class="kw">nchar</span>(text),</span>
+<span id="cb250-27"><a href="functions.html#cb250-27"></a>                                 <span class="dt">superOrSub =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb250-28"><a href="functions.html#cb250-28"></a>                                 <span class="dt">size =</span> <span class="st">&#39;8&#39;</span>,</span>
+<span id="cb250-29"><a href="functions.html#cb250-29"></a>                                 <span class="dt">colour =</span> <span class="st">&#39;000000&#39;</span>,</span>
+<span id="cb250-30"><a href="functions.html#cb250-30"></a>                                 <span class="dt">font =</span> <span class="st">&#39;Arial&#39;</span>,</span>
+<span id="cb250-31"><a href="functions.html#cb250-31"></a>                                 <span class="dt">family =</span> <span class="st">&#39;2&#39;</span>,</span>
+<span id="cb250-32"><a href="functions.html#cb250-32"></a>                                 <span class="dt">bold =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb250-33"><a href="functions.html#cb250-33"></a>                                 <span class="dt">italic =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb250-34"><a href="functions.html#cb250-34"></a>                                 <span class="dt">underlined =</span> <span class="ot">FALSE</span>){</span>
+<span id="cb250-35"><a href="functions.html#cb250-35"></a>  </span>
+<span id="cb250-36"><a href="functions.html#cb250-36"></a>  placeholderText &lt;-<span class="st"> &#39;This is placeholder text that should not appear anywhere in your document.&#39;</span></span>
+<span id="cb250-37"><a href="functions.html#cb250-37"></a>  </span>
+<span id="cb250-38"><a href="functions.html#cb250-38"></a>  openxlsx<span class="op">::</span><span class="kw">writeData</span>(<span class="dt">wb =</span> wb,</span>
+<span id="cb250-39"><a href="functions.html#cb250-39"></a>                      <span class="dt">sheet =</span> sheet,</span>
+<span id="cb250-40"><a href="functions.html#cb250-40"></a>                      <span class="dt">x =</span> placeholderText,</span>
+<span id="cb250-41"><a href="functions.html#cb250-41"></a>                      <span class="dt">startRow =</span> row,</span>
+<span id="cb250-42"><a href="functions.html#cb250-42"></a>                      <span class="dt">startCol =</span> col)</span>
+<span id="cb250-43"><a href="functions.html#cb250-43"></a>  </span>
+<span id="cb250-44"><a href="functions.html#cb250-44"></a>  <span class="co">#finds the string that you want to update</span></span>
+<span id="cb250-45"><a href="functions.html#cb250-45"></a>  stringToUpdate &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">sapply</span>(wb<span class="op">$</span>sharedStrings,</span>
+<span id="cb250-46"><a href="functions.html#cb250-46"></a>                                 <span class="cf">function</span>(x){</span>
+<span id="cb250-47"><a href="functions.html#cb250-47"></a>                                   <span class="kw">grep</span>(<span class="dt">pattern =</span> placeholderText,</span>
+<span id="cb250-48"><a href="functions.html#cb250-48"></a>                                        x)</span>
+<span id="cb250-49"><a href="functions.html#cb250-49"></a>                                 }</span>
+<span id="cb250-50"><a href="functions.html#cb250-50"></a>  )</span>
+<span id="cb250-51"><a href="functions.html#cb250-51"></a>  <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)</span>
+<span id="cb250-52"><a href="functions.html#cb250-52"></a>  </span>
+<span id="cb250-53"><a href="functions.html#cb250-53"></a>  <span class="co">#splits the text into before and after the superscript</span></span>
+<span id="cb250-54"><a href="functions.html#cb250-54"></a>  </span>
+<span id="cb250-55"><a href="functions.html#cb250-55"></a>  preText &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_sub</span>(text,</span>
+<span id="cb250-56"><a href="functions.html#cb250-56"></a>                              <span class="dv">1</span>,</span>
+<span id="cb250-57"><a href="functions.html#cb250-57"></a>                              position)</span>
+<span id="cb250-58"><a href="functions.html#cb250-58"></a>  </span>
+<span id="cb250-59"><a href="functions.html#cb250-59"></a>  postText &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_sub</span>(text,</span>
+<span id="cb250-60"><a href="functions.html#cb250-60"></a>                               position <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,</span>
+<span id="cb250-61"><a href="functions.html#cb250-61"></a>                               <span class="kw">nchar</span>(text))</span>
+<span id="cb250-62"><a href="functions.html#cb250-62"></a>  </span>
+<span id="cb250-63"><a href="functions.html#cb250-63"></a>  <span class="co">#formatting instructions</span></span>
+<span id="cb250-64"><a href="functions.html#cb250-64"></a>  </span>
+<span id="cb250-65"><a href="functions.html#cb250-65"></a>  sz    &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;sz val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,size,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
+<span id="cb250-66"><a href="functions.html#cb250-66"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-67"><a href="functions.html#cb250-67"></a>  col   &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;color rgb =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,colour,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
+<span id="cb250-68"><a href="functions.html#cb250-68"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-69"><a href="functions.html#cb250-69"></a>  rFont &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;rFont val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,font,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
+<span id="cb250-70"><a href="functions.html#cb250-70"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-71"><a href="functions.html#cb250-71"></a>  fam   &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;family val =</span><span class="ch">\&quot;</span><span class="st">&#39;</span>,family,<span class="st">&#39;</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>,</span>
+<span id="cb250-72"><a href="functions.html#cb250-72"></a>                 <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-73"><a href="functions.html#cb250-73"></a>  <span class="cf">if</span>(superOrSub){</span>
+<span id="cb250-74"><a href="functions.html#cb250-74"></a>    vert &lt;-<span class="st"> &#39;&lt;vertAlign val=</span><span class="ch">\&quot;</span><span class="st">superscript</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span></span>
+<span id="cb250-75"><a href="functions.html#cb250-75"></a>  } <span class="cf">else</span>{vert &lt;-<span class="st"> &#39;&lt;vertAlign val=</span><span class="ch">\&quot;</span><span class="st">subscript</span><span class="ch">\&quot;</span><span class="st">/&gt;&#39;</span>}</span>
+<span id="cb250-76"><a href="functions.html#cb250-76"></a>  </span>
+<span id="cb250-77"><a href="functions.html#cb250-77"></a>  <span class="cf">if</span>(bold){</span>
+<span id="cb250-78"><a href="functions.html#cb250-78"></a>    bld &lt;-<span class="st"> &#39;&lt;b/&gt;&#39;</span></span>
+<span id="cb250-79"><a href="functions.html#cb250-79"></a>  } <span class="cf">else</span>{bld &lt;-<span class="st"> &#39;&#39;</span>}</span>
+<span id="cb250-80"><a href="functions.html#cb250-80"></a>  </span>
+<span id="cb250-81"><a href="functions.html#cb250-81"></a>  <span class="cf">if</span>(italic){</span>
+<span id="cb250-82"><a href="functions.html#cb250-82"></a>    itl &lt;-<span class="st"> &#39;&lt;i/&gt;&#39;</span></span>
+<span id="cb250-83"><a href="functions.html#cb250-83"></a>  } <span class="cf">else</span>{itl &lt;-<span class="st"> &#39;&#39;</span>}</span>
+<span id="cb250-84"><a href="functions.html#cb250-84"></a>  </span>
+<span id="cb250-85"><a href="functions.html#cb250-85"></a>  <span class="cf">if</span>(underlined){</span>
+<span id="cb250-86"><a href="functions.html#cb250-86"></a>    uld &lt;-<span class="st"> &#39;&lt;u/&gt;&#39;</span></span>
+<span id="cb250-87"><a href="functions.html#cb250-87"></a>  } <span class="cf">else</span>{uld &lt;-<span class="st"> &#39;&#39;</span>}</span>
+<span id="cb250-88"><a href="functions.html#cb250-88"></a>  </span>
+<span id="cb250-89"><a href="functions.html#cb250-89"></a>  <span class="co">#run properties</span></span>
+<span id="cb250-90"><a href="functions.html#cb250-90"></a>  </span>
+<span id="cb250-91"><a href="functions.html#cb250-91"></a>  rPrText &lt;-<span class="st"> </span><span class="kw">paste</span>(sz,</span>
+<span id="cb250-92"><a href="functions.html#cb250-92"></a>                   col,</span>
+<span id="cb250-93"><a href="functions.html#cb250-93"></a>                   rFont,</span>
+<span id="cb250-94"><a href="functions.html#cb250-94"></a>                   fam,</span>
+<span id="cb250-95"><a href="functions.html#cb250-95"></a>                   bld,</span>
+<span id="cb250-96"><a href="functions.html#cb250-96"></a>                   itl,</span>
+<span id="cb250-97"><a href="functions.html#cb250-97"></a>                   uld,</span>
+<span id="cb250-98"><a href="functions.html#cb250-98"></a>                   <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-99"><a href="functions.html#cb250-99"></a>  </span>
+<span id="cb250-100"><a href="functions.html#cb250-100"></a>  rPrSuperText &lt;-<span class="st"> </span><span class="kw">paste</span>(vert,</span>
+<span id="cb250-101"><a href="functions.html#cb250-101"></a>                        sz,</span>
+<span id="cb250-102"><a href="functions.html#cb250-102"></a>                        col,</span>
+<span id="cb250-103"><a href="functions.html#cb250-103"></a>                        rFont,</span>
+<span id="cb250-104"><a href="functions.html#cb250-104"></a>                        fam,</span>
+<span id="cb250-105"><a href="functions.html#cb250-105"></a>                        bld,</span>
+<span id="cb250-106"><a href="functions.html#cb250-106"></a>                        itl,</span>
+<span id="cb250-107"><a href="functions.html#cb250-107"></a>                        uld,</span>
+<span id="cb250-108"><a href="functions.html#cb250-108"></a>                        <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-109"><a href="functions.html#cb250-109"></a>  </span>
+<span id="cb250-110"><a href="functions.html#cb250-110"></a>  newString &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&#39;&lt;si&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
+<span id="cb250-111"><a href="functions.html#cb250-111"></a>                     rPrText,</span>
+<span id="cb250-112"><a href="functions.html#cb250-112"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
+<span id="cb250-113"><a href="functions.html#cb250-113"></a>                     preText,</span>
+<span id="cb250-114"><a href="functions.html#cb250-114"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
+<span id="cb250-115"><a href="functions.html#cb250-115"></a>                     rPrSuperText,</span>
+<span id="cb250-116"><a href="functions.html#cb250-116"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
+<span id="cb250-117"><a href="functions.html#cb250-117"></a>                     superScriptText,</span>
+<span id="cb250-118"><a href="functions.html#cb250-118"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;r&gt;&lt;rPr&gt;&#39;</span>,</span>
+<span id="cb250-119"><a href="functions.html#cb250-119"></a>                     rPrText,</span>
+<span id="cb250-120"><a href="functions.html#cb250-120"></a>                     <span class="st">&#39;&lt;/rPr&gt;&lt;t xml:space=&quot;preserve&quot;&gt;&#39;</span>,</span>
+<span id="cb250-121"><a href="functions.html#cb250-121"></a>                     postText,</span>
+<span id="cb250-122"><a href="functions.html#cb250-122"></a>                     <span class="st">&#39;&lt;/t&gt;&lt;/r&gt;&lt;/si&gt;&#39;</span>,</span>
+<span id="cb250-123"><a href="functions.html#cb250-123"></a>                     <span class="dt">sep =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb250-124"><a href="functions.html#cb250-124"></a>  </span>
+<span id="cb250-125"><a href="functions.html#cb250-125"></a>  wb<span class="op">$</span>sharedStrings[stringToUpdate] &lt;-<span class="st"> </span>newString</span>
+<span id="cb250-126"><a href="functions.html#cb250-126"></a>}</span></code></pre></div>
 <p>An example of using the superscript function in R:</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="functions.html#cb246-1"></a><span class="co"># add title with superscript</span></span>
-<span id="cb246-2"><a href="functions.html#cb246-2"></a><span class="co"># the superscript text specified in the function is what will appear as a superscript</span></span>
-<span id="cb246-3"><a href="functions.html#cb246-3"></a><span class="kw">addSuperScriptToCell</span>(<span class="dt">wb =</span> Table1,<span class="dt">sheet =</span> <span class="st">&quot;SFR0101&quot;</span>,<span class="dt">row =</span> <span class="dv">4</span>,<span class="dt">col =</span> <span class="dv">1</span>,<span class="dt">text =</span> <span class="st">&quot;Publication table title&quot;</span>,<span class="dt">superScriptText =</span> <span class="st">&#39;1,2,3&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="functions.html#cb251-1"></a><span class="co"># add title with superscript</span></span>
+<span id="cb251-2"><a href="functions.html#cb251-2"></a><span class="co"># the superscript text specified in the function is what will appear as a superscript</span></span>
+<span id="cb251-3"><a href="functions.html#cb251-3"></a><span class="kw">addSuperScriptToCell</span>(<span class="dt">wb =</span> Table1,<span class="dt">sheet =</span> <span class="st">&quot;SFR0101&quot;</span>,<span class="dt">row =</span> <span class="dv">4</span>,<span class="dt">col =</span> <span class="dv">1</span>,<span class="dt">text =</span> <span class="st">&quot;Publication table title&quot;</span>,<span class="dt">superScriptText =</span> <span class="st">&#39;1,2,3&#39;</span>)</span></code></pre></div>
 <p>note: to use this function you will need to load an Excel workbook into R using the openxlsx package:</p>
-<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="functions.html#cb247-1"></a></span>
-<span id="cb247-2"><a href="functions.html#cb247-2"></a><span class="co"># load the excel table </span></span>
-<span id="cb247-3"><a href="functions.html#cb247-3"></a>Table1 &lt;-<span class="st"> </span>openxlsx<span class="op">::</span><span class="kw">loadWorkbook</span>(<span class="st">&quot;0101 template/sfr0101_template.xlsx&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="functions.html#cb252-1"></a></span>
+<span id="cb252-2"><a href="functions.html#cb252-2"></a><span class="co"># load the excel table </span></span>
+<span id="cb252-3"><a href="functions.html#cb252-3"></a>Table1 &lt;-<span class="st"> </span>openxlsx<span class="op">::</span><span class="kw">loadWorkbook</span>(<span class="st">&quot;0101 template/sfr0101_template.xlsx&quot;</span>)</span></code></pre></div>
 </div>
 <div id="function-to-produce-multiple-graphs" class="section level2">
 <h2><span class="header-section-number">10.6</span> Function to produce multiple graphs</h2>
@@ -555,37 +555,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The function then uses a loop to basically create a graph for each value in the list.</p>
 <p>The graphs are created using ggplot, where the data being used to create the graphs is subset based on the value it is currently using from the list. So, in this case the data is subset based on each local authority in the list and a graph is created using this subset of data. This is then looped for each local authority in the list.</p>
 <p>The function saves each graph as a png file in the working directory.</p>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="functions.html#cb248-1"></a></span>
-<span id="cb248-2"><a href="functions.html#cb248-2"></a><span class="co"># create graphing function</span></span>
-<span id="cb248-3"><a href="functions.html#cb248-3"></a>    multiple.graph &lt;-<span class="st"> </span><span class="cf">function</span>(df, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>, ...){</span>
-<span id="cb248-4"><a href="functions.html#cb248-4"></a>      </span>
-<span id="cb248-5"><a href="functions.html#cb248-5"></a>      <span class="co"># create list of local authorities in data to loop over </span></span>
-<span id="cb248-6"><a href="functions.html#cb248-6"></a>      la_list &lt;-<span class="st"> </span><span class="kw">unique</span>(df<span class="op">$</span>local_authority)</span>
-<span id="cb248-7"><a href="functions.html#cb248-7"></a>      </span>
-<span id="cb248-8"><a href="functions.html#cb248-8"></a>      <span class="co"># create for loop to produce ggplot2 graphs </span></span>
-<span id="cb248-9"><a href="functions.html#cb248-9"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(la_list)) { </span>
-<span id="cb248-10"><a href="functions.html#cb248-10"></a>        </span>
-<span id="cb248-11"><a href="functions.html#cb248-11"></a>        <span class="co"># create plot for each LA in df </span></span>
-<span id="cb248-12"><a href="functions.html#cb248-12"></a>        plot &lt;-<span class="st"> </span></span>
-<span id="cb248-13"><a href="functions.html#cb248-13"></a><span class="st">          </span><span class="kw">ggplot</span>(<span class="kw">subset</span>(df, df<span class="op">$</span>local_authority<span class="op">==</span>la_list[i]),</span>
-<span id="cb248-14"><a href="functions.html#cb248-14"></a>                 <span class="kw">aes</span>(<span class="dt">x =</span> year)) <span class="op">+</span></span>
-<span id="cb248-15"><a href="functions.html#cb248-15"></a><span class="st">          </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> serious_accidents), <span class="dt">colour =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span></span>
-<span id="cb248-16"><a href="functions.html#cb248-16"></a><span class="st">          </span><span class="kw">ylab</span>(<span class="st">&quot;serious accident count&quot;</span>) <span class="op">+</span></span>
-<span id="cb248-17"><a href="functions.html#cb248-17"></a><span class="st">          </span><span class="kw">xlab</span>(<span class="st">&quot;Year&quot;</span>) <span class="op">+</span></span>
-<span id="cb248-18"><a href="functions.html#cb248-18"></a><span class="st">          </span><span class="kw">theme_bw</span>() <span class="op">+</span></span>
-<span id="cb248-19"><a href="functions.html#cb248-19"></a><span class="st">          </span><span class="kw">ggtitle</span>(<span class="kw">paste</span>(la_list[i], <span class="st">&quot;comparison chart&quot;</span>))    <span class="co"># this produces a dynamic title which is updated based on the local authority currently being used from the list</span></span>
-<span id="cb248-20"><a href="functions.html#cb248-20"></a></span>
-<span id="cb248-21"><a href="functions.html#cb248-21"></a>        </span>
-<span id="cb248-22"><a href="functions.html#cb248-22"></a>         <span class="co"># save plots as .png</span></span>
-<span id="cb248-23"><a href="functions.html#cb248-23"></a>        <span class="kw">ggsave</span>(plot, <span class="dt">file=</span><span class="kw">paste</span>(la_list[i], <span class="st">&quot;.png&quot;</span>, <span class="dt">sep=</span><span class="st">&#39;&#39;</span>), <span class="dt">scale=</span><span class="dv">2</span>)</span>
-<span id="cb248-24"><a href="functions.html#cb248-24"></a>        </span>
-<span id="cb248-25"><a href="functions.html#cb248-25"></a>         <span class="co"># print plots to screen</span></span>
-<span id="cb248-26"><a href="functions.html#cb248-26"></a>    <span class="kw">print</span>(plot)</span>
-<span id="cb248-27"><a href="functions.html#cb248-27"></a>  }</span>
-<span id="cb248-28"><a href="functions.html#cb248-28"></a>    }</span>
-<span id="cb248-29"><a href="functions.html#cb248-29"></a></span>
-<span id="cb248-30"><a href="functions.html#cb248-30"></a><span class="co">## run function</span></span>
-<span id="cb248-31"><a href="functions.html#cb248-31"></a><span class="kw">multiple.graph</span>(dataframe3)</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="functions.html#cb253-1"></a></span>
+<span id="cb253-2"><a href="functions.html#cb253-2"></a><span class="co"># create graphing function</span></span>
+<span id="cb253-3"><a href="functions.html#cb253-3"></a>    multiple.graph &lt;-<span class="st"> </span><span class="cf">function</span>(df, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>, ...){</span>
+<span id="cb253-4"><a href="functions.html#cb253-4"></a>      </span>
+<span id="cb253-5"><a href="functions.html#cb253-5"></a>      <span class="co"># create list of local authorities in data to loop over </span></span>
+<span id="cb253-6"><a href="functions.html#cb253-6"></a>      la_list &lt;-<span class="st"> </span><span class="kw">unique</span>(df<span class="op">$</span>local_authority)</span>
+<span id="cb253-7"><a href="functions.html#cb253-7"></a>      </span>
+<span id="cb253-8"><a href="functions.html#cb253-8"></a>      <span class="co"># create for loop to produce ggplot2 graphs </span></span>
+<span id="cb253-9"><a href="functions.html#cb253-9"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(la_list)) { </span>
+<span id="cb253-10"><a href="functions.html#cb253-10"></a>        </span>
+<span id="cb253-11"><a href="functions.html#cb253-11"></a>        <span class="co"># create plot for each LA in df </span></span>
+<span id="cb253-12"><a href="functions.html#cb253-12"></a>        plot &lt;-<span class="st"> </span></span>
+<span id="cb253-13"><a href="functions.html#cb253-13"></a><span class="st">          </span><span class="kw">ggplot</span>(<span class="kw">subset</span>(df, df<span class="op">$</span>local_authority<span class="op">==</span>la_list[i]),</span>
+<span id="cb253-14"><a href="functions.html#cb253-14"></a>                 <span class="kw">aes</span>(<span class="dt">x =</span> year)) <span class="op">+</span></span>
+<span id="cb253-15"><a href="functions.html#cb253-15"></a><span class="st">          </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> serious_accidents), <span class="dt">colour =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span></span>
+<span id="cb253-16"><a href="functions.html#cb253-16"></a><span class="st">          </span><span class="kw">ylab</span>(<span class="st">&quot;serious accident count&quot;</span>) <span class="op">+</span></span>
+<span id="cb253-17"><a href="functions.html#cb253-17"></a><span class="st">          </span><span class="kw">xlab</span>(<span class="st">&quot;Year&quot;</span>) <span class="op">+</span></span>
+<span id="cb253-18"><a href="functions.html#cb253-18"></a><span class="st">          </span><span class="kw">theme_bw</span>() <span class="op">+</span></span>
+<span id="cb253-19"><a href="functions.html#cb253-19"></a><span class="st">          </span><span class="kw">ggtitle</span>(<span class="kw">paste</span>(la_list[i], <span class="st">&quot;comparison chart&quot;</span>))    <span class="co"># this produces a dynamic title which is updated based on the local authority currently being used from the list</span></span>
+<span id="cb253-20"><a href="functions.html#cb253-20"></a></span>
+<span id="cb253-21"><a href="functions.html#cb253-21"></a>        </span>
+<span id="cb253-22"><a href="functions.html#cb253-22"></a>         <span class="co"># save plots as .png</span></span>
+<span id="cb253-23"><a href="functions.html#cb253-23"></a>        <span class="kw">ggsave</span>(plot, <span class="dt">file=</span><span class="kw">paste</span>(la_list[i], <span class="st">&quot;.png&quot;</span>, <span class="dt">sep=</span><span class="st">&#39;&#39;</span>), <span class="dt">scale=</span><span class="dv">2</span>)</span>
+<span id="cb253-24"><a href="functions.html#cb253-24"></a>        </span>
+<span id="cb253-25"><a href="functions.html#cb253-25"></a>         <span class="co"># print plots to screen</span></span>
+<span id="cb253-26"><a href="functions.html#cb253-26"></a>    <span class="kw">print</span>(plot)</span>
+<span id="cb253-27"><a href="functions.html#cb253-27"></a>  }</span>
+<span id="cb253-28"><a href="functions.html#cb253-28"></a>    }</span>
+<span id="cb253-29"><a href="functions.html#cb253-29"></a></span>
+<span id="cb253-30"><a href="functions.html#cb253-30"></a><span class="co">## run function</span></span>
+<span id="cb253-31"><a href="functions.html#cb253-31"></a><span class="kw">multiple.graph</span>(dataframe3)</span></code></pre></div>
 </div>
 <div id="further-reading" class="section level2">
 <h2><span class="header-section-number">10.7</span> Further reading</h2>

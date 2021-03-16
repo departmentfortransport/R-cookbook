@@ -24,7 +24,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor" />
 
 
-<meta name="date" content="2021-03-03" />
+<meta name="date" content="2021-03-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -358,50 +358,50 @@ categorical data in formulae)</li>
 </ul>
 <div id="tabulation-of-data" class="section level3">
 <h3><span class="header-section-number">6.1.1</span> Tabulation of data</h3>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="factors.html#cb185-1"></a><span class="co"># define a simple character vector</span></span>
-<span id="cb185-2"><a href="factors.html#cb185-2"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>)</span>
-<span id="cb185-3"><a href="factors.html#cb185-3"></a><span class="kw">class</span>(vehicles_observed)</span>
-<span id="cb185-4"><a href="factors.html#cb185-4"></a><span class="co">#&gt; [1] &quot;character&quot;</span></span>
-<span id="cb185-5"><a href="factors.html#cb185-5"></a><span class="kw">table</span>(vehicles_observed)</span>
-<span id="cb185-6"><a href="factors.html#cb185-6"></a><span class="co">#&gt; vehicles_observed</span></span>
-<span id="cb185-7"><a href="factors.html#cb185-7"></a><span class="co">#&gt; bus car </span></span>
-<span id="cb185-8"><a href="factors.html#cb185-8"></a><span class="co">#&gt;   1   3</span></span>
-<span id="cb185-9"><a href="factors.html#cb185-9"></a></span>
-<span id="cb185-10"><a href="factors.html#cb185-10"></a><span class="co"># convert to factor with possible levels</span></span>
-<span id="cb185-11"><a href="factors.html#cb185-11"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;motorbike&quot;</span>, <span class="st">&quot;bicycle&quot;</span>)</span>
-<span id="cb185-12"><a href="factors.html#cb185-12"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
-<span id="cb185-13"><a href="factors.html#cb185-13"></a><span class="kw">class</span>(vehicles_observed)</span>
-<span id="cb185-14"><a href="factors.html#cb185-14"></a><span class="co">#&gt; [1] &quot;factor&quot;</span></span>
-<span id="cb185-15"><a href="factors.html#cb185-15"></a><span class="kw">table</span>(vehicles_observed)</span>
-<span id="cb185-16"><a href="factors.html#cb185-16"></a><span class="co">#&gt; vehicles_observed</span></span>
-<span id="cb185-17"><a href="factors.html#cb185-17"></a><span class="co">#&gt;       car       bus motorbike   bicycle </span></span>
-<span id="cb185-18"><a href="factors.html#cb185-18"></a><span class="co">#&gt;         3         1         0         0</span></span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="factors.html#cb190-1"></a><span class="co"># define a simple character vector</span></span>
+<span id="cb190-2"><a href="factors.html#cb190-2"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>)</span>
+<span id="cb190-3"><a href="factors.html#cb190-3"></a><span class="kw">class</span>(vehicles_observed)</span>
+<span id="cb190-4"><a href="factors.html#cb190-4"></a><span class="co">#&gt; [1] &quot;character&quot;</span></span>
+<span id="cb190-5"><a href="factors.html#cb190-5"></a><span class="kw">table</span>(vehicles_observed)</span>
+<span id="cb190-6"><a href="factors.html#cb190-6"></a><span class="co">#&gt; vehicles_observed</span></span>
+<span id="cb190-7"><a href="factors.html#cb190-7"></a><span class="co">#&gt; bus car </span></span>
+<span id="cb190-8"><a href="factors.html#cb190-8"></a><span class="co">#&gt;   1   3</span></span>
+<span id="cb190-9"><a href="factors.html#cb190-9"></a></span>
+<span id="cb190-10"><a href="factors.html#cb190-10"></a><span class="co"># convert to factor with possible levels</span></span>
+<span id="cb190-11"><a href="factors.html#cb190-11"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;motorbike&quot;</span>, <span class="st">&quot;bicycle&quot;</span>)</span>
+<span id="cb190-12"><a href="factors.html#cb190-12"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
+<span id="cb190-13"><a href="factors.html#cb190-13"></a><span class="kw">class</span>(vehicles_observed)</span>
+<span id="cb190-14"><a href="factors.html#cb190-14"></a><span class="co">#&gt; [1] &quot;factor&quot;</span></span>
+<span id="cb190-15"><a href="factors.html#cb190-15"></a><span class="kw">table</span>(vehicles_observed)</span>
+<span id="cb190-16"><a href="factors.html#cb190-16"></a><span class="co">#&gt; vehicles_observed</span></span>
+<span id="cb190-17"><a href="factors.html#cb190-17"></a><span class="co">#&gt;       car       bus motorbike   bicycle </span></span>
+<span id="cb190-18"><a href="factors.html#cb190-18"></a><span class="co">#&gt;         3         1         0         0</span></span></code></pre></div>
 </div>
 <div id="ordering-of-data-for-output" class="section level3">
 <h3><span class="header-section-number">6.1.2</span> Ordering of data for output</h3>
-<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="factors.html#cb186-1"></a><span class="co"># example 1</span></span>
-<span id="cb186-2"><a href="factors.html#cb186-2"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>)</span>
-<span id="cb186-3"><a href="factors.html#cb186-3"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;motorbike&quot;</span>, <span class="st">&quot;bicycle&quot;</span>)</span>
-<span id="cb186-4"><a href="factors.html#cb186-4"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
-<span id="cb186-5"><a href="factors.html#cb186-5"></a><span class="kw">table</span>(vehicles_observed)</span>
-<span id="cb186-6"><a href="factors.html#cb186-6"></a><span class="co">#&gt; vehicles_observed</span></span>
-<span id="cb186-7"><a href="factors.html#cb186-7"></a><span class="co">#&gt;       car       bus motorbike   bicycle </span></span>
-<span id="cb186-8"><a href="factors.html#cb186-8"></a><span class="co">#&gt;         3         1         0         0</span></span>
-<span id="cb186-9"><a href="factors.html#cb186-9"></a></span>
-<span id="cb186-10"><a href="factors.html#cb186-10"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;bicycle&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;motorbike&quot;</span>)</span>
-<span id="cb186-11"><a href="factors.html#cb186-11"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
-<span id="cb186-12"><a href="factors.html#cb186-12"></a><span class="kw">table</span>(vehicles_observed)</span>
-<span id="cb186-13"><a href="factors.html#cb186-13"></a><span class="co">#&gt; vehicles_observed</span></span>
-<span id="cb186-14"><a href="factors.html#cb186-14"></a><span class="co">#&gt;   bicycle       bus       car motorbike </span></span>
-<span id="cb186-15"><a href="factors.html#cb186-15"></a><span class="co">#&gt;         0         1         3         0</span></span>
-<span id="cb186-16"><a href="factors.html#cb186-16"></a></span>
-<span id="cb186-17"><a href="factors.html#cb186-17"></a><span class="co"># example 2</span></span>
-<span id="cb186-18"><a href="factors.html#cb186-18"></a>df &lt;-<span class="st"> </span>iris[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(iris), <span class="dv">100</span>), ]</span>
-<span id="cb186-19"><a href="factors.html#cb186-19"></a><span class="kw">ggplot</span>(df, <span class="kw">aes</span>(Species)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="factors.html#cb191-1"></a><span class="co"># example 1</span></span>
+<span id="cb191-2"><a href="factors.html#cb191-2"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>)</span>
+<span id="cb191-3"><a href="factors.html#cb191-3"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;motorbike&quot;</span>, <span class="st">&quot;bicycle&quot;</span>)</span>
+<span id="cb191-4"><a href="factors.html#cb191-4"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
+<span id="cb191-5"><a href="factors.html#cb191-5"></a><span class="kw">table</span>(vehicles_observed)</span>
+<span id="cb191-6"><a href="factors.html#cb191-6"></a><span class="co">#&gt; vehicles_observed</span></span>
+<span id="cb191-7"><a href="factors.html#cb191-7"></a><span class="co">#&gt;       car       bus motorbike   bicycle </span></span>
+<span id="cb191-8"><a href="factors.html#cb191-8"></a><span class="co">#&gt;         3         1         0         0</span></span>
+<span id="cb191-9"><a href="factors.html#cb191-9"></a></span>
+<span id="cb191-10"><a href="factors.html#cb191-10"></a>possible_vehicles &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;bicycle&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>, <span class="st">&quot;motorbike&quot;</span>)</span>
+<span id="cb191-11"><a href="factors.html#cb191-11"></a>vehicles_observed &lt;-<span class="st"> </span><span class="kw">factor</span>(vehicles_observed, <span class="dt">levels =</span> possible_vehicles)</span>
+<span id="cb191-12"><a href="factors.html#cb191-12"></a><span class="kw">table</span>(vehicles_observed)</span>
+<span id="cb191-13"><a href="factors.html#cb191-13"></a><span class="co">#&gt; vehicles_observed</span></span>
+<span id="cb191-14"><a href="factors.html#cb191-14"></a><span class="co">#&gt;   bicycle       bus       car motorbike </span></span>
+<span id="cb191-15"><a href="factors.html#cb191-15"></a><span class="co">#&gt;         0         1         3         0</span></span>
+<span id="cb191-16"><a href="factors.html#cb191-16"></a></span>
+<span id="cb191-17"><a href="factors.html#cb191-17"></a><span class="co"># example 2</span></span>
+<span id="cb191-18"><a href="factors.html#cb191-18"></a>df &lt;-<span class="st"> </span>iris[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(iris), <span class="dv">100</span>), ]</span>
+<span id="cb191-19"><a href="factors.html#cb191-19"></a><span class="kw">ggplot</span>(df, <span class="kw">aes</span>(Species)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-174-1.png" width="672" /></p>
-<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="factors.html#cb187-1"></a></span>
-<span id="cb187-2"><a href="factors.html#cb187-2"></a>df<span class="op">$</span>Species &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>Species, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;versicolor&quot;</span>, <span class="st">&quot;virginica&quot;</span>, <span class="st">&quot;setosa&quot;</span>))</span>
-<span id="cb187-3"><a href="factors.html#cb187-3"></a><span class="kw">ggplot</span>(df, <span class="kw">aes</span>(Species)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="factors.html#cb192-1"></a></span>
+<span id="cb192-2"><a href="factors.html#cb192-2"></a>df<span class="op">$</span>Species &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>Species, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;versicolor&quot;</span>, <span class="st">&quot;virginica&quot;</span>, <span class="st">&quot;setosa&quot;</span>))</span>
+<span id="cb192-3"><a href="factors.html#cb192-3"></a><span class="kw">ggplot</span>(df, <span class="kw">aes</span>(Species)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-174-2.png" width="672" /></p>
 </div>
 <div id="statistical-models" class="section level3">
@@ -412,12 +412,12 @@ level of the vector is contrasted with a baseline level (by default the first
 level once the vector has been converted to a factor). If you want to change
 the baseline level or use a different encoding methodology then you need to
 work with factors. To illustrate this we use the <code>Titanic</code> dataset.</p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="factors.html#cb188-1"></a><span class="co"># load data and convert to one observation per row</span></span>
-<span id="cb188-2"><a href="factors.html#cb188-2"></a><span class="kw">data</span>(<span class="st">&quot;Titanic&quot;</span>)</span>
-<span id="cb188-3"><a href="factors.html#cb188-3"></a>df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(Titanic)</span>
-<span id="cb188-4"><a href="factors.html#cb188-4"></a>df &lt;-<span class="st"> </span>df[<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(df), df[ ,<span class="dv">5</span>]), <span class="dv">-5</span>]</span>
-<span id="cb188-5"><a href="factors.html#cb188-5"></a><span class="kw">rownames</span>(df) &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
-<span id="cb188-6"><a href="factors.html#cb188-6"></a><span class="kw">head</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="factors.html#cb193-1"></a><span class="co"># load data and convert to one observation per row</span></span>
+<span id="cb193-2"><a href="factors.html#cb193-2"></a><span class="kw">data</span>(<span class="st">&quot;Titanic&quot;</span>)</span>
+<span id="cb193-3"><a href="factors.html#cb193-3"></a>df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(Titanic)</span>
+<span id="cb193-4"><a href="factors.html#cb193-4"></a>df &lt;-<span class="st"> </span>df[<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(df), df[ ,<span class="dv">5</span>]), <span class="dv">-5</span>]</span>
+<span id="cb193-5"><a href="factors.html#cb193-5"></a><span class="kw">rownames</span>(df) &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb193-6"><a href="factors.html#cb193-6"></a><span class="kw">head</span>(df)</span></code></pre></div>
 <div class="kable-table">
 
 <table>
@@ -525,92 +525,92 @@ No
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="factors.html#cb189-1"></a></span>
-<span id="cb189-2"><a href="factors.html#cb189-2"></a><span class="co"># For this example we convert all variables to characters</span></span>
-<span id="cb189-3"><a href="factors.html#cb189-3"></a>df[] &lt;-<span class="st"> </span><span class="kw">lapply</span>(df, as.character)</span>
-<span id="cb189-4"><a href="factors.html#cb189-4"></a></span>
-<span id="cb189-5"><a href="factors.html#cb189-5"></a><span class="co"># save to temporary folder</span></span>
-<span id="cb189-6"><a href="factors.html#cb189-6"></a>filename &lt;-<span class="st"> </span><span class="kw">tempfile</span>(<span class="dt">fileext =</span> <span class="st">&quot;.csv&quot;</span>)</span>
-<span id="cb189-7"><a href="factors.html#cb189-7"></a><span class="kw">write.csv</span>(df, filename, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb189-8"><a href="factors.html#cb189-8"></a></span>
-<span id="cb189-9"><a href="factors.html#cb189-9"></a><span class="co"># reload data with stringsAsFactors = FALSE</span></span>
-<span id="cb189-10"><a href="factors.html#cb189-10"></a>new_df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(filename, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb189-11"><a href="factors.html#cb189-11"></a><span class="kw">str</span>(new_df)</span>
-<span id="cb189-12"><a href="factors.html#cb189-12"></a><span class="co">#&gt; &#39;data.frame&#39;:    2201 obs. of  4 variables:</span></span>
-<span id="cb189-13"><a href="factors.html#cb189-13"></a><span class="co">#&gt;  $ Class   : chr  &quot;3rd&quot; &quot;3rd&quot; &quot;3rd&quot; &quot;3rd&quot; ...</span></span>
-<span id="cb189-14"><a href="factors.html#cb189-14"></a><span class="co">#&gt;  $ Sex     : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...</span></span>
-<span id="cb189-15"><a href="factors.html#cb189-15"></a><span class="co">#&gt;  $ Age     : chr  &quot;Child&quot; &quot;Child&quot; &quot;Child&quot; &quot;Child&quot; ...</span></span>
-<span id="cb189-16"><a href="factors.html#cb189-16"></a><span class="co">#&gt;  $ Survived: chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="factors.html#cb194-1"></a></span>
+<span id="cb194-2"><a href="factors.html#cb194-2"></a><span class="co"># For this example we convert all variables to characters</span></span>
+<span id="cb194-3"><a href="factors.html#cb194-3"></a>df[] &lt;-<span class="st"> </span><span class="kw">lapply</span>(df, as.character)</span>
+<span id="cb194-4"><a href="factors.html#cb194-4"></a></span>
+<span id="cb194-5"><a href="factors.html#cb194-5"></a><span class="co"># save to temporary folder</span></span>
+<span id="cb194-6"><a href="factors.html#cb194-6"></a>filename &lt;-<span class="st"> </span><span class="kw">tempfile</span>(<span class="dt">fileext =</span> <span class="st">&quot;.csv&quot;</span>)</span>
+<span id="cb194-7"><a href="factors.html#cb194-7"></a><span class="kw">write.csv</span>(df, filename, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb194-8"><a href="factors.html#cb194-8"></a></span>
+<span id="cb194-9"><a href="factors.html#cb194-9"></a><span class="co"># reload data with stringsAsFactors = FALSE</span></span>
+<span id="cb194-10"><a href="factors.html#cb194-10"></a>new_df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(filename, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb194-11"><a href="factors.html#cb194-11"></a><span class="kw">str</span>(new_df)</span>
+<span id="cb194-12"><a href="factors.html#cb194-12"></a><span class="co">#&gt; &#39;data.frame&#39;:    2201 obs. of  4 variables:</span></span>
+<span id="cb194-13"><a href="factors.html#cb194-13"></a><span class="co">#&gt;  $ Class   : chr  &quot;3rd&quot; &quot;3rd&quot; &quot;3rd&quot; &quot;3rd&quot; ...</span></span>
+<span id="cb194-14"><a href="factors.html#cb194-14"></a><span class="co">#&gt;  $ Sex     : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...</span></span>
+<span id="cb194-15"><a href="factors.html#cb194-15"></a><span class="co">#&gt;  $ Age     : chr  &quot;Child&quot; &quot;Child&quot; &quot;Child&quot; &quot;Child&quot; ...</span></span>
+<span id="cb194-16"><a href="factors.html#cb194-16"></a><span class="co">#&gt;  $ Survived: chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...</span></span></code></pre></div>
 <p>First lets see what happens if we try and build a logistic regression model for
 survivals but using our newly loaded dataframe</p>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="factors.html#cb190-1"></a>model_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
-<span id="cb190-2"><a href="factors.html#cb190-2"></a><span class="co">#&gt; Error in eval(family$initialize): y values must be 0 &lt;= y &lt;= 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="factors.html#cb195-1"></a>model_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
+<span id="cb195-2"><a href="factors.html#cb195-2"></a><span class="co">#&gt; Error in eval(family$initialize): y values must be 0 &lt;= y &lt;= 1</span></span></code></pre></div>
 <p>This errors due to the <strong>Survived</strong> variable being a character vector. Let’s
 convert it to a factor.</p>
-<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="factors.html#cb191-1"></a>new_df<span class="op">$</span>Survived &lt;-<span class="st"> </span><span class="kw">factor</span>(new_df<span class="op">$</span>Survived)</span>
-<span id="cb191-2"><a href="factors.html#cb191-2"></a>model_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
-<span id="cb191-3"><a href="factors.html#cb191-3"></a><span class="kw">summary</span>(model_<span class="dv">2</span>)</span>
-<span id="cb191-4"><a href="factors.html#cb191-4"></a><span class="co">#&gt; </span></span>
-<span id="cb191-5"><a href="factors.html#cb191-5"></a><span class="co">#&gt; Call:</span></span>
-<span id="cb191-6"><a href="factors.html#cb191-6"></a><span class="co">#&gt; glm(formula = Survived ~ ., family = binomial, data = new_df)</span></span>
-<span id="cb191-7"><a href="factors.html#cb191-7"></a><span class="co">#&gt; </span></span>
-<span id="cb191-8"><a href="factors.html#cb191-8"></a><span class="co">#&gt; Deviance Residuals: </span></span>
-<span id="cb191-9"><a href="factors.html#cb191-9"></a><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
-<span id="cb191-10"><a href="factors.html#cb191-10"></a><span class="co">#&gt; -2.0812  -0.7149  -0.6656   0.6858   2.1278  </span></span>
-<span id="cb191-11"><a href="factors.html#cb191-11"></a><span class="co">#&gt; </span></span>
-<span id="cb191-12"><a href="factors.html#cb191-12"></a><span class="co">#&gt; Coefficients:</span></span>
-<span id="cb191-13"><a href="factors.html#cb191-13"></a><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span id="cb191-14"><a href="factors.html#cb191-14"></a><span class="co">#&gt; (Intercept)   2.0438     0.1679  12.171  &lt; 2e-16 ***</span></span>
-<span id="cb191-15"><a href="factors.html#cb191-15"></a><span class="co">#&gt; Class2nd     -1.0181     0.1960  -5.194 2.05e-07 ***</span></span>
-<span id="cb191-16"><a href="factors.html#cb191-16"></a><span class="co">#&gt; Class3rd     -1.7778     0.1716 -10.362  &lt; 2e-16 ***</span></span>
-<span id="cb191-17"><a href="factors.html#cb191-17"></a><span class="co">#&gt; ClassCrew    -0.8577     0.1573  -5.451 5.00e-08 ***</span></span>
-<span id="cb191-18"><a href="factors.html#cb191-18"></a><span class="co">#&gt; SexMale      -2.4201     0.1404 -17.236  &lt; 2e-16 ***</span></span>
-<span id="cb191-19"><a href="factors.html#cb191-19"></a><span class="co">#&gt; AgeChild      1.0615     0.2440   4.350 1.36e-05 ***</span></span>
-<span id="cb191-20"><a href="factors.html#cb191-20"></a><span class="co">#&gt; ---</span></span>
-<span id="cb191-21"><a href="factors.html#cb191-21"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
-<span id="cb191-22"><a href="factors.html#cb191-22"></a><span class="co">#&gt; </span></span>
-<span id="cb191-23"><a href="factors.html#cb191-23"></a><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
-<span id="cb191-24"><a href="factors.html#cb191-24"></a><span class="co">#&gt; </span></span>
-<span id="cb191-25"><a href="factors.html#cb191-25"></a><span class="co">#&gt;     Null deviance: 2769.5  on 2200  degrees of freedom</span></span>
-<span id="cb191-26"><a href="factors.html#cb191-26"></a><span class="co">#&gt; Residual deviance: 2210.1  on 2195  degrees of freedom</span></span>
-<span id="cb191-27"><a href="factors.html#cb191-27"></a><span class="co">#&gt; AIC: 2222.1</span></span>
-<span id="cb191-28"><a href="factors.html#cb191-28"></a><span class="co">#&gt; </span></span>
-<span id="cb191-29"><a href="factors.html#cb191-29"></a><span class="co">#&gt; Number of Fisher Scoring iterations: 4</span></span></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="factors.html#cb196-1"></a>new_df<span class="op">$</span>Survived &lt;-<span class="st"> </span><span class="kw">factor</span>(new_df<span class="op">$</span>Survived)</span>
+<span id="cb196-2"><a href="factors.html#cb196-2"></a>model_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
+<span id="cb196-3"><a href="factors.html#cb196-3"></a><span class="kw">summary</span>(model_<span class="dv">2</span>)</span>
+<span id="cb196-4"><a href="factors.html#cb196-4"></a><span class="co">#&gt; </span></span>
+<span id="cb196-5"><a href="factors.html#cb196-5"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb196-6"><a href="factors.html#cb196-6"></a><span class="co">#&gt; glm(formula = Survived ~ ., family = binomial, data = new_df)</span></span>
+<span id="cb196-7"><a href="factors.html#cb196-7"></a><span class="co">#&gt; </span></span>
+<span id="cb196-8"><a href="factors.html#cb196-8"></a><span class="co">#&gt; Deviance Residuals: </span></span>
+<span id="cb196-9"><a href="factors.html#cb196-9"></a><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
+<span id="cb196-10"><a href="factors.html#cb196-10"></a><span class="co">#&gt; -2.0812  -0.7149  -0.6656   0.6858   2.1278  </span></span>
+<span id="cb196-11"><a href="factors.html#cb196-11"></a><span class="co">#&gt; </span></span>
+<span id="cb196-12"><a href="factors.html#cb196-12"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb196-13"><a href="factors.html#cb196-13"></a><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb196-14"><a href="factors.html#cb196-14"></a><span class="co">#&gt; (Intercept)   2.0438     0.1679  12.171  &lt; 2e-16 ***</span></span>
+<span id="cb196-15"><a href="factors.html#cb196-15"></a><span class="co">#&gt; Class2nd     -1.0181     0.1960  -5.194 2.05e-07 ***</span></span>
+<span id="cb196-16"><a href="factors.html#cb196-16"></a><span class="co">#&gt; Class3rd     -1.7778     0.1716 -10.362  &lt; 2e-16 ***</span></span>
+<span id="cb196-17"><a href="factors.html#cb196-17"></a><span class="co">#&gt; ClassCrew    -0.8577     0.1573  -5.451 5.00e-08 ***</span></span>
+<span id="cb196-18"><a href="factors.html#cb196-18"></a><span class="co">#&gt; SexMale      -2.4201     0.1404 -17.236  &lt; 2e-16 ***</span></span>
+<span id="cb196-19"><a href="factors.html#cb196-19"></a><span class="co">#&gt; AgeChild      1.0615     0.2440   4.350 1.36e-05 ***</span></span>
+<span id="cb196-20"><a href="factors.html#cb196-20"></a><span class="co">#&gt; ---</span></span>
+<span id="cb196-21"><a href="factors.html#cb196-21"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb196-22"><a href="factors.html#cb196-22"></a><span class="co">#&gt; </span></span>
+<span id="cb196-23"><a href="factors.html#cb196-23"></a><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb196-24"><a href="factors.html#cb196-24"></a><span class="co">#&gt; </span></span>
+<span id="cb196-25"><a href="factors.html#cb196-25"></a><span class="co">#&gt;     Null deviance: 2769.5  on 2200  degrees of freedom</span></span>
+<span id="cb196-26"><a href="factors.html#cb196-26"></a><span class="co">#&gt; Residual deviance: 2210.1  on 2195  degrees of freedom</span></span>
+<span id="cb196-27"><a href="factors.html#cb196-27"></a><span class="co">#&gt; AIC: 2222.1</span></span>
+<span id="cb196-28"><a href="factors.html#cb196-28"></a><span class="co">#&gt; </span></span>
+<span id="cb196-29"><a href="factors.html#cb196-29"></a><span class="co">#&gt; Number of Fisher Scoring iterations: 4</span></span></code></pre></div>
 <p>This works, but the baseline case for <strong>Class</strong> is <code>1st</code>. What if we wanted it
 to be <code>3rd</code>. We would first need to convert the variable to a factor and choose
 the appropriate level as a baseline</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="factors.html#cb192-1"></a>new_df<span class="op">$</span>Class &lt;-<span class="st"> </span><span class="kw">factor</span>(new_df<span class="op">$</span>Class)</span>
-<span id="cb192-2"><a href="factors.html#cb192-2"></a><span class="kw">levels</span>(new_df<span class="op">$</span>Class)</span>
-<span id="cb192-3"><a href="factors.html#cb192-3"></a><span class="co">#&gt; [1] &quot;1st&quot;  &quot;2nd&quot;  &quot;3rd&quot;  &quot;Crew&quot;</span></span>
-<span id="cb192-4"><a href="factors.html#cb192-4"></a><span class="kw">contrasts</span>(new_df<span class="op">$</span>Class) &lt;-<span class="st"> </span><span class="kw">contr.treatment</span>(<span class="kw">levels</span>(new_df<span class="op">$</span>Class), <span class="dv">3</span>)</span>
-<span id="cb192-5"><a href="factors.html#cb192-5"></a>model_<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
-<span id="cb192-6"><a href="factors.html#cb192-6"></a><span class="kw">summary</span>(model_<span class="dv">3</span>)</span>
-<span id="cb192-7"><a href="factors.html#cb192-7"></a><span class="co">#&gt; </span></span>
-<span id="cb192-8"><a href="factors.html#cb192-8"></a><span class="co">#&gt; Call:</span></span>
-<span id="cb192-9"><a href="factors.html#cb192-9"></a><span class="co">#&gt; glm(formula = Survived ~ ., family = binomial, data = new_df)</span></span>
-<span id="cb192-10"><a href="factors.html#cb192-10"></a><span class="co">#&gt; </span></span>
-<span id="cb192-11"><a href="factors.html#cb192-11"></a><span class="co">#&gt; Deviance Residuals: </span></span>
-<span id="cb192-12"><a href="factors.html#cb192-12"></a><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
-<span id="cb192-13"><a href="factors.html#cb192-13"></a><span class="co">#&gt; -2.0812  -0.7149  -0.6656   0.6858   2.1278  </span></span>
-<span id="cb192-14"><a href="factors.html#cb192-14"></a><span class="co">#&gt; </span></span>
-<span id="cb192-15"><a href="factors.html#cb192-15"></a><span class="co">#&gt; Coefficients:</span></span>
-<span id="cb192-16"><a href="factors.html#cb192-16"></a><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span id="cb192-17"><a href="factors.html#cb192-17"></a><span class="co">#&gt; (Intercept)   0.2661     0.1293   2.058   0.0396 *  </span></span>
-<span id="cb192-18"><a href="factors.html#cb192-18"></a><span class="co">#&gt; Class1st      1.7778     0.1716  10.362  &lt; 2e-16 ***</span></span>
-<span id="cb192-19"><a href="factors.html#cb192-19"></a><span class="co">#&gt; Class2nd      0.7597     0.1764   4.308 1.65e-05 ***</span></span>
-<span id="cb192-20"><a href="factors.html#cb192-20"></a><span class="co">#&gt; ClassCrew     0.9201     0.1486   6.192 5.93e-10 ***</span></span>
-<span id="cb192-21"><a href="factors.html#cb192-21"></a><span class="co">#&gt; SexMale      -2.4201     0.1404 -17.236  &lt; 2e-16 ***</span></span>
-<span id="cb192-22"><a href="factors.html#cb192-22"></a><span class="co">#&gt; AgeChild      1.0615     0.2440   4.350 1.36e-05 ***</span></span>
-<span id="cb192-23"><a href="factors.html#cb192-23"></a><span class="co">#&gt; ---</span></span>
-<span id="cb192-24"><a href="factors.html#cb192-24"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
-<span id="cb192-25"><a href="factors.html#cb192-25"></a><span class="co">#&gt; </span></span>
-<span id="cb192-26"><a href="factors.html#cb192-26"></a><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
-<span id="cb192-27"><a href="factors.html#cb192-27"></a><span class="co">#&gt; </span></span>
-<span id="cb192-28"><a href="factors.html#cb192-28"></a><span class="co">#&gt;     Null deviance: 2769.5  on 2200  degrees of freedom</span></span>
-<span id="cb192-29"><a href="factors.html#cb192-29"></a><span class="co">#&gt; Residual deviance: 2210.1  on 2195  degrees of freedom</span></span>
-<span id="cb192-30"><a href="factors.html#cb192-30"></a><span class="co">#&gt; AIC: 2222.1</span></span>
-<span id="cb192-31"><a href="factors.html#cb192-31"></a><span class="co">#&gt; </span></span>
-<span id="cb192-32"><a href="factors.html#cb192-32"></a><span class="co">#&gt; Number of Fisher Scoring iterations: 4</span></span></code></pre></div>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="factors.html#cb197-1"></a>new_df<span class="op">$</span>Class &lt;-<span class="st"> </span><span class="kw">factor</span>(new_df<span class="op">$</span>Class)</span>
+<span id="cb197-2"><a href="factors.html#cb197-2"></a><span class="kw">levels</span>(new_df<span class="op">$</span>Class)</span>
+<span id="cb197-3"><a href="factors.html#cb197-3"></a><span class="co">#&gt; [1] &quot;1st&quot;  &quot;2nd&quot;  &quot;3rd&quot;  &quot;Crew&quot;</span></span>
+<span id="cb197-4"><a href="factors.html#cb197-4"></a><span class="kw">contrasts</span>(new_df<span class="op">$</span>Class) &lt;-<span class="st"> </span><span class="kw">contr.treatment</span>(<span class="kw">levels</span>(new_df<span class="op">$</span>Class), <span class="dv">3</span>)</span>
+<span id="cb197-5"><a href="factors.html#cb197-5"></a>model_<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">glm</span>(Survived <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> binomial, <span class="dt">data =</span> new_df)</span>
+<span id="cb197-6"><a href="factors.html#cb197-6"></a><span class="kw">summary</span>(model_<span class="dv">3</span>)</span>
+<span id="cb197-7"><a href="factors.html#cb197-7"></a><span class="co">#&gt; </span></span>
+<span id="cb197-8"><a href="factors.html#cb197-8"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb197-9"><a href="factors.html#cb197-9"></a><span class="co">#&gt; glm(formula = Survived ~ ., family = binomial, data = new_df)</span></span>
+<span id="cb197-10"><a href="factors.html#cb197-10"></a><span class="co">#&gt; </span></span>
+<span id="cb197-11"><a href="factors.html#cb197-11"></a><span class="co">#&gt; Deviance Residuals: </span></span>
+<span id="cb197-12"><a href="factors.html#cb197-12"></a><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
+<span id="cb197-13"><a href="factors.html#cb197-13"></a><span class="co">#&gt; -2.0812  -0.7149  -0.6656   0.6858   2.1278  </span></span>
+<span id="cb197-14"><a href="factors.html#cb197-14"></a><span class="co">#&gt; </span></span>
+<span id="cb197-15"><a href="factors.html#cb197-15"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb197-16"><a href="factors.html#cb197-16"></a><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb197-17"><a href="factors.html#cb197-17"></a><span class="co">#&gt; (Intercept)   0.2661     0.1293   2.058   0.0396 *  </span></span>
+<span id="cb197-18"><a href="factors.html#cb197-18"></a><span class="co">#&gt; Class1st      1.7778     0.1716  10.362  &lt; 2e-16 ***</span></span>
+<span id="cb197-19"><a href="factors.html#cb197-19"></a><span class="co">#&gt; Class2nd      0.7597     0.1764   4.308 1.65e-05 ***</span></span>
+<span id="cb197-20"><a href="factors.html#cb197-20"></a><span class="co">#&gt; ClassCrew     0.9201     0.1486   6.192 5.93e-10 ***</span></span>
+<span id="cb197-21"><a href="factors.html#cb197-21"></a><span class="co">#&gt; SexMale      -2.4201     0.1404 -17.236  &lt; 2e-16 ***</span></span>
+<span id="cb197-22"><a href="factors.html#cb197-22"></a><span class="co">#&gt; AgeChild      1.0615     0.2440   4.350 1.36e-05 ***</span></span>
+<span id="cb197-23"><a href="factors.html#cb197-23"></a><span class="co">#&gt; ---</span></span>
+<span id="cb197-24"><a href="factors.html#cb197-24"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb197-25"><a href="factors.html#cb197-25"></a><span class="co">#&gt; </span></span>
+<span id="cb197-26"><a href="factors.html#cb197-26"></a><span class="co">#&gt; (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb197-27"><a href="factors.html#cb197-27"></a><span class="co">#&gt; </span></span>
+<span id="cb197-28"><a href="factors.html#cb197-28"></a><span class="co">#&gt;     Null deviance: 2769.5  on 2200  degrees of freedom</span></span>
+<span id="cb197-29"><a href="factors.html#cb197-29"></a><span class="co">#&gt; Residual deviance: 2210.1  on 2195  degrees of freedom</span></span>
+<span id="cb197-30"><a href="factors.html#cb197-30"></a><span class="co">#&gt; AIC: 2222.1</span></span>
+<span id="cb197-31"><a href="factors.html#cb197-31"></a><span class="co">#&gt; </span></span>
+<span id="cb197-32"><a href="factors.html#cb197-32"></a><span class="co">#&gt; Number of Fisher Scoring iterations: 4</span></span></code></pre></div>
 </div>
 </div>
 <div id="other-things-to-know-about-factors" class="section level2">
@@ -620,72 +620,72 @@ user. This is as their behaviour is not always intuitive. Below we illustrate
 three common areas of confusion</p>
 <div id="renaming-factor-levels" class="section level3">
 <h3><span class="header-section-number">6.2.1</span> Renaming factor levels</h3>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="factors.html#cb193-1"></a>my_factor &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;Dog&quot;</span>, <span class="st">&quot;Cat&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Monkey&quot;</span>, <span class="st">&quot;Hippo&quot;</span>))</span>
-<span id="cb193-2"><a href="factors.html#cb193-2"></a>my_factor</span>
-<span id="cb193-3"><a href="factors.html#cb193-3"></a><span class="co">#&gt; [1] Dog    Cat    Hippo  Hippo  Monkey Hippo </span></span>
-<span id="cb193-4"><a href="factors.html#cb193-4"></a><span class="co">#&gt; Levels: Cat Dog Hippo Monkey</span></span>
-<span id="cb193-5"><a href="factors.html#cb193-5"></a></span>
-<span id="cb193-6"><a href="factors.html#cb193-6"></a><span class="co"># change Hippo to Giraffe</span></span>
-<span id="cb193-7"><a href="factors.html#cb193-7"></a><span class="co">## DO NOT DO THIS</span></span>
-<span id="cb193-8"><a href="factors.html#cb193-8"></a>my_factor[my_factor <span class="op">==</span><span class="st"> &quot;Hippo&quot;</span>] &lt;-<span class="st"> &quot;Giraffe&quot;</span></span>
-<span id="cb193-9"><a href="factors.html#cb193-9"></a><span class="co">#&gt; Warning in `[&lt;-.factor`(`*tmp*`, my_factor == &quot;Hippo&quot;, value = &quot;Giraffe&quot;):</span></span>
-<span id="cb193-10"><a href="factors.html#cb193-10"></a><span class="co">#&gt; invalid factor level, NA generated</span></span>
-<span id="cb193-11"><a href="factors.html#cb193-11"></a>my_factor</span>
-<span id="cb193-12"><a href="factors.html#cb193-12"></a><span class="co">#&gt; [1] Dog    Cat    &lt;NA&gt;   &lt;NA&gt;   Monkey &lt;NA&gt;  </span></span>
-<span id="cb193-13"><a href="factors.html#cb193-13"></a><span class="co">#&gt; Levels: Cat Dog Hippo Monkey</span></span>
-<span id="cb193-14"><a href="factors.html#cb193-14"></a></span>
-<span id="cb193-15"><a href="factors.html#cb193-15"></a><span class="co">## reset factor</span></span>
-<span id="cb193-16"><a href="factors.html#cb193-16"></a>my_factor &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;Dog&quot;</span>, <span class="st">&quot;Cat&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Monkey&quot;</span>, <span class="st">&quot;Hippo&quot;</span>))</span>
-<span id="cb193-17"><a href="factors.html#cb193-17"></a></span>
-<span id="cb193-18"><a href="factors.html#cb193-18"></a><span class="co"># change Hippo to Giraffe</span></span>
-<span id="cb193-19"><a href="factors.html#cb193-19"></a><span class="co">## DO THIS</span></span>
-<span id="cb193-20"><a href="factors.html#cb193-20"></a><span class="kw">levels</span>(my_factor)[<span class="kw">levels</span>(my_factor) <span class="op">==</span><span class="st"> &quot;Hippo&quot;</span>] &lt;-<span class="st"> &quot;Giraffe&quot;</span></span>
-<span id="cb193-21"><a href="factors.html#cb193-21"></a>my_factor</span>
-<span id="cb193-22"><a href="factors.html#cb193-22"></a><span class="co">#&gt; [1] Dog     Cat     Giraffe Giraffe Monkey  Giraffe</span></span>
-<span id="cb193-23"><a href="factors.html#cb193-23"></a><span class="co">#&gt; Levels: Cat Dog Giraffe Monkey</span></span></code></pre></div>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="factors.html#cb198-1"></a>my_factor &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;Dog&quot;</span>, <span class="st">&quot;Cat&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Monkey&quot;</span>, <span class="st">&quot;Hippo&quot;</span>))</span>
+<span id="cb198-2"><a href="factors.html#cb198-2"></a>my_factor</span>
+<span id="cb198-3"><a href="factors.html#cb198-3"></a><span class="co">#&gt; [1] Dog    Cat    Hippo  Hippo  Monkey Hippo </span></span>
+<span id="cb198-4"><a href="factors.html#cb198-4"></a><span class="co">#&gt; Levels: Cat Dog Hippo Monkey</span></span>
+<span id="cb198-5"><a href="factors.html#cb198-5"></a></span>
+<span id="cb198-6"><a href="factors.html#cb198-6"></a><span class="co"># change Hippo to Giraffe</span></span>
+<span id="cb198-7"><a href="factors.html#cb198-7"></a><span class="co">## DO NOT DO THIS</span></span>
+<span id="cb198-8"><a href="factors.html#cb198-8"></a>my_factor[my_factor <span class="op">==</span><span class="st"> &quot;Hippo&quot;</span>] &lt;-<span class="st"> &quot;Giraffe&quot;</span></span>
+<span id="cb198-9"><a href="factors.html#cb198-9"></a><span class="co">#&gt; Warning in `[&lt;-.factor`(`*tmp*`, my_factor == &quot;Hippo&quot;, value = &quot;Giraffe&quot;):</span></span>
+<span id="cb198-10"><a href="factors.html#cb198-10"></a><span class="co">#&gt; invalid factor level, NA generated</span></span>
+<span id="cb198-11"><a href="factors.html#cb198-11"></a>my_factor</span>
+<span id="cb198-12"><a href="factors.html#cb198-12"></a><span class="co">#&gt; [1] Dog    Cat    &lt;NA&gt;   &lt;NA&gt;   Monkey &lt;NA&gt;  </span></span>
+<span id="cb198-13"><a href="factors.html#cb198-13"></a><span class="co">#&gt; Levels: Cat Dog Hippo Monkey</span></span>
+<span id="cb198-14"><a href="factors.html#cb198-14"></a></span>
+<span id="cb198-15"><a href="factors.html#cb198-15"></a><span class="co">## reset factor</span></span>
+<span id="cb198-16"><a href="factors.html#cb198-16"></a>my_factor &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;Dog&quot;</span>, <span class="st">&quot;Cat&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Hippo&quot;</span>, <span class="st">&quot;Monkey&quot;</span>, <span class="st">&quot;Hippo&quot;</span>))</span>
+<span id="cb198-17"><a href="factors.html#cb198-17"></a></span>
+<span id="cb198-18"><a href="factors.html#cb198-18"></a><span class="co"># change Hippo to Giraffe</span></span>
+<span id="cb198-19"><a href="factors.html#cb198-19"></a><span class="co">## DO THIS</span></span>
+<span id="cb198-20"><a href="factors.html#cb198-20"></a><span class="kw">levels</span>(my_factor)[<span class="kw">levels</span>(my_factor) <span class="op">==</span><span class="st"> &quot;Hippo&quot;</span>] &lt;-<span class="st"> &quot;Giraffe&quot;</span></span>
+<span id="cb198-21"><a href="factors.html#cb198-21"></a>my_factor</span>
+<span id="cb198-22"><a href="factors.html#cb198-22"></a><span class="co">#&gt; [1] Dog     Cat     Giraffe Giraffe Monkey  Giraffe</span></span>
+<span id="cb198-23"><a href="factors.html#cb198-23"></a><span class="co">#&gt; Levels: Cat Dog Giraffe Monkey</span></span></code></pre></div>
 </div>
 <div id="combining-factors-does-not-result-in-a-factor" class="section level3">
 <h3><span class="header-section-number">6.2.2</span> Combining factors does not result in a factor</h3>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="factors.html#cb194-1"></a>names_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;jon&quot;</span>, <span class="st">&quot;george&quot;</span>, <span class="st">&quot;bobby&quot;</span>))</span>
-<span id="cb194-2"><a href="factors.html#cb194-2"></a>names_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;laura&quot;</span>, <span class="st">&quot;claire&quot;</span>, <span class="st">&quot;laura&quot;</span>))</span>
-<span id="cb194-3"><a href="factors.html#cb194-3"></a><span class="kw">c</span>(names_<span class="dv">1</span>, names_<span class="dv">2</span>)</span>
-<span id="cb194-4"><a href="factors.html#cb194-4"></a><span class="co">#&gt; [1] 3 2 1 2 1 2</span></span>
-<span id="cb194-5"><a href="factors.html#cb194-5"></a></span>
-<span id="cb194-6"><a href="factors.html#cb194-6"></a><span class="co"># if you want concatenation of factors to give a factor than the help page for</span></span>
-<span id="cb194-7"><a href="factors.html#cb194-7"></a><span class="co"># c() suggest the following method is used:</span></span>
-<span id="cb194-8"><a href="factors.html#cb194-8"></a>c.factor &lt;-<span class="st"> </span><span class="cf">function</span>(..., <span class="dt">recursive=</span><span class="ot">TRUE</span>) <span class="kw">unlist</span>(<span class="kw">list</span>(...), <span class="dt">recursive=</span>recursive)</span>
-<span id="cb194-9"><a href="factors.html#cb194-9"></a><span class="kw">c</span>(names_<span class="dv">1</span>, names_<span class="dv">2</span>)</span>
-<span id="cb194-10"><a href="factors.html#cb194-10"></a><span class="co">#&gt; [1] jon    george bobby  laura  claire laura </span></span>
-<span id="cb194-11"><a href="factors.html#cb194-11"></a><span class="co">#&gt; Levels: bobby george jon claire laura</span></span>
-<span id="cb194-12"><a href="factors.html#cb194-12"></a></span>
-<span id="cb194-13"><a href="factors.html#cb194-13"></a><span class="co"># if you only wanted the result to be a character vector then you could also use</span></span>
-<span id="cb194-14"><a href="factors.html#cb194-14"></a><span class="kw">c</span>(<span class="kw">as.character</span>(names_<span class="dv">1</span>), <span class="kw">as.character</span>(names_<span class="dv">2</span>))</span>
-<span id="cb194-15"><a href="factors.html#cb194-15"></a><span class="co">#&gt; [1] &quot;jon&quot;    &quot;george&quot; &quot;bobby&quot;  &quot;laura&quot;  &quot;claire&quot; &quot;laura&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="factors.html#cb199-1"></a>names_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;jon&quot;</span>, <span class="st">&quot;george&quot;</span>, <span class="st">&quot;bobby&quot;</span>))</span>
+<span id="cb199-2"><a href="factors.html#cb199-2"></a>names_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;laura&quot;</span>, <span class="st">&quot;claire&quot;</span>, <span class="st">&quot;laura&quot;</span>))</span>
+<span id="cb199-3"><a href="factors.html#cb199-3"></a><span class="kw">c</span>(names_<span class="dv">1</span>, names_<span class="dv">2</span>)</span>
+<span id="cb199-4"><a href="factors.html#cb199-4"></a><span class="co">#&gt; [1] 3 2 1 2 1 2</span></span>
+<span id="cb199-5"><a href="factors.html#cb199-5"></a></span>
+<span id="cb199-6"><a href="factors.html#cb199-6"></a><span class="co"># if you want concatenation of factors to give a factor than the help page for</span></span>
+<span id="cb199-7"><a href="factors.html#cb199-7"></a><span class="co"># c() suggest the following method is used:</span></span>
+<span id="cb199-8"><a href="factors.html#cb199-8"></a>c.factor &lt;-<span class="st"> </span><span class="cf">function</span>(..., <span class="dt">recursive=</span><span class="ot">TRUE</span>) <span class="kw">unlist</span>(<span class="kw">list</span>(...), <span class="dt">recursive=</span>recursive)</span>
+<span id="cb199-9"><a href="factors.html#cb199-9"></a><span class="kw">c</span>(names_<span class="dv">1</span>, names_<span class="dv">2</span>)</span>
+<span id="cb199-10"><a href="factors.html#cb199-10"></a><span class="co">#&gt; [1] jon    george bobby  laura  claire laura </span></span>
+<span id="cb199-11"><a href="factors.html#cb199-11"></a><span class="co">#&gt; Levels: bobby george jon claire laura</span></span>
+<span id="cb199-12"><a href="factors.html#cb199-12"></a></span>
+<span id="cb199-13"><a href="factors.html#cb199-13"></a><span class="co"># if you only wanted the result to be a character vector then you could also use</span></span>
+<span id="cb199-14"><a href="factors.html#cb199-14"></a><span class="kw">c</span>(<span class="kw">as.character</span>(names_<span class="dv">1</span>), <span class="kw">as.character</span>(names_<span class="dv">2</span>))</span>
+<span id="cb199-15"><a href="factors.html#cb199-15"></a><span class="co">#&gt; [1] &quot;jon&quot;    &quot;george&quot; &quot;bobby&quot;  &quot;laura&quot;  &quot;claire&quot; &quot;laura&quot;</span></span></code></pre></div>
 </div>
 <div id="numeric-vectors-that-have-been-read-as-factors" class="section level3">
 <h3><span class="header-section-number">6.2.3</span> Numeric vectors that have been read as factors</h3>
 <p>Sometimes we find a numeric vector is being stored as a factor
 (a common occurence when reading a csv from Excel with #N/A values)</p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="factors.html#cb195-1"></a><span class="co"># example data set</span></span>
-<span id="cb195-2"><a href="factors.html#cb195-2"></a>pseudo_excel_csv &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;jon&quot;</span>, <span class="st">&quot;laura&quot;</span>, <span class="st">&quot;ivy&quot;</span>, <span class="st">&quot;george&quot;</span>),</span>
-<span id="cb195-3"><a href="factors.html#cb195-3"></a>                               <span class="dt">ages =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">22</span>, <span class="st">&quot;#N/A&quot;</span>, <span class="st">&quot;#N/A&quot;</span>))</span>
-<span id="cb195-4"><a href="factors.html#cb195-4"></a><span class="co"># save to temporary file</span></span>
-<span id="cb195-5"><a href="factors.html#cb195-5"></a>filename &lt;-<span class="st"> </span><span class="kw">tempfile</span>(<span class="dt">fileext =</span> <span class="st">&quot;.csv&quot;</span>)</span>
-<span id="cb195-6"><a href="factors.html#cb195-6"></a><span class="kw">write.csv</span>(pseudo_excel_csv, filename, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb195-7"><a href="factors.html#cb195-7"></a></span>
-<span id="cb195-8"><a href="factors.html#cb195-8"></a><span class="co"># reload data</span></span>
-<span id="cb195-9"><a href="factors.html#cb195-9"></a>df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(filename)</span>
-<span id="cb195-10"><a href="factors.html#cb195-10"></a><span class="kw">str</span>(df)</span>
-<span id="cb195-11"><a href="factors.html#cb195-11"></a><span class="co">#&gt; &#39;data.frame&#39;:    4 obs. of  2 variables:</span></span>
-<span id="cb195-12"><a href="factors.html#cb195-12"></a><span class="co">#&gt;  $ names: chr  &quot;jon&quot; &quot;laura&quot; &quot;ivy&quot; &quot;george&quot;</span></span>
-<span id="cb195-13"><a href="factors.html#cb195-13"></a><span class="co">#&gt;  $ ages : chr  &quot;20&quot; &quot;22&quot; &quot;#N/A&quot; &quot;#N/A&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="factors.html#cb200-1"></a><span class="co"># example data set</span></span>
+<span id="cb200-2"><a href="factors.html#cb200-2"></a>pseudo_excel_csv &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;jon&quot;</span>, <span class="st">&quot;laura&quot;</span>, <span class="st">&quot;ivy&quot;</span>, <span class="st">&quot;george&quot;</span>),</span>
+<span id="cb200-3"><a href="factors.html#cb200-3"></a>                               <span class="dt">ages =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">22</span>, <span class="st">&quot;#N/A&quot;</span>, <span class="st">&quot;#N/A&quot;</span>))</span>
+<span id="cb200-4"><a href="factors.html#cb200-4"></a><span class="co"># save to temporary file</span></span>
+<span id="cb200-5"><a href="factors.html#cb200-5"></a>filename &lt;-<span class="st"> </span><span class="kw">tempfile</span>(<span class="dt">fileext =</span> <span class="st">&quot;.csv&quot;</span>)</span>
+<span id="cb200-6"><a href="factors.html#cb200-6"></a><span class="kw">write.csv</span>(pseudo_excel_csv, filename, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb200-7"><a href="factors.html#cb200-7"></a></span>
+<span id="cb200-8"><a href="factors.html#cb200-8"></a><span class="co"># reload data</span></span>
+<span id="cb200-9"><a href="factors.html#cb200-9"></a>df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(filename)</span>
+<span id="cb200-10"><a href="factors.html#cb200-10"></a><span class="kw">str</span>(df)</span>
+<span id="cb200-11"><a href="factors.html#cb200-11"></a><span class="co">#&gt; &#39;data.frame&#39;:    4 obs. of  2 variables:</span></span>
+<span id="cb200-12"><a href="factors.html#cb200-12"></a><span class="co">#&gt;  $ names: chr  &quot;jon&quot; &quot;laura&quot; &quot;ivy&quot; &quot;george&quot;</span></span>
+<span id="cb200-13"><a href="factors.html#cb200-13"></a><span class="co">#&gt;  $ ages : chr  &quot;20&quot; &quot;22&quot; &quot;#N/A&quot; &quot;#N/A&quot;</span></span></code></pre></div>
 <p>to transform this to a numeric variable we can proceed as follows</p>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="factors.html#cb196-1"></a>df<span class="op">$</span>ages &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">levels</span>(df<span class="op">$</span>ages)[df<span class="op">$</span>ages])</span>
-<span id="cb196-2"><a href="factors.html#cb196-2"></a><span class="co">#&gt; Error in `$&lt;-.data.frame`(`*tmp*`, ages, value = numeric(0)): replacement has 0 rows, data has 4</span></span>
-<span id="cb196-3"><a href="factors.html#cb196-3"></a><span class="kw">str</span>(df)</span>
-<span id="cb196-4"><a href="factors.html#cb196-4"></a><span class="co">#&gt; &#39;data.frame&#39;:    4 obs. of  2 variables:</span></span>
-<span id="cb196-5"><a href="factors.html#cb196-5"></a><span class="co">#&gt;  $ names: chr  &quot;jon&quot; &quot;laura&quot; &quot;ivy&quot; &quot;george&quot;</span></span>
-<span id="cb196-6"><a href="factors.html#cb196-6"></a><span class="co">#&gt;  $ ages : chr  &quot;20&quot; &quot;22&quot; &quot;#N/A&quot; &quot;#N/A&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="factors.html#cb201-1"></a>df<span class="op">$</span>ages &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">levels</span>(df<span class="op">$</span>ages)[df<span class="op">$</span>ages])</span>
+<span id="cb201-2"><a href="factors.html#cb201-2"></a><span class="co">#&gt; Error in `$&lt;-.data.frame`(`*tmp*`, ages, value = numeric(0)): replacement has 0 rows, data has 4</span></span>
+<span id="cb201-3"><a href="factors.html#cb201-3"></a><span class="kw">str</span>(df)</span>
+<span id="cb201-4"><a href="factors.html#cb201-4"></a><span class="co">#&gt; &#39;data.frame&#39;:    4 obs. of  2 variables:</span></span>
+<span id="cb201-5"><a href="factors.html#cb201-5"></a><span class="co">#&gt;  $ names: chr  &quot;jon&quot; &quot;laura&quot; &quot;ivy&quot; &quot;george&quot;</span></span>
+<span id="cb201-6"><a href="factors.html#cb201-6"></a><span class="co">#&gt;  $ ages : chr  &quot;20&quot; &quot;22&quot; &quot;#N/A&quot; &quot;#N/A&quot;</span></span></code></pre></div>
 </div>
 </div>
 <div id="helpful-packages" class="section level2">

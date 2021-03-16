@@ -24,7 +24,7 @@
 <meta name="author" content="Isi Avbulimen, Hannah Bougdah, Tamsin Forbes, Jack Marks, Tim Taylor" />
 
 
-<meta name="date" content="2021-03-03" />
+<meta name="date" content="2021-03-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -666,17 +666,1107 @@ n
 </tr>
 </tbody>
 </table>
+<p><strong>Extended data transpose example</strong></p>
+<p>This section shows how to transpose data using the <strong>spread</strong> and <strong>gather</strong> functions with the <strong>tidyr</strong> package.</p>
+<p style="background-color: #D9D9D9">
+<br>The aim is to take a published table of reported road accidents in which each row contains the data for one year with the severity of accident recorded in the columns. The tranposition will enable the calculation of the percentage increases for each of the last two years.<br><br>
+</p>
+<p>Firstly, the <strong>current year</strong> should be specified and the rounding function declared. This function is used as the default round function in R rounds upwards only if the number is even.</p>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="tables.html#cb132-1"></a>Yr &lt;-<span class="st"> </span><span class="dv">2018</span>   <span class="co">## select for the latest of the three years you require </span></span>
+<span id="cb132-2"><a href="tables.html#cb132-2"></a></span>
+<span id="cb132-3"><a href="tables.html#cb132-3"></a>RoundC &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>) {</span>
+<span id="cb132-4"><a href="tables.html#cb132-4"></a>  posneg &lt;-<span class="st"> </span><span class="kw">sign</span>(x)</span>
+<span id="cb132-5"><a href="tables.html#cb132-5"></a>  z &lt;-<span class="st"> </span><span class="kw">abs</span>(x) <span class="op">*</span><span class="st"> </span><span class="dv">10</span> <span class="op">^</span><span class="st"> </span>digits</span>
+<span id="cb132-6"><a href="tables.html#cb132-6"></a>  z &lt;-<span class="st"> </span>z <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span></span>
+<span id="cb132-7"><a href="tables.html#cb132-7"></a>  z &lt;-<span class="st"> </span><span class="kw">trunc</span>(z)</span>
+<span id="cb132-8"><a href="tables.html#cb132-8"></a>  z &lt;-<span class="st"> </span>z <span class="op">/</span><span class="st"> </span><span class="dv">10</span> <span class="op">^</span><span class="st"> </span>digits</span>
+<span id="cb132-9"><a href="tables.html#cb132-9"></a>  z <span class="op">*</span><span class="st"> </span>posneg</span>
+<span id="cb132-10"><a href="tables.html#cb132-10"></a>} </span></code></pre></div>
+<p>This example uses data from RAS30013 <em>“Reported casualty rates by road user type and severty: Great Britain”</em>. <a href="https://www.gov.uk/government/statistical-data-sets/ras30-reported-casualties-in-road-accidents#casualty-rates-and-risk" class="uri">https://www.gov.uk/government/statistical-data-sets/ras30-reported-casualties-in-road-accidents#casualty-rates-and-risk</a></p>
+<p>Firstly, the contents of the published table is read in (the last 10 years only), The adjusted data is rounded to the nearest whole number. The year field is changed to a character format so that it is displayed without the thousand separator comma.</p>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="tables.html#cb133-1"></a>Accidents &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_excel</span>(<span class="st">&quot;data/ras10013.xlsx&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb133-2"><a href="tables.html#cb133-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Year<span class="op">&gt;=</span><span class="dv">2009</span>) <span class="op">%&gt;%</span></span>
+<span id="cb133-3"><a href="tables.html#cb133-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">SeriousAdjusted=</span><span class="kw">RoundC</span>(SeriousAdjusted,<span class="dv">0</span>),</span>
+<span id="cb133-4"><a href="tables.html#cb133-4"></a>                <span class="dt">FatalSeriousAdjusted=</span><span class="kw">RoundC</span>(FatalSeriousAdjusted,<span class="dv">0</span>),</span>
+<span id="cb133-5"><a href="tables.html#cb133-5"></a>                <span class="dt">SlightAdjusted=</span><span class="kw">RoundC</span>(SlightAdjusted,<span class="dv">0</span>))</span>
+<span id="cb133-6"><a href="tables.html#cb133-6"></a></span>
+<span id="cb133-7"><a href="tables.html#cb133-7"></a>Accidents<span class="op">$</span>Year &lt;-<span class="kw">as.character</span>(<span class="kw">as.numeric</span>(Accidents<span class="op">$</span>Year))</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Year
+</th>
+<th style="text-align:right;">
+Fatal
+</th>
+<th style="text-align:right;">
+SeriousUnadjusted
+</th>
+<th style="text-align:right;">
+SeriousAdjusted
+</th>
+<th style="text-align:right;">
+FatalSeriousUnadjusted
+</th>
+<th style="text-align:right;">
+FatalSeriousAdjusted
+</th>
+<th style="text-align:right;">
+SlightUnadjusted
+</th>
+<th style="text-align:right;">
+SlightAdjusted
+</th>
+<th style="text-align:right;">
+AllAccidents
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2009
+</td>
+<td style="text-align:right;">
+2,057
+</td>
+<td style="text-align:right;">
+21,997
+</td>
+<td style="text-align:right;">
+34,198
+</td>
+<td style="text-align:right;">
+24,054
+</td>
+<td style="text-align:right;">
+36,255
+</td>
+<td style="text-align:right;">
+139,500
+</td>
+<td style="text-align:right;">
+127,299
+</td>
+<td style="text-align:right;">
+163,554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2010
+</td>
+<td style="text-align:right;">
+1,731
+</td>
+<td style="text-align:right;">
+20,440
+</td>
+<td style="text-align:right;">
+31,831
+</td>
+<td style="text-align:right;">
+22,171
+</td>
+<td style="text-align:right;">
+33,562
+</td>
+<td style="text-align:right;">
+132,243
+</td>
+<td style="text-align:right;">
+120,852
+</td>
+<td style="text-align:right;">
+154,414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2011
+</td>
+<td style="text-align:right;">
+1,797
+</td>
+<td style="text-align:right;">
+20,986
+</td>
+<td style="text-align:right;">
+32,476
+</td>
+<td style="text-align:right;">
+22,783
+</td>
+<td style="text-align:right;">
+34,273
+</td>
+<td style="text-align:right;">
+128,691
+</td>
+<td style="text-align:right;">
+117,201
+</td>
+<td style="text-align:right;">
+151,474
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2012
+</td>
+<td style="text-align:right;">
+1,637
+</td>
+<td style="text-align:right;">
+20,901
+</td>
+<td style="text-align:right;">
+32,005
+</td>
+<td style="text-align:right;">
+22,538
+</td>
+<td style="text-align:right;">
+33,642
+</td>
+<td style="text-align:right;">
+123,033
+</td>
+<td style="text-align:right;">
+111,929
+</td>
+<td style="text-align:right;">
+145,571
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2013
+</td>
+<td style="text-align:right;">
+1,608
+</td>
+<td style="text-align:right;">
+19,624
+</td>
+<td style="text-align:right;">
+30,243
+</td>
+<td style="text-align:right;">
+21,232
+</td>
+<td style="text-align:right;">
+31,851
+</td>
+<td style="text-align:right;">
+117,428
+</td>
+<td style="text-align:right;">
+106,809
+</td>
+<td style="text-align:right;">
+138,660
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2014
+</td>
+<td style="text-align:right;">
+1,658
+</td>
+<td style="text-align:right;">
+20,676
+</td>
+<td style="text-align:right;">
+31,889
+</td>
+<td style="text-align:right;">
+22,334
+</td>
+<td style="text-align:right;">
+33,547
+</td>
+<td style="text-align:right;">
+123,988
+</td>
+<td style="text-align:right;">
+112,775
+</td>
+<td style="text-align:right;">
+146,322
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2015
+</td>
+<td style="text-align:right;">
+1,616
+</td>
+<td style="text-align:right;">
+20,038
+</td>
+<td style="text-align:right;">
+30,474
+</td>
+<td style="text-align:right;">
+21,654
+</td>
+<td style="text-align:right;">
+32,090
+</td>
+<td style="text-align:right;">
+118,402
+</td>
+<td style="text-align:right;">
+107,966
+</td>
+<td style="text-align:right;">
+140,056
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2016
+</td>
+<td style="text-align:right;">
+1,695
+</td>
+<td style="text-align:right;">
+21,725
+</td>
+<td style="text-align:right;">
+29,072
+</td>
+<td style="text-align:right;">
+23,420
+</td>
+<td style="text-align:right;">
+30,767
+</td>
+<td style="text-align:right;">
+113,201
+</td>
+<td style="text-align:right;">
+105,854
+</td>
+<td style="text-align:right;">
+136,621
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017
+</td>
+<td style="text-align:right;">
+1,676
+</td>
+<td style="text-align:right;">
+22,534
+</td>
+<td style="text-align:right;">
+27,938
+</td>
+<td style="text-align:right;">
+24,210
+</td>
+<td style="text-align:right;">
+29,614
+</td>
+<td style="text-align:right;">
+105,772
+</td>
+<td style="text-align:right;">
+100,368
+</td>
+<td style="text-align:right;">
+129,982
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:right;">
+1,671
+</td>
+<td style="text-align:right;">
+23,165
+</td>
+<td style="text-align:right;">
+28,266
+</td>
+<td style="text-align:right;">
+24,836
+</td>
+<td style="text-align:right;">
+29,937
+</td>
+<td style="text-align:right;">
+97,799
+</td>
+<td style="text-align:right;">
+92,698
+</td>
+<td style="text-align:right;">
+122,635
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2019
+</td>
+<td style="text-align:right;">
+1,658
+</td>
+<td style="text-align:right;">
+23,422
+</td>
+<td style="text-align:right;">
+27,222
+</td>
+<td style="text-align:right;">
+25,080
+</td>
+<td style="text-align:right;">
+28,880
+</td>
+<td style="text-align:right;">
+92,456
+</td>
+<td style="text-align:right;">
+88,656
+</td>
+<td style="text-align:right;">
+117,536
+</td>
+</tr>
+</tbody>
+</table>
+<p>The data is now filtered to keep only the last three years of data.</p>
+<p>We could have hard coded the year in the filter below e.g. <strong>Year %in% c(2017,2018,2019)</strong>. To save having to change the code every time we wish to run for different years,we can use the <strong>glue</strong> function to derive the required years from a previously defined variable. This picks up the most recent year from <strong>yr</strong> defined above and calculates the other years as 1 and 2 years before <strong>yr</strong> as <strong>yr-1</strong> and <strong>yr-2</strong>.</p>
+<p>A new variable <strong>YearLab</strong> with the respective text ThisYear, LastYear and YearBefore is created to automate calculations below.</p>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="tables.html#cb134-1"></a>Last3Years &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accidents,</span>
+<span id="cb134-2"><a href="tables.html#cb134-2"></a>                Year <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(glue<span class="op">::</span><span class="kw">glue</span>({Yr}),glue<span class="op">::</span><span class="kw">glue</span>({Yr<span class="dv">-1</span>}),glue<span class="op">::</span><span class="kw">glue</span>({Yr<span class="dv">-2</span>}))) <span class="op">%&gt;%</span></span>
+<span id="cb134-3"><a href="tables.html#cb134-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">YearLab =</span> dplyr<span class="op">::</span><span class="kw">case_when</span>(</span>
+<span id="cb134-4"><a href="tables.html#cb134-4"></a>    Year <span class="op">==</span><span class="st"> </span>glue<span class="op">::</span><span class="kw">glue</span>({Yr}) <span class="op">~</span><span class="st"> &quot;ThisYear&quot;</span>,</span>
+<span id="cb134-5"><a href="tables.html#cb134-5"></a>    Year <span class="op">==</span><span class="st"> </span>glue<span class="op">::</span><span class="kw">glue</span>({Yr<span class="dv">-1</span>}) <span class="op">~</span><span class="st"> &quot;LastYear&quot;</span>,</span>
+<span id="cb134-6"><a href="tables.html#cb134-6"></a>    <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> &quot;YearBefore&quot;</span> <span class="co"># else option </span></span>
+<span id="cb134-7"><a href="tables.html#cb134-7"></a>  )) <span class="op">%&gt;%</span></span>
+<span id="cb134-8"><a href="tables.html#cb134-8"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year)</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Fatal
+</th>
+<th style="text-align:right;">
+SeriousUnadjusted
+</th>
+<th style="text-align:right;">
+SeriousAdjusted
+</th>
+<th style="text-align:right;">
+FatalSeriousUnadjusted
+</th>
+<th style="text-align:right;">
+FatalSeriousAdjusted
+</th>
+<th style="text-align:right;">
+SlightUnadjusted
+</th>
+<th style="text-align:right;">
+SlightAdjusted
+</th>
+<th style="text-align:right;">
+AllAccidents
+</th>
+<th style="text-align:left;">
+YearLab
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1,695
+</td>
+<td style="text-align:right;">
+21,725
+</td>
+<td style="text-align:right;">
+29,072
+</td>
+<td style="text-align:right;">
+23,420
+</td>
+<td style="text-align:right;">
+30,767
+</td>
+<td style="text-align:right;">
+113,201
+</td>
+<td style="text-align:right;">
+105,854
+</td>
+<td style="text-align:right;">
+136,621
+</td>
+<td style="text-align:left;">
+YearBefore
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1,676
+</td>
+<td style="text-align:right;">
+22,534
+</td>
+<td style="text-align:right;">
+27,938
+</td>
+<td style="text-align:right;">
+24,210
+</td>
+<td style="text-align:right;">
+29,614
+</td>
+<td style="text-align:right;">
+105,772
+</td>
+<td style="text-align:right;">
+100,368
+</td>
+<td style="text-align:right;">
+129,982
+</td>
+<td style="text-align:left;">
+LastYear
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1,671
+</td>
+<td style="text-align:right;">
+23,165
+</td>
+<td style="text-align:right;">
+28,266
+</td>
+<td style="text-align:right;">
+24,836
+</td>
+<td style="text-align:right;">
+29,937
+</td>
+<td style="text-align:right;">
+97,799
+</td>
+<td style="text-align:right;">
+92,698
+</td>
+<td style="text-align:right;">
+122,635
+</td>
+<td style="text-align:left;">
+ThisYear
+</td>
+</tr>
+</tbody>
+</table>
+<p>The table <strong>Last3Years</strong> hold the number of accidents for each severity (in columns) with a row for each of the last three years. We wish to calculate the annual growth in accidents by severity. To achieve this we need to transpose the table. This can be achieved using the <strong>gather</strong> function within the <strong>tidyr</strong> package which allows us to put data into a tidy format which makes it easier to manipulate.</p>
+<p>The template of the <strong>gather</strong> function is:</p>
+<p>tidyr::Gather(variables_to_input_into_one_column,
+key = “name_of_column_creating”,
+value = “name_of_value_column”)</p>
+<p>The variables We want to input into one column are the accident severities (<em>Fatal, SeriousUnadjusted, …, AllAccidents</em>). The <strong>key</strong> parameter we will call <em>SeverityType</em>. The <strong>value</strong> parameter is the name of the column holding the number of accidents (<em>n</em>). The variable <strong>YearLabel</strong> will remain in one column so does not need to be mentioned in the <strong>gather</strong> statement.</p>
+<p>A new field <strong>SeverityNum</strong> is created so that the severity types can be sorted in a logical order in the final output.</p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="tables.html#cb135-1"></a>Severity &lt;-<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">gather</span>(Last3Years,Fatal,SeriousUnadjusted,SeriousAdjusted,</span>
+<span id="cb135-2"><a href="tables.html#cb135-2"></a>                          FatalSeriousUnadjusted,FatalSeriousAdjusted,SlightUnadjusted,</span>
+<span id="cb135-3"><a href="tables.html#cb135-3"></a>                          SlightAdjusted,AllAccidents,</span>
+<span id="cb135-4"><a href="tables.html#cb135-4"></a>                          <span class="dt">key =</span> <span class="st">&quot;SeverityType&quot;</span>, </span>
+<span id="cb135-5"><a href="tables.html#cb135-5"></a>                          <span class="dt">value =</span> <span class="st">&quot;n&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb135-6"><a href="tables.html#cb135-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">SeverityNum =</span> dplyr<span class="op">::</span><span class="kw">case_when</span>(</span>
+<span id="cb135-7"><a href="tables.html#cb135-7"></a>  SeverityType<span class="op">==</span><span class="st">&#39;Fatal&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</span>
+<span id="cb135-8"><a href="tables.html#cb135-8"></a>  SeverityType<span class="op">==</span><span class="st">&#39;SeriousUnadjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">2</span>,</span>
+<span id="cb135-9"><a href="tables.html#cb135-9"></a>  SeverityType<span class="op">==</span><span class="st">&#39;SeriousAdjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">3</span>,</span>
+<span id="cb135-10"><a href="tables.html#cb135-10"></a>  SeverityType<span class="op">==</span><span class="st">&#39;FatalSeriousUnadjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">4</span>,</span>
+<span id="cb135-11"><a href="tables.html#cb135-11"></a>  SeverityType<span class="op">==</span><span class="st">&#39;FatalSeriousAdjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">5</span>,</span>
+<span id="cb135-12"><a href="tables.html#cb135-12"></a>  SeverityType<span class="op">==</span><span class="st">&#39;SlightUnadjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">6</span>,</span>
+<span id="cb135-13"><a href="tables.html#cb135-13"></a>  SeverityType<span class="op">==</span><span class="st">&#39;SlightAdjusted&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">7</span>,</span>
+<span id="cb135-14"><a href="tables.html#cb135-14"></a>  SeverityType<span class="op">==</span><span class="st">&#39;AllAccidents&#39;</span> <span class="op">~</span><span class="st"> </span><span class="dv">8</span>,</span>
+<span id="cb135-15"><a href="tables.html#cb135-15"></a>  <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="co"># else option </span></span>
+<span id="cb135-16"><a href="tables.html#cb135-16"></a>))</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+YearLab
+</th>
+<th style="text-align:left;">
+SeverityType
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+SeverityNum
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+Fatal
+</td>
+<td style="text-align:right;">
+1,695
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+Fatal
+</td>
+<td style="text-align:right;">
+1,676
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+Fatal
+</td>
+<td style="text-align:right;">
+1,671
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+SeriousUnadjusted
+</td>
+<td style="text-align:right;">
+21,725
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+SeriousUnadjusted
+</td>
+<td style="text-align:right;">
+22,534
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+SeriousUnadjusted
+</td>
+<td style="text-align:right;">
+23,165
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+SeriousAdjusted
+</td>
+<td style="text-align:right;">
+29,072
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+SeriousAdjusted
+</td>
+<td style="text-align:right;">
+27,938
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+SeriousAdjusted
+</td>
+<td style="text-align:right;">
+28,266
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+FatalSeriousUnadjusted
+</td>
+<td style="text-align:right;">
+23,420
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+FatalSeriousUnadjusted
+</td>
+<td style="text-align:right;">
+24,210
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+FatalSeriousUnadjusted
+</td>
+<td style="text-align:right;">
+24,836
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+FatalSeriousAdjusted
+</td>
+<td style="text-align:right;">
+30,767
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+FatalSeriousAdjusted
+</td>
+<td style="text-align:right;">
+29,614
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+FatalSeriousAdjusted
+</td>
+<td style="text-align:right;">
+29,937
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+SlightUnadjusted
+</td>
+<td style="text-align:right;">
+113,201
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+SlightUnadjusted
+</td>
+<td style="text-align:right;">
+105,772
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+SlightUnadjusted
+</td>
+<td style="text-align:right;">
+97,799
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+SlightAdjusted
+</td>
+<td style="text-align:right;">
+105,854
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+SlightAdjusted
+</td>
+<td style="text-align:right;">
+100,368
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+SlightAdjusted
+</td>
+<td style="text-align:right;">
+92,698
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+YearBefore
+</td>
+<td style="text-align:left;">
+AllAccidents
+</td>
+<td style="text-align:right;">
+136,621
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LastYear
+</td>
+<td style="text-align:left;">
+AllAccidents
+</td>
+<td style="text-align:right;">
+129,982
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ThisYear
+</td>
+<td style="text-align:left;">
+AllAccidents
+</td>
+<td style="text-align:right;">
+122,635
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+</tbody>
+</table>
+<p>We now wish to transpose this table so that the three years (<em>ThisYear, LastYear and YearBefore</em>) will be in seperate columns rather than one.</p>
+<p>To do this, we use the <strong>spread</strong> function within the <strong>tidyr</strong> package.</p>
+<p>The template of the <strong>spread</strong> function is:</p>
+<p>tidyr::Spread(variables_to_change_from rows_into_columns,
+value = “name_of_value_column”)</p>
+<p>Here the row to be transposed is <em>YearLab</em>. The value is the number of accidents <em>n</em>. The names of the new columns are derived from the values of <strong>YearLab</strong>. The variables <strong>SeverityType</strong> and <strong>SeverityNum</strong> will each remain in one column so are not listed in the <strong>spread</strong> function.</p>
+<p>By default, the data would be sorted in alphabetical order of <strong>SeverityType</strong>. Instead the data is sorted in a pre-defined logical order using the <strong>SeverityNum</strong> variable defined above. The <strong>SeverityNum</strong>, having done its job, is then dropped from the final output.</p>
+<p>Now that the number of accidents for each year are in a seperate column, the percentage growth for one year to the next can be calculated using the <strong>mutate</strong> function.</p>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="tables.html#cb136-1"></a>Transposed &lt;-<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">spread</span>(Severity,YearLab, n) <span class="op">%&gt;%</span></span>
+<span id="cb136-2"><a href="tables.html#cb136-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(SeverityNum) <span class="op">%&gt;%</span></span>
+<span id="cb136-3"><a href="tables.html#cb136-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>SeverityNum) <span class="op">%&gt;%</span></span>
+<span id="cb136-4"><a href="tables.html#cb136-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">PerGrowthThisYear=</span><span class="kw">RoundC</span>(ThisYear<span class="op">/</span>LastYear <span class="op">*</span><span class="dv">100-100</span>,<span class="dv">1</span>),</span>
+<span id="cb136-5"><a href="tables.html#cb136-5"></a>                              <span class="dt">PerGrowthLastYear=</span><span class="kw">RoundC</span>(LastYear<span class="op">/</span>YearBefore <span class="op">*</span><span class="dv">100-100</span>,<span class="dv">1</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+SeverityType
+</th>
+<th style="text-align:right;">
+LastYear
+</th>
+<th style="text-align:right;">
+ThisYear
+</th>
+<th style="text-align:right;">
+YearBefore
+</th>
+<th style="text-align:right;">
+PerGrowthThisYear
+</th>
+<th style="text-align:right;">
+PerGrowthLastYear
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Fatal
+</td>
+<td style="text-align:right;">
+1,676
+</td>
+<td style="text-align:right;">
+1,671
+</td>
+<td style="text-align:right;">
+1,695
+</td>
+<td style="text-align:right;">
+-0.3
+</td>
+<td style="text-align:right;">
+-1.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SeriousUnadjusted
+</td>
+<td style="text-align:right;">
+22,534
+</td>
+<td style="text-align:right;">
+23,165
+</td>
+<td style="text-align:right;">
+21,725
+</td>
+<td style="text-align:right;">
+2.8
+</td>
+<td style="text-align:right;">
+3.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SeriousAdjusted
+</td>
+<td style="text-align:right;">
+27,938
+</td>
+<td style="text-align:right;">
+28,266
+</td>
+<td style="text-align:right;">
+29,072
+</td>
+<td style="text-align:right;">
+1.2
+</td>
+<td style="text-align:right;">
+-3.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FatalSeriousUnadjusted
+</td>
+<td style="text-align:right;">
+24,210
+</td>
+<td style="text-align:right;">
+24,836
+</td>
+<td style="text-align:right;">
+23,420
+</td>
+<td style="text-align:right;">
+2.6
+</td>
+<td style="text-align:right;">
+3.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FatalSeriousAdjusted
+</td>
+<td style="text-align:right;">
+29,614
+</td>
+<td style="text-align:right;">
+29,937
+</td>
+<td style="text-align:right;">
+30,767
+</td>
+<td style="text-align:right;">
+1.1
+</td>
+<td style="text-align:right;">
+-3.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SlightUnadjusted
+</td>
+<td style="text-align:right;">
+105,772
+</td>
+<td style="text-align:right;">
+97,799
+</td>
+<td style="text-align:right;">
+113,201
+</td>
+<td style="text-align:right;">
+-7.5
+</td>
+<td style="text-align:right;">
+-6.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SlightAdjusted
+</td>
+<td style="text-align:right;">
+100,368
+</td>
+<td style="text-align:right;">
+92,698
+</td>
+<td style="text-align:right;">
+105,854
+</td>
+<td style="text-align:right;">
+-7.6
+</td>
+<td style="text-align:right;">
+-5.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AllAccidents
+</td>
+<td style="text-align:right;">
+129,982
+</td>
+<td style="text-align:right;">
+122,635
+</td>
+<td style="text-align:right;">
+136,621
+</td>
+<td style="text-align:right;">
+-5.7
+</td>
+<td style="text-align:right;">
+-4.9
+</td>
+</tr>
+</tbody>
+</table>
 <p><strong>{reshape2} package</strong></p>
 <p>Again, this has two functions which can be used to pivot tables:</p>
 <ul>
 <li><p><strong>melt</strong> makes wide data longer</p></li>
 <li><p><strong>dcast</strong> makes long data wider</p></li>
 </ul>
-<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="tables.html#cb132-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
-<span id="cb132-2"><a href="tables.html#cb132-2"></a><span class="kw">library</span>(reshape2)</span>
-<span id="cb132-3"><a href="tables.html#cb132-3"></a>road_accidents_weekdays2 &lt;-<span class="st"> </span></span>
-<span id="cb132-4"><a href="tables.html#cb132-4"></a><span class="st">  </span>reshape2<span class="op">::</span><span class="kw">dcast</span>(road_accidents_small, Accident_Severity <span class="op">~</span><span class="st"> </span></span>
-<span id="cb132-5"><a href="tables.html#cb132-5"></a><span class="st">                    </span>Day_of_Week, <span class="dt">value.var =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="tables.html#cb137-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
+<span id="cb137-2"><a href="tables.html#cb137-2"></a><span class="kw">library</span>(reshape2)</span>
+<span id="cb137-3"><a href="tables.html#cb137-3"></a>road_accidents_weekdays2 &lt;-<span class="st"> </span></span>
+<span id="cb137-4"><a href="tables.html#cb137-4"></a><span class="st">  </span>reshape2<span class="op">::</span><span class="kw">dcast</span>(road_accidents_small, Accident_Severity <span class="op">~</span><span class="st"> </span></span>
+<span id="cb137-5"><a href="tables.html#cb137-5"></a><span class="st">                    </span>Day_of_Week, <span class="dt">value.var =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
 <p>With the <code>dcast</code> function above, after stating the name of the data frame, you need to specify the variable(s) you want in long format (multiple variables seperated by “+”), in this case Accident_Severity, and then the wide format variable(s) are put after the tilda (again multiple seperated by “+”). The <code>value.var</code> argument specifies which column will be used to populate the new columns, in this case it is n.</p>
 <table>
 <caption>
@@ -792,11 +1882,11 @@ Accident_Severity
 </tbody>
 </table>
 <p>If you want to create sums and totals of the tables this can also be done using {reshape2}. For example, taking the original table, we want to pivot it and sum each severity to get the total number of accidents per day.</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="tables.html#cb133-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
-<span id="cb133-2"><a href="tables.html#cb133-2"></a><span class="kw">library</span>(reshape2)</span>
-<span id="cb133-3"><a href="tables.html#cb133-3"></a>road_accidents_weekdays3 &lt;-<span class="st"> </span></span>
-<span id="cb133-4"><a href="tables.html#cb133-4"></a>reshape2<span class="op">::</span><span class="kw">dcast</span>(road_accidents_small, Accident_Severity <span class="op">~</span><span class="st"> </span>Day_of_Week,</span>
-<span id="cb133-5"><a href="tables.html#cb133-5"></a><span class="dt">value.var =</span> <span class="st">&quot;n&quot;</span>, sum, <span class="dt">margins =</span> <span class="st">&quot;Accident_Severity&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="tables.html#cb138-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
+<span id="cb138-2"><a href="tables.html#cb138-2"></a><span class="kw">library</span>(reshape2)</span>
+<span id="cb138-3"><a href="tables.html#cb138-3"></a>road_accidents_weekdays3 &lt;-<span class="st"> </span></span>
+<span id="cb138-4"><a href="tables.html#cb138-4"></a>reshape2<span class="op">::</span><span class="kw">dcast</span>(road_accidents_small, Accident_Severity <span class="op">~</span><span class="st"> </span>Day_of_Week,</span>
+<span id="cb138-5"><a href="tables.html#cb138-5"></a><span class="dt">value.var =</span> <span class="st">&quot;n&quot;</span>, sum, <span class="dt">margins =</span> <span class="st">&quot;Accident_Severity&quot;</span>)</span></code></pre></div>
 <p>In this example, we use the <code>margins</code> argument to specify what we want to combine to create totals. So we want to add all the accident severity figures up for each weekday. Before using <code>margins</code> you need to specify how the margins are calculated, in this case we want a <code>sum</code>. Alternative options are to calculate the length, i.e. the number of rows.</p>
 <table>
 <caption>
@@ -938,11 +2028,11 @@ Accident_Severity
 </tbody>
 </table>
 <p>The opposite can also be done using the <code>melt</code> function.</p>
-<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="tables.html#cb134-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
-<span id="cb134-2"><a href="tables.html#cb134-2"></a><span class="kw">library</span>(reshape2)</span>
-<span id="cb134-3"><a href="tables.html#cb134-3"></a>road_accidents_melt &lt;-<span class="st"> </span>reshape2<span class="op">::</span><span class="kw">melt</span>(road_accidents_weekdays2, <span class="dt">id.vars =</span> <span class="st">&quot;Accident_Severity&quot;</span>,</span>
-<span id="cb134-4"><a href="tables.html#cb134-4"></a>                                      <span class="dt">measure.vars =</span> <span class="kw">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;7&quot;</span>),</span>
-<span id="cb134-5"><a href="tables.html#cb134-5"></a>                                      <span class="dt">variable.name =</span> <span class="st">&quot;Day_of_Week&quot;</span>, <span class="dt">value.name =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="tables.html#cb139-1"></a><span class="co"># Pivot table using reshape2 package</span></span>
+<span id="cb139-2"><a href="tables.html#cb139-2"></a><span class="kw">library</span>(reshape2)</span>
+<span id="cb139-3"><a href="tables.html#cb139-3"></a>road_accidents_melt &lt;-<span class="st"> </span>reshape2<span class="op">::</span><span class="kw">melt</span>(road_accidents_weekdays2, <span class="dt">id.vars =</span> <span class="st">&quot;Accident_Severity&quot;</span>,</span>
+<span id="cb139-4"><a href="tables.html#cb139-4"></a>                                      <span class="dt">measure.vars =</span> <span class="kw">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;7&quot;</span>),</span>
+<span id="cb139-5"><a href="tables.html#cb139-5"></a>                                      <span class="dt">variable.name =</span> <span class="st">&quot;Day_of_Week&quot;</span>, <span class="dt">value.name =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
 <p>For the <code>melt</code> function you need to specify:</p>
 <p><code>id.vars</code> = “variables to be kept as columns”</p>
 <p><code>measure.vars</code> = c(“variables to be created as one column”)</p>
@@ -1039,8 +2129,8 @@ n
 <h2><span class="header-section-number">4.2</span> Dropping and selecting columns</h2>
 <p>Use the {dplyr} select function to both select and drop columns.</p>
 <p><strong>Select columns</strong></p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="tables.html#cb135-1"></a>road_accidents_<span class="dv">4</span>_cols &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
-<span id="cb135-2"><a href="tables.html#cb135-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Date, Police_Force)</span></code></pre></div>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="tables.html#cb140-1"></a>road_accidents_<span class="dv">4</span>_cols &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
+<span id="cb140-2"><a href="tables.html#cb140-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Date, Police_Force)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-82">Table 4.7: </span>Four columns from road accidents 2017
@@ -1150,8 +2240,8 @@ Police_Force
 </table>
 <p><strong>Drop columns</strong></p>
 <p>Note that to drop columns the difference is putting a “-” in front of the variable name.</p>
-<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="tables.html#cb136-1"></a>road_accidents_<span class="dv">3</span>_cols &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb136-2"><a href="tables.html#cb136-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Police_Force)</span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="tables.html#cb141-1"></a>road_accidents_<span class="dv">3</span>_cols &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb141-2"><a href="tables.html#cb141-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Police_Force)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-84">Table 4.8: </span>Three columns from road accidents 2017
@@ -1242,8 +2332,8 @@ Date
 <div id="rename-variables" class="section level2">
 <h2><span class="header-section-number">4.3</span> Rename variables</h2>
 <p>Use the <strong>rename</strong> function from {dplyr} to rename variables where the new variable name is on the left hand side of the <strong>=</strong> equals sign, and the old variable name is on the right hand.</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="tables.html#cb137-1"></a>road_accidents_rename &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb137-2"><a href="tables.html#cb137-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">Date_of_Accident =</span> Date)</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="tables.html#cb142-1"></a>road_accidents_rename &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb142-2"><a href="tables.html#cb142-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">Date_of_Accident =</span> Date)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-86">Table 4.9: </span>Rename date column to Date_of_Accident
@@ -1356,8 +2446,8 @@ Police_Force
 <h2><span class="header-section-number">4.4</span> Filtering data</h2>
 <p>Use the {dplyr} filter function to filter data.</p>
 <p>This example filters the data for slight severity accidents (accident severity 3).</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="tables.html#cb138-1"></a>road_accidents_slight &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb138-2"><a href="tables.html#cb138-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="tables.html#cb143-1"></a>road_accidents_slight &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb143-2"><a href="tables.html#cb143-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-88">Table 4.10: </span>Slight severity road accidents 2017
@@ -1467,24 +2557,24 @@ Police_Force
 </table>
 <p>To filter multiple conditions:</p>
 <p>And operator</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="tables.html#cb139-1"></a>road_accidents_filter &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb139-2"><a href="tables.html#cb139-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;</span><span class="st"> </span>Police_Force <span class="op">==</span><span class="st"> </span><span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="tables.html#cb144-1"></a>road_accidents_filter &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb144-2"><a href="tables.html#cb144-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;</span><span class="st"> </span>Police_Force <span class="op">==</span><span class="st"> </span><span class="dv">4</span>)</span></code></pre></div>
 <p>Or operator</p>
-<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="tables.html#cb140-1"></a>road_accidents_filter2 &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb140-2"><a href="tables.html#cb140-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="tables.html#cb145-1"></a>road_accidents_filter2 &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb145-2"><a href="tables.html#cb145-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>Accident_Severity <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)</span></code></pre></div>
 <p><strong>Note: filtering with characters must be wrapped in “quotation marks” e.g:</strong></p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="tables.html#cb141-1"></a>road_accidents_filter3 &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
-<span id="cb141-2"><a href="tables.html#cb141-2"></a>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="st">`</span><span class="dt">Local_Authority_(Highway)</span><span class="st">`</span> <span class="op">==</span><span class="st"> &quot;E09000010&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="tables.html#cb146-1"></a>road_accidents_filter3 &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
+<span id="cb146-2"><a href="tables.html#cb146-2"></a>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="st">`</span><span class="dt">Local_Authority_(Highway)</span><span class="st">`</span> <span class="op">==</span><span class="st"> &quot;E09000010&quot;</span>)</span></code></pre></div>
 <p>Also note that in the above example the variable is quoted in back ticks (`). This is because some variable names confuse R due to brackets and numbers and need to be wrapped in back ticks so R knows that everything inside the back ticks is a variable name.</p>
 </div>
 <div id="group-data" class="section level2">
 <h2><span class="header-section-number">4.5</span> Group data</h2>
 <p>Use the {dplyr} group_by function to group data. This works in a similar manner to “GROUP BY” in SQL.</p>
 <p>The below example groups the data by accident severity and weekday, and creates totals for each group using the “tally” function.</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="tables.html#cb142-1"></a><span class="co"># Create grouped data set with counts</span></span>
-<span id="cb142-2"><a href="tables.html#cb142-2"></a>road_accidents_small &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
-<span id="cb142-3"><a href="tables.html#cb142-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Accident_Severity, Day_of_Week) <span class="op">%&gt;%</span></span>
-<span id="cb142-4"><a href="tables.html#cb142-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="tables.html#cb147-1"></a><span class="co"># Create grouped data set with counts</span></span>
+<span id="cb147-2"><a href="tables.html#cb147-2"></a>road_accidents_small &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
+<span id="cb147-3"><a href="tables.html#cb147-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Accident_Severity, Day_of_Week) <span class="op">%&gt;%</span></span>
+<span id="cb147-4"><a href="tables.html#cb147-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-93">Table 4.11: </span>Road accidents 2017 by accident severity and weekday
@@ -1576,10 +2666,10 @@ n
 <h2><span class="header-section-number">4.6</span> Order data</h2>
 <p>Use the {dplyr} arrange function to order data. This works in a similar manner to “ORDER BY” in SQL.</p>
 <p>This example orders the data by date and number of casualties.</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="tables.html#cb143-1"></a><span class="co"># Order data by date and number of casualties</span></span>
-<span id="cb143-2"><a href="tables.html#cb143-2"></a>road_accidents_ordered &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
-<span id="cb143-3"><a href="tables.html#cb143-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) <span class="op">%&gt;%</span></span>
-<span id="cb143-4"><a href="tables.html#cb143-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(Date, Number_of_Casualties)</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="tables.html#cb148-1"></a><span class="co"># Order data by date and number of casualties</span></span>
+<span id="cb148-2"><a href="tables.html#cb148-2"></a>road_accidents_ordered &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
+<span id="cb148-3"><a href="tables.html#cb148-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) <span class="op">%&gt;%</span></span>
+<span id="cb148-4"><a href="tables.html#cb148-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(Date, Number_of_Casualties)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-96">Table 4.12: </span>Road accidents 2017 ordered by date and number of casualties
@@ -1606,41 +2696,7 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-2017077059997
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-2017-02-26
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017030184388
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2017-05-10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017460193815
+2017460153072
 </td>
 <td style="text-align:right;">
 3
@@ -1649,15 +2705,32 @@ Date
 46
 </td>
 <td style="text-align:right;">
-2
+1
 </td>
 <td style="text-align:left;">
-2017-06-06
+2017-01-21
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017010051854
+2017170L30517
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+2017-04-04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017010044947
 </td>
 <td style="text-align:right;">
 3
@@ -1669,41 +2742,58 @@ Date
 1
 </td>
 <td style="text-align:left;">
-2017-07-12
+2017-06-24
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017320312038
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:right;">
-32
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2017-07-20
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017200247142
+2017420204408
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-20
+42
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:left;">
-2017-11-27
+2017-07-26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017134AJ1287
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2017-10-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+201706A039516
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2017-12-01
 </td>
 </tr>
 </tbody>
@@ -1712,10 +2802,10 @@ Date
 <div id="get-counts-of-data" class="section level2">
 <h2><span class="header-section-number">4.7</span> Get counts of data</h2>
 <p>To get counts for groups of data, the {dplyr} tally function can be used in conjunction with the {dplyr} group by function. This groups the data into the required groups and then tallys how many records are in each group.</p>
-<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="tables.html#cb144-1"></a><span class="co"># Create grouped data set with counts</span></span>
-<span id="cb144-2"><a href="tables.html#cb144-2"></a>road_accidents_small &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
-<span id="cb144-3"><a href="tables.html#cb144-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Accident_Severity, Day_of_Week) <span class="op">%&gt;%</span></span>
-<span id="cb144-4"><a href="tables.html#cb144-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="tables.html#cb149-1"></a><span class="co"># Create grouped data set with counts</span></span>
+<span id="cb149-2"><a href="tables.html#cb149-2"></a>road_accidents_small &lt;-<span class="st"> </span>road_accidents <span class="op">%&gt;%</span></span>
+<span id="cb149-3"><a href="tables.html#cb149-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Accident_Severity, Day_of_Week) <span class="op">%&gt;%</span></span>
+<span id="cb149-4"><a href="tables.html#cb149-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">tally</span>()</span></code></pre></div>
 <p>The above example creates groups by accident severity and weekday and counts how many accidents are in each group (one row equals one accident therefore the tally is counting accidents).</p>
 <table>
 <caption>
@@ -2107,11 +3197,11 @@ n
 </table>
 <p>To combine these tables we can use the bind_rows function from the {dplyr} package. Use bind_rows when you want to append the tables underneath one another to make one longer table, i.e. you want to add more rows.</p>
 <p><strong>Ensure that the column names for each table are exactly the same in each table.</strong></p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="tables.html#cb145-1"></a><span class="co"># combine tables using bind_rows</span></span>
-<span id="cb145-2"><a href="tables.html#cb145-2"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb145-3"><a href="tables.html#cb145-3"></a></span>
-<span id="cb145-4"><a href="tables.html#cb145-4"></a>all_accidents &lt;-<span class="st"> </span>accidents_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
-<span id="cb145-5"><a href="tables.html#cb145-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(accidents_<span class="dv">2</span>, accidents_<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="tables.html#cb150-1"></a><span class="co"># combine tables using bind_rows</span></span>
+<span id="cb150-2"><a href="tables.html#cb150-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb150-3"><a href="tables.html#cb150-3"></a></span>
+<span id="cb150-4"><a href="tables.html#cb150-4"></a>all_accidents &lt;-<span class="st"> </span>accidents_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
+<span id="cb150-5"><a href="tables.html#cb150-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(accidents_<span class="dv">2</span>, accidents_<span class="dv">3</span>)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-102">Table 4.15: </span>Road accident data 2017, bind_rows
@@ -2367,11 +3457,11 @@ n
 <div id="joining-tables" class="section level2">
 <h2><span class="header-section-number">4.9</span> Joining tables</h2>
 <p>Joins in R can be done using {dplyr}. This is generally to combine columns of data from two tables:</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="tables.html#cb146-1"></a><span class="co"># combine tables using left join</span></span>
-<span id="cb146-2"><a href="tables.html#cb146-2"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb146-3"><a href="tables.html#cb146-3"></a></span>
-<span id="cb146-4"><a href="tables.html#cb146-4"></a>all_accidents_cols_join &lt;-<span class="st"> </span>road_acc_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
-<span id="cb146-5"><a href="tables.html#cb146-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(road_acc_<span class="dv">2</span>, <span class="dt">by =</span> <span class="st">&quot;acc_index&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="tables.html#cb151-1"></a><span class="co"># combine tables using left join</span></span>
+<span id="cb151-2"><a href="tables.html#cb151-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb151-3"><a href="tables.html#cb151-3"></a></span>
+<span id="cb151-4"><a href="tables.html#cb151-4"></a>all_accidents_cols_join &lt;-<span class="st"> </span>road_acc_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
+<span id="cb151-5"><a href="tables.html#cb151-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(road_acc_<span class="dv">2</span>, <span class="dt">by =</span> <span class="st">&quot;acc_index&quot;</span>)</span></code></pre></div>
 <p>This uses the same principles as SQL, by specifying what the tables should be joined on using the <strong>by =</strong> argument.</p>
 <p>{dplyr} has all the usual SQL joins for example, <code>inner_join</code>, <code>full_join</code>, <code>right_join</code>. All of these are used in the same way as the left join example above.</p>
 <p>Another useful join for data manipulation is an <code>anti_join</code>. This provides all the data that is not in the joined table. For example, the below snapshot of a table displays road accident totals broken down by accident severity and weekday:</p>
@@ -2511,11 +3601,11 @@ n
 </tbody>
 </table>
 <p>Then, I can use an <code>anti-join</code> to create a table which has all of the data that is not in the above table:</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="tables.html#cb147-1"></a><span class="co"># create table of all rows not in the joined table</span></span>
-<span id="cb147-2"><a href="tables.html#cb147-2"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb147-3"><a href="tables.html#cb147-3"></a></span>
-<span id="cb147-4"><a href="tables.html#cb147-4"></a>all_accidents_not_monday &lt;-<span class="st"> </span>road_accidents_small <span class="op">%&gt;%</span></span>
-<span id="cb147-5"><a href="tables.html#cb147-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">anti_join</span>(accidents_monday, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;Accident_Severity&quot;</span>, <span class="st">&quot;Day_of_Week&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="tables.html#cb152-1"></a><span class="co"># create table of all rows not in the joined table</span></span>
+<span id="cb152-2"><a href="tables.html#cb152-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb152-3"><a href="tables.html#cb152-3"></a></span>
+<span id="cb152-4"><a href="tables.html#cb152-4"></a>all_accidents_not_monday &lt;-<span class="st"> </span>road_accidents_small <span class="op">%&gt;%</span></span>
+<span id="cb152-5"><a href="tables.html#cb152-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">anti_join</span>(accidents_monday, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;Accident_Severity&quot;</span>, <span class="st">&quot;Day_of_Week&quot;</span>))</span></code></pre></div>
 <p>The above code takes the initial table we want to get our data from (road_accidents_small) and anti joins accidents_monday. This says, “get all the rows from road_accidents_small that are not in accidents_monday”. Again, note the need to specify what the join rows would be joined and compared by.</p>
 <table>
 <caption>
@@ -2913,12 +4003,12 @@ Day_of_Week
 </tbody>
 </table>
 <p>Let’s say we want <strong>acc_index</strong> and <strong>Police_Force</strong> from the first table, and <strong>Date</strong> from the second table.</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="tables.html#cb148-1"></a><span class="co"># select specific columns from each table and left join</span></span>
-<span id="cb148-2"><a href="tables.html#cb148-2"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb148-3"><a href="tables.html#cb148-3"></a></span>
-<span id="cb148-4"><a href="tables.html#cb148-4"></a>road_acc_<span class="dv">3</span> &lt;-<span class="st"> </span>road_acc_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
-<span id="cb148-5"><a href="tables.html#cb148-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Police_Force) <span class="op">%&gt;%</span></span>
-<span id="cb148-6"><a href="tables.html#cb148-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(<span class="kw">select</span>(road_acc_<span class="dv">2</span>, acc_index, Date), <span class="dt">by =</span> <span class="st">&quot;acc_index&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="tables.html#cb153-1"></a><span class="co"># select specific columns from each table and left join</span></span>
+<span id="cb153-2"><a href="tables.html#cb153-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb153-3"><a href="tables.html#cb153-3"></a></span>
+<span id="cb153-4"><a href="tables.html#cb153-4"></a>road_acc_<span class="dv">3</span> &lt;-<span class="st"> </span>road_acc_<span class="dv">1</span> <span class="op">%&gt;%</span></span>
+<span id="cb153-5"><a href="tables.html#cb153-5"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Police_Force) <span class="op">%&gt;%</span></span>
+<span id="cb153-6"><a href="tables.html#cb153-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(<span class="kw">select</span>(road_acc_<span class="dv">2</span>, acc_index, Date), <span class="dt">by =</span> <span class="st">&quot;acc_index&quot;</span>)</span></code></pre></div>
 <p>The above code takes the first table and uses the <code>select</code> statement to select the required columns from the first table.</p>
 <p>Then within the <code>left_join</code> command, to select the data from the second table, you again add the <code>select</code> statement.</p>
 <p><strong>Note: you will need to select the joining variable in both tables but this will only appear once</strong></p>
@@ -3015,8 +4105,8 @@ Date
 <div id="sum-rows" class="section level3">
 <h3><span class="header-section-number">4.11.1</span> Sum rows</h3>
 <p>To sum across a row:</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="tables.html#cb149-1"></a><span class="co"># sum across a row </span></span>
-<span id="cb149-2"><a href="tables.html#cb149-2"></a>road_accidents_weekdays<span class="op">$</span>rowsum &lt;-<span class="st"> </span><span class="kw">rowSums</span>(road_accidents_weekdays, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="tables.html#cb154-1"></a><span class="co"># sum across a row </span></span>
+<span id="cb154-2"><a href="tables.html#cb154-2"></a>road_accidents_weekdays<span class="op">$</span>rowsum &lt;-<span class="st"> </span><span class="kw">rowSums</span>(road_accidents_weekdays, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-114">Table 4.19: </span>Road accidents 2017 by accident severity and weekday
@@ -3143,11 +4233,11 @@ rowsum
 </tbody>
 </table>
 <p>To sum across specific rows:</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="tables.html#cb150-1"></a><span class="co"># sum across specific rows </span></span>
-<span id="cb150-2"><a href="tables.html#cb150-2"></a>road_accidents_weekdays<span class="op">$</span>alldays &lt;-<span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">1</span><span class="st">`</span> <span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">2</span><span class="st">`</span><span class="op">+</span></span>
-<span id="cb150-3"><a href="tables.html#cb150-3"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">3</span><span class="st">`</span><span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">4</span><span class="st">`</span><span class="op">+</span></span>
-<span id="cb150-4"><a href="tables.html#cb150-4"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">5</span><span class="st">`</span><span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">6</span><span class="st">`</span><span class="op">+</span></span>
-<span id="cb150-5"><a href="tables.html#cb150-5"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">7</span><span class="st">`</span></span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="tables.html#cb155-1"></a><span class="co"># sum across specific rows </span></span>
+<span id="cb155-2"><a href="tables.html#cb155-2"></a>road_accidents_weekdays<span class="op">$</span>alldays &lt;-<span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">1</span><span class="st">`</span> <span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">2</span><span class="st">`</span><span class="op">+</span></span>
+<span id="cb155-3"><a href="tables.html#cb155-3"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">3</span><span class="st">`</span><span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">4</span><span class="st">`</span><span class="op">+</span></span>
+<span id="cb155-4"><a href="tables.html#cb155-4"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">5</span><span class="st">`</span><span class="op">+</span><span class="st"> </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">6</span><span class="st">`</span><span class="op">+</span></span>
+<span id="cb155-5"><a href="tables.html#cb155-5"></a><span class="st">                                    </span>road_accidents_weekdays<span class="op">$</span><span class="st">`</span><span class="dt">7</span><span class="st">`</span></span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-116">Table 4.20: </span>Road accidents 2017 by accident severity and weekday
@@ -3277,12 +4367,12 @@ alldays
 <div id="sum-columns" class="section level3">
 <h3><span class="header-section-number">4.11.2</span> Sum columns</h3>
 <p>To sum columns to get totals of each column, <strong><em>note this will appear as a console output not in a data object</em></strong>:</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="tables.html#cb151-1"></a><span class="co"># sum columns</span></span>
-<span id="cb151-2"><a href="tables.html#cb151-2"></a><span class="kw">colSums</span>(road_accidents_weekdays, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="tables.html#cb156-1"></a><span class="co"># sum columns</span></span>
+<span id="cb156-2"><a href="tables.html#cb156-2"></a><span class="kw">colSums</span>(road_accidents_weekdays, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) </span></code></pre></div>
 <p>To get the totals of each column as a row in the data:</p>
-<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="tables.html#cb152-1"></a><span class="co"># create total column</span></span>
-<span id="cb152-2"><a href="tables.html#cb152-2"></a>road_accidents_weekdays &lt;-<span class="st"> </span>road_accidents_weekdays <span class="op">%&gt;%</span></span>
-<span id="cb152-3"><a href="tables.html#cb152-3"></a><span class="st">  </span>janitor<span class="op">::</span><span class="kw">adorn_totals</span>(<span class="st">&quot;row&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="tables.html#cb157-1"></a><span class="co"># create total column</span></span>
+<span id="cb157-2"><a href="tables.html#cb157-2"></a>road_accidents_weekdays &lt;-<span class="st"> </span>road_accidents_weekdays <span class="op">%&gt;%</span></span>
+<span id="cb157-3"><a href="tables.html#cb157-3"></a><span class="st">  </span>janitor<span class="op">::</span><span class="kw">adorn_totals</span>(<span class="st">&quot;row&quot;</span>)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-119">Table 4.21: </span>Road accidents 2017 by accident severity and weekday
@@ -3428,25 +4518,25 @@ Total
 <div id="replace-nas-or-other-values" class="section level2">
 <h2><span class="header-section-number">4.12</span> Replace NAs or other values</h2>
 <p>To replace all NAs in one column (Junction Control column) with a specific value:</p>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="tables.html#cb153-1"></a><span class="kw">library</span> (tidyr)</span>
-<span id="cb153-2"><a href="tables.html#cb153-2"></a><span class="co"># replace all NAs with value -1</span></span>
-<span id="cb153-3"><a href="tables.html#cb153-3"></a>road_accidents_na<span class="op">$</span>Junction_Control &lt;-<span class="st"> </span>road_accidents_na<span class="op">$</span>Junction_Control <span class="op">%&gt;%</span></span>
-<span id="cb153-4"><a href="tables.html#cb153-4"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">replace_na</span>(<span class="op">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="tables.html#cb158-1"></a><span class="kw">library</span> (tidyr)</span>
+<span id="cb158-2"><a href="tables.html#cb158-2"></a><span class="co"># replace all NAs with value -1</span></span>
+<span id="cb158-3"><a href="tables.html#cb158-3"></a>road_accidents_na<span class="op">$</span>Junction_Control &lt;-<span class="st"> </span>road_accidents_na<span class="op">$</span>Junction_Control <span class="op">%&gt;%</span></span>
+<span id="cb158-4"><a href="tables.html#cb158-4"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">replace_na</span>(<span class="op">-</span><span class="dv">1</span>)</span></code></pre></div>
 <p><strong>Note: To replace NA with a character the character replacement must be wrapped in “quotation marks”</strong></p>
 <p>To replace all NAs in a data frame or tibble:</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="tables.html#cb154-1"></a><span class="co"># replace all NAs with value -1</span></span>
-<span id="cb154-2"><a href="tables.html#cb154-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
-<span id="cb154-3"><a href="tables.html#cb154-3"></a><span class="st">  </span><span class="kw">replace</span>(<span class="kw">is.na</span>(.), <span class="dv">-1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="tables.html#cb159-1"></a><span class="co"># replace all NAs with value -1</span></span>
+<span id="cb159-2"><a href="tables.html#cb159-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
+<span id="cb159-3"><a href="tables.html#cb159-3"></a><span class="st">  </span><span class="kw">replace</span>(<span class="kw">is.na</span>(.), <span class="dv">-1</span>)</span></code></pre></div>
 <p>To replace values with NA, specify what value you want to be replaced with NA using the na_if function:</p>
-<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="tables.html#cb155-1"></a><span class="co"># create nas</span></span>
-<span id="cb155-2"><a href="tables.html#cb155-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
-<span id="cb155-3"><a href="tables.html#cb155-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">na_if</span>(<span class="op">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="tables.html#cb160-1"></a><span class="co"># create nas</span></span>
+<span id="cb160-2"><a href="tables.html#cb160-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
+<span id="cb160-3"><a href="tables.html#cb160-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">na_if</span>(<span class="op">-</span><span class="dv">1</span>)</span></code></pre></div>
 <p><strong>Note: to only create NAs in a specific column specify the column name in a similar manner to the first example in this section.</strong></p>
 <p>To replace values:</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="tables.html#cb156-1"></a><span class="co"># replace 1st_road_class </span></span>
-<span id="cb156-2"><a href="tables.html#cb156-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
-<span id="cb156-3"><a href="tables.html#cb156-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span> =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">case_when</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span> <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> &quot;A Road&quot;</span>,</span>
-<span id="cb156-4"><a href="tables.html#cb156-4"></a>                                      <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="kw">as.character</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="tables.html#cb161-1"></a><span class="co"># replace 1st_road_class </span></span>
+<span id="cb161-2"><a href="tables.html#cb161-2"></a>road_accidents_na &lt;-<span class="st"> </span>road_accidents_na <span class="op">%&gt;%</span></span>
+<span id="cb161-3"><a href="tables.html#cb161-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span> =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">case_when</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span> <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">~</span><span class="st"> &quot;A Road&quot;</span>,</span>
+<span id="cb161-4"><a href="tables.html#cb161-4"></a>                                      <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="kw">as.character</span>(<span class="st">`</span><span class="dt">1st_Road_Class</span><span class="st">`</span>)))</span></code></pre></div>
 <p>The case_when function is similar to using CASE WHEN in SQL.</p>
 <p>The TRUE argument indicates that if the values aren’t included in the case_when then they should be whatever is after the tilda (~) i.e. the equivalent of the ELSE statement in SQL.</p>
 <p>The “as.character” function says that everything that in <code>1st_Road_Class</code> isn’t 3 should be kept as it is, this could be replaced by an arbitrary character or value e.g. “Other”. This would make everything that is not a 3, coded as “Other”.</p>
@@ -3457,10 +4547,10 @@ Total
 <div id="reordering-rows" class="section level3">
 <h3><span class="header-section-number">4.13.1</span> Reordering rows</h3>
 <p>Rows can be reordered by certain variables using the {dplyr} arrange function with examples in the <strong>4.5 Order data</strong> sub-chapter of this book. This will order the data in ascending order by the variables quoted. To order rows in descending order the <code>desc()</code> command can be used within the arrange function.</p>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="tables.html#cb157-1"></a><span class="co"># Order data by date and number of casualties</span></span>
-<span id="cb157-2"><a href="tables.html#cb157-2"></a>road_accidents_ordered_desc &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
-<span id="cb157-3"><a href="tables.html#cb157-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) <span class="op">%&gt;%</span></span>
-<span id="cb157-4"><a href="tables.html#cb157-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(<span class="kw">desc</span>(Date), Number_of_Casualties)</span></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="tables.html#cb162-1"></a><span class="co"># Order data by date and number of casualties</span></span>
+<span id="cb162-2"><a href="tables.html#cb162-2"></a>road_accidents_ordered_desc &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
+<span id="cb162-3"><a href="tables.html#cb162-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(acc_index, Accident_Severity, Police_Force, Number_of_Casualties, Date) <span class="op">%&gt;%</span></span>
+<span id="cb162-4"><a href="tables.html#cb162-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(<span class="kw">desc</span>(Date), Number_of_Casualties)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-126">Table 4.22: </span>Road accidents 2017 ordered by date (descending) and number of casualties
@@ -3487,58 +4577,75 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-2017320556566
+2017010078041
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-32
-</td>
-<td style="text-align:right;">
 1
 </td>
+<td style="text-align:right;">
+4
+</td>
 <td style="text-align:left;">
-2017-12-20
+2017-12-14
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017200247142
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-20
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2017-11-27
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017320312038
+201706A039516
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
-32
+6
 </td>
 <td style="text-align:right;">
 1
 </td>
 <td style="text-align:left;">
-2017-07-20
+2017-12-01
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017010051854
+2017134AJ1287
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2017-10-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017420204408
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2017-07-26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017010044947
 </td>
 <td style="text-align:right;">
 3
@@ -3550,41 +4657,24 @@ Date
 1
 </td>
 <td style="text-align:left;">
-2017-07-12
+2017-06-24
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017460193815
+2017170L30517
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
-46
+17
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:left;">
-2017-06-06
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017030184388
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2017-05-10
+2017-04-04
 </td>
 </tr>
 </tbody>
@@ -3701,16 +4791,16 @@ Police_Force
 </tbody>
 </table>
 <p>To reorder this table we do:</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="tables.html#cb158-1"></a>table_reordered &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
-<span id="cb158-2"><a href="tables.html#cb158-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(Accident_Severity, Date, acc_index, Police_Force)</span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="tables.html#cb163-1"></a>table_reordered &lt;-<span class="st"> </span>road_accidents_<span class="dv">4</span>_cols <span class="op">%&gt;%</span></span>
+<span id="cb163-2"><a href="tables.html#cb163-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(Accident_Severity, Date, acc_index, Police_Force)</span></code></pre></div>
 </div>
 </div>
 <div id="creating-new-variables" class="section level2">
 <h2><span class="header-section-number">4.14</span> Creating new variables</h2>
 <p>The {dplyr} mutate function can be used to create new variables based on current variables or other additional information.</p>
 <p>For example, to create a new variable which is speed limit in km:</p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="tables.html#cb159-1"></a>road_acc_km &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
-<span id="cb159-2"><a href="tables.html#cb159-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">speed_km =</span> Speed_limit <span class="op">*</span><span class="st"> </span><span class="fl">1.6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="tables.html#cb164-1"></a>road_acc_km &lt;-<span class="st"> </span>road_acc_<span class="dv">7</span> <span class="op">%&gt;%</span></span>
+<span id="cb164-2"><a href="tables.html#cb164-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">speed_km =</span> Speed_limit <span class="op">*</span><span class="st"> </span><span class="fl">1.6</span>)</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-130">Table 4.24: </span>Road accidents by km/h
@@ -3734,21 +4824,21 @@ speed_km
 <tbody>
 <tr>
 <td style="text-align:left;">
-2017200247142
+2017010044947
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:right;">
 20
 </td>
 <td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-48
+32
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2017010051854
+2017010078041
 </td>
 <td style="text-align:right;">
 1
@@ -3762,24 +4852,10 @@ speed_km
 </tr>
 <tr>
 <td style="text-align:left;">
-2017030184388
+201706A039516
 </td>
 <td style="text-align:right;">
-3
-</td>
-<td style="text-align:right;">
-60
-</td>
-<td style="text-align:right;">
-96
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2017320312038
-</td>
-<td style="text-align:right;">
-32
+6
 </td>
 <td style="text-align:right;">
 30
@@ -3790,10 +4866,24 @@ speed_km
 </tr>
 <tr>
 <td style="text-align:left;">
-2017320556566
+2017460153072
 </td>
 <td style="text-align:right;">
-32
+46
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017170L30517
+</td>
+<td style="text-align:right;">
+17
 </td>
 <td style="text-align:right;">
 60
@@ -3804,16 +4894,16 @@ speed_km
 </tr>
 <tr>
 <td style="text-align:left;">
-2017460193815
+2017420204408
 </td>
 <td style="text-align:right;">
-46
+42
 </td>
 <td style="text-align:right;">
-70
+60
 </td>
 <td style="text-align:right;">
-112
+96
 </td>
 </tr>
 </tbody>
@@ -3910,9 +5000,9 @@ n
 </tbody>
 </table>
 <p>The group by function is used with the summarise function to specify what groups the mean will be applied to, in this case weekday.</p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="tables.html#cb160-1"></a>road_acc_mean &lt;-<span class="st"> </span>road_accidents_small <span class="op">%&gt;%</span></span>
-<span id="cb160-2"><a href="tables.html#cb160-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Day_of_Week) <span class="op">%&gt;%</span></span>
-<span id="cb160-3"><a href="tables.html#cb160-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(n))</span></code></pre></div>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="tables.html#cb165-1"></a>road_acc_mean &lt;-<span class="st"> </span>road_accidents_small <span class="op">%&gt;%</span></span>
+<span id="cb165-2"><a href="tables.html#cb165-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(Day_of_Week) <span class="op">%&gt;%</span></span>
+<span id="cb165-3"><a href="tables.html#cb165-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(n))</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-133">Table 4.26: </span>Mean number of accidents in 2017, by weekday
@@ -3983,9 +5073,9 @@ mean
 <h2><span class="header-section-number">4.16</span> Look up tables</h2>
 <p>Aside from importing a separate lookup data file into R, named vectors can be used as lookup tables.</p>
 <p>For example, to assign accident severity values with labels, named vectors can be used (<strong>note: numbers must also be in quotation marks</strong>):</p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="tables.html#cb161-1"></a>lookup_severity &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;1&quot;</span> =<span class="st"> &quot;Fatal&quot;</span>, <span class="st">&quot;2&quot;</span> =<span class="st"> &quot;Serious&quot;</span>, <span class="st">&quot;3&quot;</span> =<span class="st"> &quot;Slight&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="tables.html#cb166-1"></a>lookup_severity &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;1&quot;</span> =<span class="st"> &quot;Fatal&quot;</span>, <span class="st">&quot;2&quot;</span> =<span class="st"> &quot;Serious&quot;</span>, <span class="st">&quot;3&quot;</span> =<span class="st"> &quot;Slight&quot;</span>)</span></code></pre></div>
 <p>To convert the data and create a label variable (<strong>note: the Accident_Severity variable values can be replaced with the lookup values by changing the name of the variable on the left to Accident_Severity</strong>):</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="tables.html#cb162-1"></a>road_accidents_small<span class="op">$</span>Accident_Severity_label &lt;-<span class="st"> </span>lookup_severity[road_accidents_small<span class="op">$</span>Accident_Severity]</span></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="tables.html#cb167-1"></a>road_accidents_small<span class="op">$</span>Accident_Severity_label &lt;-<span class="st"> </span>lookup_severity[road_accidents_small<span class="op">$</span>Accident_Severity]</span></code></pre></div>
 <table>
 <caption>
 <span id="tab:unnamed-chunk-136">Table 4.27: </span>Road accidents 2017, by severity and weekday
