@@ -107,7 +107,7 @@ This section shows how to transpose data using the **spread** and **gather** fun
 
 <p style="background-color: #D9D9D9"><br>The aim is to take a published table of reported road accidents in which each row contains the data for one year with the severity of accident recorded in the columns. The tranposition will enable the calculation of the percentage increases for each of the last two years.<br><br></p>
 
-Firstly, the **current year** should be specified and the rounding function declared. This function is used as the default round function in R rounds upwards only if the number is even. 
+Firstly, the **current year** is specified and the rounding function declared. This function is used because the default round function in R rounds upwards only if the number is even. 
 
 ```{r DeclareYear, include=TRUE}
 Yr <- 2018   ## select for the latest of the three years you require 
@@ -124,7 +124,7 @@ RoundC <- function(x, digits = 0) {
 
 This example uses data from RAS30013 *"Reported casualty rates by road user type and severty: Great Britain"*. https://www.gov.uk/government/statistical-data-sets/ras30-reported-casualties-in-road-accidents#casualty-rates-and-risk
 
-Firstly, the contents of the published table is read in (the last 10 years only), The adjusted data is rounded to the nearest whole number. The year field is changed to a character format so that it is displayed without the thousand separator comma.
+The contents of the published table is read in (the last 10 years only), The adjusted data is rounded to the nearest whole number. The year field is changed to a character format so that it is displayed without the thousand separator comma.
 
 ```{r PublishedTable, include=TRUE}
 Accidents <- readxl::read_excel("data/ras10013.xlsx") %>%
@@ -137,7 +137,9 @@ Accidents$Year <-as.character(as.numeric(Accidents$Year))
 ```
 
 ```{r Table1, echo = FALSE, results = 'asis'}
-knitr::kable(Accidents, format.args = list(big.mark = ","))
+
+knitr::kable(Accidents, format.args = list(big.mark = ",")) %>% 
+  kableExtra::kable_styling(latex_options="scale_down")
 ```
 
 The data is now filtered to keep only the last three years of data. 
@@ -158,10 +160,11 @@ Last3Years <- dplyr::filter(Accidents,
 ```
 
 ```{r Table2, echo = FALSE, results = 'asis'}
-knitr::kable(Last3Years, format.args = list(big.mark = ","))
+knitr::kable(Last3Years, format.args = list(big.mark = ",")) %>% 
+  kableExtra::kable_styling(latex_options="scale_down")
 ```
 
-The table **Last3Years** hold the number of accidents for each severity (in columns) with a row for each of the last three years. We wish to calculate the annual growth in accidents by severity. To achieve this we need to transpose the table. This can be achieved using the **gather** function within the **tidyr** package which allows us to put data into a tidy format which makes it easier to manipulate.
+The table above holds the number of accidents for each severity (in columns) with a row for each of the last three years. We wish to calculate the annual growth in accidents by severity. To achieve this we need to transpose the table. This can be achieved using the **gather** function within the **tidyr** package which allows us to put data into a tidy format which makes it easier to manipulate.
 
 The template of the **gather** function is:
     
@@ -174,7 +177,7 @@ The variables We want to input into one column are the accident severities (*Fat
 A new field **SeverityNum** is created so that the severity types can be sorted in a logical order in the final output.
 
 ```{r Gather, include=TRUE}
-Severity <- tidyr::gather(Last3Years,Fatal,SeriousUnadjusted,SeriousAdjusted,
+Severity <- Last3Years %>% tidyr::gather(Fatal,SeriousUnadjusted,SeriousAdjusted,
                           FatalSeriousUnadjusted,FatalSeriousAdjusted,SlightUnadjusted,
                           SlightAdjusted,AllAccidents,
                           key = "SeverityType", 
@@ -193,7 +196,8 @@ Severity <- tidyr::gather(Last3Years,Fatal,SeriousUnadjusted,SeriousAdjusted,
 ```
 
 ```{r Table3, echo = FALSE, results = 'asis'}
-knitr::kable(Severity, format.args = list(big.mark = ","))
+knitr::kable(Severity, format.args = list(big.mark = ",")) %>% 
+  kableExtra::kable_styling(latex_options="scale_down")
 ```
 
 We now wish to transpose this table so that the three years (*ThisYear, LastYear and YearBefore*) will be in seperate columns rather than one.
@@ -209,10 +213,10 @@ Here the row to be transposed is *YearLab*. The value is the number of accidents
 
 By default, the data would be sorted in alphabetical order of **SeverityType**. Instead the data is sorted in a pre-defined logical order using the **SeverityNum** variable defined above. The **SeverityNum**, having done its job, is then dropped from the final output.
 
-Now that the number of accidents for each year are in a seperate column, the percentage growth for one year to the next can be calculated using the **mutate** function.
+Now that the number of accidents for each year are in a separate column, the percentage growth for one year to the next can be calculated using the **mutate** function.
 
 ``` {r Spread, include=TRUE}
-Transposed <- tidyr::spread(Severity,YearLab, n) %>%
+Transposed <- Severity %>% tidyr::spread(YearLab, n) %>%
   dplyr::arrange(SeverityNum) %>%
   dplyr::select(-SeverityNum) %>%
   dplyr::mutate(PerGrowthThisYear=RoundC(ThisYear/LastYear *100-100,1),
@@ -220,7 +224,8 @@ Transposed <- tidyr::spread(Severity,YearLab, n) %>%
 ```
 
 ```{r Table4, echo = FALSE, results = 'asis'}
-knitr::kable(Transposed, format.args = list(big.mark = ","))
+knitr::kable(Transposed, format.args = list(big.mark = ",")) %>% 
+  kableExtra::kable_styling(latex_options="scale_down")
 ```
 
 **{reshape2} package**
