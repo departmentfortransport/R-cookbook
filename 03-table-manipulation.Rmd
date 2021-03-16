@@ -101,6 +101,128 @@ caption = "Number of road accidents by accident severity and weekday, tidyr::gat
 
 ```
 
+**Extended data transpose example**
+
+This section shows how to transpose data using the **spread** and **gather** functions with the **tidyr** package.
+
+<p style="background-color: #D9D9D9"><br>The aim is to take a published table of reported road accidents in which each row contains the data for one year with the severity of accident recorded in the columns. The tranposition will enable the calculation of the percentage increases for each of the last two years.<br><br></p>
+
+Firstly, the **current year** should be specified and the rounding function declared. This function is used as the default round function in R rounds upwards only if the number is even. 
+
+```{r DeclareYear, include=TRUE}
+Yr <- 2018   ## select for the latest of the three years you require 
+
+RoundC <- function(x, digits = 0) {
+  posneg <- sign(x)
+  z <- abs(x) * 10 ^ digits
+  z <- z + 0.5
+  z <- trunc(z)
+  z <- z / 10 ^ digits
+  z * posneg
+} 
+```
+
+This example uses data from RAS30013 *"Reported casualty rates by road user type and severty: Great Britain"*. https://www.gov.uk/government/statistical-data-sets/ras30-reported-casualties-in-road-accidents#casualty-rates-and-risk
+
+Firstly, the contents of the published table is read in (the last 10 years only), The adjusted data is rounded to the nearest whole number. The year field is changed to a character format so that it is displayed without the thousand separator comma.
+
+```{r PublishedTable, include=TRUE}
+Accidents <- readxl::read_excel("data/ras10013.xlsx") %>%
+  dplyr::filter(Year>=2009) %>%
+  dplyr::mutate(SeriousAdjusted=RoundC(SeriousAdjusted,0),
+                FatalSeriousAdjusted=RoundC(FatalSeriousAdjusted,0),
+                SlightAdjusted=RoundC(SlightAdjusted,0))
+
+Accidents$Year <-as.character(as.numeric(Accidents$Year))
+```
+
+```{r Table1, echo = FALSE, results = 'asis'}
+knitr::kable(Accidents, format.args = list(big.mark = ","))
+```
+
+The data is now filtered to keep only the last three years of data. 
+
+We could have hard coded the year in the filter below e.g. **Year %in% c(2017,2018,2019)**. To save having to change the code every time we wish to run for different years,we can use the **glue** function to derive the required years from a previously defined variable. This picks up the most recent year from **yr** defined above and calculates the other years as 1 and 2 years before **yr** as **yr-1** and **yr-2**. 
+
+A new variable **YearLab** with the respective text ThisYear, LastYear and YearBefore is created to automate calculations below. 
+
+``` {r Last3Years, include=TRUE}
+Last3Years <- dplyr::filter(Accidents,
+                Year %in% c(glue::glue({Yr}),glue::glue({Yr-1}),glue::glue({Yr-2}))) %>%
+  dplyr::mutate(YearLab = dplyr::case_when(
+    Year == glue::glue({Yr}) ~ "ThisYear",
+    Year == glue::glue({Yr-1}) ~ "LastYear",
+    TRUE ~ "YearBefore" # else option 
+  )) %>%
+  dplyr::select(-Year)
+```
+
+```{r Table2, echo = FALSE, results = 'asis'}
+knitr::kable(Last3Years, format.args = list(big.mark = ","))
+```
+
+The table **Last3Years** hold the number of accidents for each severity (in columns) with a row for each of the last three years. We wish to calculate the annual growth in accidents by severity. To achieve this we need to transpose the table. This can be achieved using the **gather** function within the **tidyr** package which allows us to put data into a tidy format which makes it easier to manipulate.
+
+The template of the **gather** function is:
+    
+    tidyr::Gather(variables_to_input_into_one_column, 
+          key = “name_of_column_creating”, 
+          value = “name_of_value_column”)
+
+The variables We want to input into one column are the accident severities (*Fatal, SeriousUnadjusted, ..., AllAccidents*). The **key** parameter we will call *SeverityType*.  The **value** parameter is the name of the column holding the number of accidents (*n*). The variable **YearLabel** will remain in one column so does not need to be mentioned in the **gather** statement.
+
+A new field **SeverityNum** is created so that the severity types can be sorted in a logical order in the final output.
+
+```{r Gather, include=TRUE}
+Severity <- tidyr::gather(Last3Years,Fatal,SeriousUnadjusted,SeriousAdjusted,
+                          FatalSeriousUnadjusted,FatalSeriousAdjusted,SlightUnadjusted,
+                          SlightAdjusted,AllAccidents,
+                          key = "SeverityType", 
+                          value = "n") %>%
+  dplyr::mutate(SeverityNum = dplyr::case_when(
+  SeverityType=='Fatal' ~ 1,
+  SeverityType=='SeriousUnadjusted' ~ 2,
+  SeverityType=='SeriousAdjusted' ~ 3,
+  SeverityType=='FatalSeriousUnadjusted' ~ 4,
+  SeverityType=='FatalSeriousAdjusted' ~ 5,
+  SeverityType=='SlightUnadjusted' ~ 6,
+  SeverityType=='SlightAdjusted' ~ 7,
+  SeverityType=='AllAccidents' ~ 8,
+  TRUE ~ 0 # else option 
+))
+```
+
+```{r Table3, echo = FALSE, results = 'asis'}
+knitr::kable(Severity, format.args = list(big.mark = ","))
+```
+
+We now wish to transpose this table so that the three years (*ThisYear, LastYear and YearBefore*) will be in seperate columns rather than one.
+
+To do this, we use the **spread** function within the **tidyr** package.
+
+The template of the **spread** function is:
+    
+    tidyr::Spread(variables_to_change_from rows_into_columns,
+          value = “name_of_value_column”)
+
+Here the row to be transposed is *YearLab*. The value is the number of accidents *n*. The names of the new columns are derived from the values of **YearLab**. The variables **SeverityType** and **SeverityNum** will each remain in one column so are not listed in the **spread** function.
+
+By default, the data would be sorted in alphabetical order of **SeverityType**. Instead the data is sorted in a pre-defined logical order using the **SeverityNum** variable defined above. The **SeverityNum**, having done its job, is then dropped from the final output.
+
+Now that the number of accidents for each year are in a seperate column, the percentage growth for one year to the next can be calculated using the **mutate** function.
+
+``` {r Spread, include=TRUE}
+Transposed <- tidyr::spread(Severity,YearLab, n) %>%
+  dplyr::arrange(SeverityNum) %>%
+  dplyr::select(-SeverityNum) %>%
+  dplyr::mutate(PerGrowthThisYear=RoundC(ThisYear/LastYear *100-100,1),
+                              PerGrowthLastYear=RoundC(LastYear/YearBefore *100-100,1))
+```
+
+```{r Table4, echo = FALSE, results = 'asis'}
+knitr::kable(Transposed, format.args = list(big.mark = ","))
+```
+
 **{reshape2} package**
 
 Again, this has two functions which can be used to pivot tables:
